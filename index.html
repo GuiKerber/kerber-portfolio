@@ -960,7 +960,10 @@
         order: -1;              /* always render cover before info */
       }
       .project-info  { padding: 32px var(--px) 28px; }
-      .project-title { font-size: clamp(28px, 8vw, 40px); }
+      /* 7.7vw not 8vw: at 8vw "Staking Marketplace" needs 330px against a
+         327px column and breaks after "Staking". This keeps the pair together
+         across phone widths. */
+      .project-title { font-size: clamp(26px, 7.7vw, 40px); }
       .project-stripe { display: none; }
 
       /* ─ About ─ */
@@ -1332,7 +1335,9 @@
         <div class="project-info">
           <div class="project-stripe"><span class="project-stripe-label">02 · Fintech</span></div>
           <div class="project-top">
-            <h3 class="project-title" data-pt="Levando um Marketplace de Staking<br>a uma Carteira Multi-Chain">Introducing a Staking Marketplace<br>to a Multi-Chain Wallet</h3>
+            <!-- &nbsp; binds "Staking Marketplace" so narrow screens break before
+                 it rather than stranding "Marketplace" on its own line. -->
+            <h3 class="project-title" data-pt="Levando um Marketplace&nbsp;de&nbsp;Staking<br>a uma Carteira Multi-Chain">Introducing a Staking&nbsp;Marketplace<br>to a Multi-Chain Wallet</h3>
             <div class="project-tags">
               <span class="tag">Product Design</span>
               <span class="tag">Crypto</span>
@@ -1388,7 +1393,7 @@
     <div class="mp-header">
       <div class="section-label">
         <span class="dot-sm"></span>
-        <span data-pt="Outros Projetos Legais">Other Cool Projects</span>
+        <span data-pt="Também projetados por mim">Also designed by me</span>
       </div>
     </div>
 
@@ -1566,8 +1571,8 @@
             <h3 class="wf-title" data-pt="Estratégia de Produto<br>&amp; Estrutura de UX">Product Strategy<br>&amp; UX Structure</h3>
             <span class="wf-num">[ 01 ]</span>
           </div>
-          <p class="wf-desc" data-pt="Antes de começar qualquer projeto, gosto de fazer entrevistas com stakeholders para entender melhor os objetivos e necessidades do negócio e dos usuários. Depois disso, defino a estrutura geral e os requisitos mínimos do produto para viabilizar o projeto. Só então sigo para a próxima etapa.">
-            Before starting any project, I like to jump on stakeholders interview to better understand the business and user goals and needs. After that, I like to define overall structure and minimal product requirements to make the project viable. Only then I proceed to the next step.
+          <p class="wf-desc" data-pt="Antes de começar qualquer projeto, gosto de fazer entrevistas com stakeholders para entender os objetivos de negócio e de usuário por trás dele. A partir daí, defino a estrutura geral e os requisitos mínimos que tornam o produto viável. Só então sigo para a próxima etapa.">
+            Before starting any project, I like to run stakeholder interviews to understand the business and user goals behind it. From there I define the overall structure and the minimum requirements that make the product viable. Only then do I move to the next step.
           </p>
         </div>
         <div class="wf-figure">
@@ -1581,8 +1586,8 @@
             <h3 class="wf-title" data-pt="Design de Interface<br>&amp; Protótipo vibe coded">Product Interface Design<br>&amp; Vibe coded prototype</h3>
             <span class="wf-num">[ 02 ]</span>
           </div>
-          <p class="wf-desc" data-pt="Tenho pulado toda a etapa de wireframes de baixa fidelidade e começado direto no Figma e no Claude Code para explorar designs. Enquanto o Claude Code trabalha no meu prompt, começo com um frame em branco no Figma para colocar meu cérebro para trabalhar e julgar qual resultado é melhor.">
-            I have been skipping the whole low-fidelity wireframes and start right away with Figma and Claude Code to explore designs. While Claude code is working on my prompt, I continue to start with a blank frame in Figma to put my brain to work and judge which result is better.
+          <p class="wf-desc" data-pt="Tenho pulado os wireframes de baixa fidelidade e ido direto para o Figma e o Claude Code para explorar designs. Enquanto o Claude Code trabalha no meu prompt, começo eu mesmo de um frame em branco, depois avalio qual resultado é mais forte e itero em cima dele.">
+            I've been skipping low-fidelity wireframes and going straight into Figma and Claude Code to explore designs. While Claude Code works through my prompt, I start from a blank frame myself, then judge which result is stronger and iterate on top of that.
           </p>
         </div>
         <div class="wf-figure">
@@ -1596,8 +1601,8 @@
             <h3 class="wf-title" data-pt="Design System<br>&amp; Handoff do Projeto">Design system<br>&amp; Project Handoff</h3>
             <span class="wf-num">[ 03 ]</span>
           </div>
-          <p class="wf-desc" data-pt="Por fim, entrego um design system completo com variáveis no Figma e também em um arquivo HTML conectado ao protótipo final do Claude Code. Ambos os arquivos podem servir como fonte da verdade do design, e devem ser mantidos atualizados nos dois sentidos.">
-            At last, I deliver a full design system and variables in Figma and also in an HTML file connected to the Claude Code final prototype. Both files can act as the true source of design, and they should be kept updated both ways.
+          <p class="wf-desc" data-pt="Por fim, entrego um design system completo com variáveis no Figma, além de um arquivo HTML conectado ao protótipo do Claude Code. Ambos servem como fonte da verdade do design, e os dois são mantidos em sincronia.">
+            Finally, I deliver a complete design system with variables in Figma, plus an HTML file wired to the Claude Code prototype. Both act as a source of truth for the design, and both are kept in sync.
           </p>
         </div>
         <div class="wf-figure">
@@ -1621,7 +1626,7 @@
         <h2 class="contact-title">
           <span class="ct-line-wrap"><span class="ct-line" data-pt="Fale comigo em">Say hello at</span></span>
           <span class="ct-email-line"><span class="contact-email-wrap" id="contactEmailWrap">
-            <span class="contact-email-text">guilherme@kerber.co</span>
+            <span class="contact-email-text">contact@guikerber.com</span>
             <button class="email-copy-btn" id="emailCopyBtn" aria-label="Copy email address" data-pt-aria="Copiar endereço de email" data-pt="Copiar Email">
               Copy Email
             </button>
@@ -2110,9 +2115,9 @@
       let resetTimer = null;
       emailCopyBtn.addEventListener('click', e => {
         e.preventDefault();
-        navigator.clipboard.writeText('guilherme@kerber.co').catch(() => {
+        navigator.clipboard.writeText('contact@guikerber.com').catch(() => {
           const ta = document.createElement('textarea');
-          ta.value = 'guilherme@kerber.co';
+          ta.value = 'contact@guikerber.com';
           ta.style.cssText = 'position:fixed;opacity:0';
           document.body.appendChild(ta);
           ta.select();
@@ -2140,18 +2145,63 @@
   <style>
     @media (max-width: 767px) {
 
-      /* ── Hero ── */
+      /* ── Hero (Figma 224:772, mobile 375) ── */
       .hero { padding: 110px 24px 64px; overflow-x: hidden; }
       .hero-title {
-        font-size: clamp(32px, 9vw, 42px);
+        font-size: 44px;
+        line-height: 1.05;          /* 46.2px at 44px */
+        letter-spacing: -0.06em;    /* -2.64px at 44px */
         margin-bottom: 16px;
-        word-break: break-word;
+        word-break: normal;
       }
+      /* One flowing paragraph, not a forced break per phrase — the desktop
+         line structure would make this 8 lines instead of Figma's 6. */
+      .hero-title .hl { display: inline !important; }
       .name-hover  { white-space: normal; }
-      .hero-body   { min-height: 0; }
       .hero-rule   { gap: 10px; margin-top: 32px; }
       .hero-sub    { font-size: 14px; }
-      .hero-coords { display: none; }
+
+      /* Gradient resolves to off-white by ~58%, just past the headline, so the
+         dark sub-copy below it sits on a light ground. */
+      .hero-bg {
+        background: linear-gradient(
+          180deg,
+          #0d0400  0%,
+          #250b00  5.91%,
+          #3d1200  11.84%,
+          #6d2100  15.53%,
+          #9e3000  19.21%,
+          #ce3e00  22.9%,
+          #FF4D00  26.58%,
+          #ff580d  28.22%,
+          #ff621a  29.88%,
+          #ff7733  33.18%,
+          #ff9155  37.18%,
+          #ffaa77  41.18%,
+          #ffd4b8  47.57%,
+          #f0ecea  53.37%,
+          #EDECEA  58%
+        );
+      }
+      /* Animated embed ends with the headline. The mask fades its bottom edge
+         into the CSS gradient — cutting it dead would leave a hard colour seam. */
+      .hero-bg-embed {
+        height: 58%;
+        -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+                mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+      }
+
+      /* Badge + 3D mark move into the hero, below the copy (Figma 224:703).
+         .hero-coords still carries it, so show the wrapper but hide the
+         coordinate readout that only belongs on desktop. */
+      .hero-body   { min-height: 0; flex-direction: column; gap: 0; }
+      .hero-coords { display: flex; align-items: center; width: 100%; }
+      .hero-coords > span,
+      .hero-coords-line { display: none; }
+      .hero-badge  { margin: 44px auto 0; }
+
+      /* Simplified mobile flow: Selected Work → About */
+      .section-more-projects { display: none; }
 
       /* ── Work header: side-by-side, no overflow ── */
       .work-header {
@@ -2203,11 +2253,15 @@
       }
       .contact-links  { align-items: flex-start !important; }
       .contact-social { gap: 20px !important; }
+      /* Copyright left, back-to-top right — one row, per Figma 224:358 */
       .contact-footer {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 10px !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 12px !important;
       }
+      .footer-copy { flex: 0 1 auto !important; }
+      .back-top    { flex: 0 0 auto !important; text-align: right !important; }
 
       /* Email copy: static tap button ── */
       .contact-email-wrap { display: flex !important; flex-direction: column !important; }
