@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enterprise Analytics Dashboard — Guilherme Kerber</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --orange:#FF4D00; --black:#080808; --off-white:#EDECEA; --ink:#111110;
+
+      /* ── White scale (dark surfaces) ── */
+      --white-4:  rgba(255,255,255,0.04);
+      --white-8:  rgba(255,255,255,0.08);
+      --white-16: rgba(255,255,255,0.16);
+      --white-32: rgba(255,255,255,0.32);
+      --white-48: rgba(255,255,255,0.48);
+      --white-56: rgba(255,255,255,0.56);
+
+      /* ── Black scale (light surfaces) ── */
+      --black-4:  rgba(0,0,0,0.04);
+      --black-10: rgba(0,0,0,0.10);
+      --black-18: rgba(0,0,0,0.18);
+      --black-28: rgba(0,0,0,0.28);
+      --black-38: rgba(0,0,0,0.38);
+      --black-52: rgba(0,0,0,0.52);
+      --black-64: rgba(0,0,0,0.64);
+
+      /* ── Orange scale ── */
+      --orange-8:  rgba(255,77,0,0.08);
+      --orange-20: rgba(255,77,0,0.20);
+      --orange-36: rgba(255,77,0,0.36);
+      --orange-52: rgba(255,77,0,0.52);
+    }
+    html { scroll-behavior:smooth; font-size:16px; }
+    body { font-family:'Inter',system-ui,sans-serif; background:var(--off-white); color:var(--ink); overflow-x:hidden; -webkit-font-smoothing:antialiased; cursor:none; }
+
+    /* ── Noise overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.12;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 256px 256px;
+    }
+
+    .cur-h,.cur-v { position:fixed; pointer-events:none; z-index:9999; }
+    .cur-h { left:0; right:0; height:1px; background:var(--black-18); transform:translateY(-50%); }
+    .cur-v { top:0; bottom:0; width:1px; background:var(--black-18); transform:translateX(-50%); }
+    .cur-plus { position:fixed; pointer-events:none; z-index:10000; width:16px; height:16px; transform:translate(-50%,-50%); }
+    .cur-plus::before,.cur-plus::after { content:''; position:absolute; background:#FF4D00; }
+    .cur-plus::before { left:50%; top:0; bottom:0; width:1px; transform:translateX(-50%); }
+    .cur-plus::after  { top:50%; left:0; right:0; height:1px; transform:translateY(-50%); }
+
+    /* ─── TEXT REVEAL ANIMATIONS ─── */
+    .reveal-line { display:block; overflow:hidden; padding-bottom:.1em; }
+    .reveal-line-inner { display:block; transform:translateY(108%); }
+    [data-split-lines].is-visible .reveal-line-inner {
+      transform:translateY(0);
+      transition:transform .95s cubic-bezier(.16,1,.3,1);
+      transition-delay:calc(var(--li,0) * .08s);
+    }
+    .reveal-word { display:inline-block; overflow:hidden; vertical-align:bottom; }
+    .reveal-word-inner { display:inline-block; transform:translateY(105%); }
+    [data-split-words].is-visible .reveal-word-inner {
+      transform:translateY(0);
+      transition:transform .7s cubic-bezier(.16,1,.3,1);
+      transition-delay:calc(var(--wi,0) * .05s);
+    }
+    [data-fade] { opacity:0; transform:translateY(16px); }
+    [data-fade].is-visible {
+      opacity:1; transform:translateY(0);
+      transition:opacity .8s ease, transform .8s cubic-bezier(.16,1,.3,1);
+      transition-delay:var(--fd,0s);
+    }
+    .gal-block[data-fade] { transform: translateY(28px); }
+    @media (prefers-reduced-motion: reduce) {
+      .gal-img img { transition: none !important; }
+    }
+    .gal-img img {
+      transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1),
+                  filter  600ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @media (hover: hover) {
+      .gal-img:hover img { transform: scale(1.02); filter: brightness(1.04); }
+    }
+
+    html { scrollbar-gutter: stable; }
+    nav { position:fixed; top:0; left:0; right:0; z-index:200; display:flex; justify-content:space-between; align-items:center; padding:20px 64px; background:rgba(8,8,8,0.88); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border-bottom:1px solid var(--white-8); }
+    .nav-logo { display:flex; align-items:center; color:#fff; text-decoration:none; flex-shrink:0; }
+    .nav-logo img { width:28px; height:28px; display:block; filter:brightness(0) invert(1); }
+    .nav-actions { display:flex; align-items:center; gap:8px; }
+    .nav-btn { display:flex; align-items:center; gap:8px; padding:8px 20px; border-radius:4px; font-family:'Syne',sans-serif; font-size:13px; font-weight:500; letter-spacing:-0.03em; cursor:pointer; border:none; text-decoration:none; white-space:nowrap; transition:opacity .2s ease, transform .15s ease; line-height:1.4; }
+    .nav-btn:hover { opacity:.88; transform:translateY(-1px); }
+    .nav-btn-projects { background:#fff; color:#080808; }
+    .nav-btn-contact  { background:var(--orange); color:#fff; }
+    .nav-panel-overlay { position:fixed; inset:0; z-index:300; opacity:0; pointer-events:none; transition:opacity .25s ease; }
+    .nav-panel-overlay.is-open { opacity:1; pointer-events:all; }
+    .nav-panel-drawer { position:fixed; top:68px; right:64px; width:360px; background:#fff; border-radius:6px; box-shadow:0 4px 6px rgba(0,0,0,0.04),0 12px 40px rgba(0,0,0,0.10),0 1px 2px rgba(0,0,0,0.06); z-index:301; transform:translateY(-10px) scale(0.97); transform-origin:top right; opacity:0; pointer-events:none; transition:transform .35s cubic-bezier(.16,1,.3,1), opacity .25s ease; overflow:hidden; }
+    .nav-panel-drawer.is-open { transform:translateY(0) scale(1); opacity:1; pointer-events:all; }
+    .nav-panel-items { padding-top:6px; padding-bottom:6px; }
+    .nav-panel-item { border-top:1px solid var(--black-10); }
+    .nav-panel-item:first-child { border-top:none; }
+    .nav-panel-link { display:flex; align-items:center; justify-content:space-between; padding:18px 24px; text-decoration:none; gap:16px; transition:background .18s ease; }
+    .nav-panel-link:hover { background:rgba(0,0,0,0.025); }
+    .nav-panel-link:hover .nav-panel-title { color:var(--orange); }
+    .nav-panel-link:hover .nav-panel-arrow-icon { background:var(--orange); border-color:var(--orange); transform:translateX(3px); }
+    .nav-panel-link:hover .nav-panel-arrow-icon svg path { stroke:#fff; }
+    .nav-panel-title { font-family:'Syne',sans-serif; font-size:16px; font-weight:700; color:var(--ink); letter-spacing:-0.02em; line-height:1.2; transition:color .18s; }
+    .nav-panel-arrow-icon { display:flex; align-items:center; justify-content:center; width:26px; height:26px; border:1px solid var(--black-18); border-radius:50%; flex-shrink:0; transition:background .22s, border-color .22s, transform .22s; color:var(--ink); }
+
+    .proj-hero { display:grid; grid-template-columns:1fr 1fr; align-items:stretch; background:var(--black); padding-top:68px; min-height: clamp(480px, 56vw * 0.75, 800px); }
+    .proj-hero-left { padding:72px 56px 72px 64px; display:flex; flex-direction:column; justify-content:flex-end; gap:28px; }
+    .proj-h1 { font-family:'Syne',sans-serif; font-size:clamp(40px,5vw,68px); font-weight:700; color:#fff; line-height:1.02; letter-spacing:-0.03em; }
+    .proj-hero-desc { font-size:16px; font-weight:300; line-height:1.7; color:var(--white-56); max-width:400px; }
+    .proj-meta-strip { display:flex; align-items:center; gap:10px; flex-wrap:wrap; width:100%; }
+    .proj-tag-hero { font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--white-48); padding:5px 10px; border:1px solid var(--white-8); border-radius:40px; }
+    .proj-dur { margin-left:auto; font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--white-32); }
+    .proj-hero-right { position:relative; overflow:hidden; background:#09090c; min-height: clamp(400px, 40vw, 700px); }
+    .proj-hero-bg { position:absolute; inset:0; background:radial-gradient(ellipse 60% 50% at 65% 40%, rgba(80,100,255,0.05) 0%,transparent 70%),repeating-linear-gradient(0deg,transparent 0px,transparent 39px,rgba(255,255,255,0.02) 39px,rgba(255,255,255,0.02) 40px),repeating-linear-gradient(90deg,transparent 0px,transparent 39px,rgba(255,255,255,0.02) 39px,rgba(255,255,255,0.02) 40px); }
+
+    .case-wrap { display:grid; grid-template-columns:380px 1fr; align-items:start; }
+    .case-left { position:sticky; top:68px; height:calc(100vh - 68px); overflow-y:auto; scrollbar-width:none; border-right:1px solid var(--black-10); background:var(--off-white); }
+    .case-left::-webkit-scrollbar { display:none; }
+    .acc-wrap { padding:48px 64px 100px; }
+    .acc-section-label { font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--black-38); margin-bottom:28px; }
+    .acc-item { border-top:1px solid var(--black-10); }
+    .acc-item:last-child { border-bottom:1px solid var(--black-10); }
+    .acc-head { width:100%; display:flex; align-items:center; gap:12px; padding:18px 0; background:none; border:none; cursor:pointer; text-align:left; }
+    .acc-num { font-size:10px; font-weight:500; letter-spacing:0.13em; color:var(--black-38); min-width:22px; transition:color .2s ease; }
+    .acc-label { font-family:'Syne',sans-serif; font-size:14px; font-weight:600; color:var(--ink); flex:1; letter-spacing:0.01em; transition:color .2s ease; }
+    .acc-plus { font-size:18px; font-weight:300; color:var(--black-38); line-height:1; transition:transform .35s cubic-bezier(.25,0,0,1),color .2s ease; }
+    .acc-item.is-open .acc-plus { transform:rotate(45deg); color:var(--orange); }
+    .acc-item.is-open .acc-label { color:var(--orange); }
+    .acc-item.is-open .acc-num { color:var(--orange); }
+    .acc-body { overflow:hidden; max-height:0; transition:max-height .55s cubic-bezier(.25,0,0,1); }
+    .acc-item.is-open .acc-body { max-height:900px; }
+    .acc-inner { padding:0 0 28px 34px; display:flex; flex-direction:column; gap:18px; }
+    .acc-text { font-size:13px; font-weight:400; line-height:1.68; color:var(--black-64); }
+    .attr-grid { display:flex; flex-direction:column; gap:7px; }
+    .attr-row { display:grid; grid-template-columns:84px 1fr; gap:8px; align-items:baseline; }
+    .attr-dt { font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--black-38); }
+    .attr-dd { font-size:13px; font-weight:400; line-height:1.68; color:var(--ink); }
+    .insight-list { list-style:none; display:flex; flex-direction:column; gap:9px; }
+    .insight-list li { font-size:13px; font-weight:400; line-height:1.68; color:var(--black-64); padding-left:14px; position:relative; }
+    .insight-list li::before { content:''; position:absolute; left:0; top:9px; width:5px; height:1px; background:var(--orange); }
+    .metrics-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .metric-box { background:var(--black-4); border:1px solid var(--black-10); border-radius:6px; padding:14px 12px; }
+    .metric-val { font-family:'Syne',sans-serif; font-size:22px; font-weight:700; color:var(--ink); letter-spacing:-0.02em; line-height:1.1; }
+    .metric-lbl { font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--black-38); margin-top:4px; line-height:1.4; }
+
+    .case-right { padding:60px 80px 80px 60px; }
+    .gallery { display:flex; flex-direction:column; gap:20px; }
+    .gal-block { display:flex; flex-direction:column; gap:10px; }
+    .gal-img { width:100%; border-radius:8px; overflow:hidden; position:relative; display:flex; align-items:center; justify-content:center; }
+    .r-wide { aspect-ratio:16/9; }
+    .r-tall { aspect-ratio:4/5; }
+    .r-portrait { aspect-ratio:9/16; }
+    .r-ultra { aspect-ratio:21/9; }
+    .r-sq { aspect-ratio:1; }
+    .r-card { aspect-ratio:3/2; }
+    .ph-dark { background:#141412; }
+    .ph-warm { background:#E5E1DC; }
+    .ph-grid { background:#F0EEEB; background-image:linear-gradient(rgba(0,0,0,0.045) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.045) 1px,transparent 1px); background-size:40px 40px; }
+    .ph-dots { background:#EDECEA; background-image:radial-gradient(circle 1.5px at 1.5px 1.5px,rgba(0,0,0,0.1) 1.5px,transparent 0); background-size:24px 24px; }
+    .ph-med { background:#D8D5D1; }
+    .ph-navy { background:#0D1117; }
+    .ph-slate { background:#1A1F2E; }
+    .ph-charcoal { background:#1E1E1C; }
+    .ph-orange { background:linear-gradient(135deg,#FF4D00 0%,#FF7733 100%); }
+    .ph-label { position:absolute; bottom:16px; left:16px; font-size:9px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:var(--black-18); }
+    .ph-dark .ph-label,.ph-charcoal .ph-label,.ph-navy .ph-label,.ph-slate .ph-label { color:var(--white-16); }
+    .ph-orange .ph-label { color:var(--white-48); }
+    .phone-mock { width:42%; aspect-ratio:9/19; background:var(--white-4); border:1px solid var(--white-8); border-radius:24px; box-shadow:0 24px 64px rgba(0,0,0,0.5); }
+    .desktop-mock { width:78%; aspect-ratio:16/10; background:var(--white-4); border:1px solid var(--white-8); border-radius:8px; box-shadow:0 20px 60px rgba(0,0,0,0.45); }
+
+    .next-proj { background:var(--black); padding:80px 64px 100px; }
+    .next-link { display:flex; flex-direction:column; gap:36px; text-decoration:none; max-width:960px; }
+    .next-eyebrow { font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--white-32); }
+    .next-body { display:flex; justify-content:space-between; align-items:flex-end; border-top:1px solid var(--white-8); padding-top:36px; gap:24px; }
+    .next-info { display:flex; flex-direction:column; gap:14px; }
+    .next-idx { font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--orange); }
+    .next-tags { display:flex; gap:8px; flex-wrap:wrap; }
+    .next-tag-item { font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--white-32); padding:4px 9px; border:1px solid var(--white-8); border-radius:20px; }
+    .next-h2 { font-family:'Syne',sans-serif; font-size:clamp(28px,4.5vw,54px); font-weight:700; color:#fff; letter-spacing:-0.03em; line-height:1.0; transition:color .3s ease; }
+    .next-link:hover .next-h2 { color:var(--orange); }
+    .next-arr { width:56px; height:56px; flex-shrink:0; border:1px solid var(--white-16); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; transition:background .25s ease,border-color .25s ease,transform .25s ease; }
+    .next-link:hover .next-arr { background:var(--orange); border-color:var(--orange); transform:rotate(45deg); }
+  </style>
+</head>
+<body>
+
+<div class="cur-h"      id="curH"></div>
+<div class="cur-v"      id="curV"></div>
+<div class="cur-plus"   id="curPlus"></div>
+
+<!-- PROJECTS SIDE PANEL -->
+<div class="nav-panel-overlay" id="navPanelOverlay" aria-hidden="true"></div>
+<div class="nav-panel-drawer" id="navPanelDrawer" role="dialog" aria-label="Projects" aria-modal="true">
+  <div class="nav-panel-items">
+    <div class="nav-panel-item">
+      <a class="nav-panel-link" href="project-5.html">
+        <span class="nav-panel-title" data-pt="Projetando uma Recepção com IA para Fotógrafos">Designing an AI Front Desk for Photographers</span>
+        <div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </a>
+    </div>
+    <div class="nav-panel-item">
+      <a class="nav-panel-link" href="project-2.html">
+        <span class="nav-panel-title" data-pt="Levando um Marketplace de Staking a uma Carteira Multi-Chain">Introducing a Staking Marketplace to a Multi-Chain Wallet</span>
+        <div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </a>
+    </div>
+    <div class="nav-panel-item">
+      <a class="nav-panel-link" href="project-1.html">
+        <span class="nav-panel-title" data-pt="Projetando uma Experiência de Coaching Multiplataforma">Designing a Cross-Platform Coaching Experience</span>
+        <div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <a class="nav-logo" href="index.html" aria-label="Guilherme Kerber — Home" data-pt-aria="Guilherme Kerber — Início">
+    <img src="assets/logo.svg" alt="GK logo" width="28" height="28">
+  </a>
+  <div class="nav-actions">
+    <button class="nav-btn nav-btn-projects" id="navProjectsBtn" aria-expanded="false" aria-controls="navPanelDrawer">
+      <span data-pt="Meus Projetos">My Projects</span>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <line x1="2.5" y1="4.5" x2="13.5" y2="4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="2.5" y1="8" x2="13.5" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="2.5" y1="11.5" x2="13.5" y2="11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <a class="nav-btn nav-btn-contact" href="index.html#contact">
+      <span data-pt="Entre em contato">Get in touch</span>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M13.5 2.5L1.5 6.5L6.5 8.5M13.5 2.5L10 13.5L6.5 8.5M13.5 2.5L6.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+</nav>
+
+<header class="proj-hero">
+  <div class="proj-hero-left">
+    <div class="proj-meta-strip" data-fade>
+      <span class="proj-tag-hero" data-pt="Visualização de Dados">Data Visualization</span>
+      <span class="proj-tag-hero">B2B</span>
+      <span class="proj-tag-hero" data-pt="Sistemas Complexos">Complex Systems</span>
+      <span class="proj-dur" data-pt="5 meses · 2024">5 months · 2024</span>
+    </div>
+    <h1 class="proj-h1" data-split-lines data-pt="Dashboard de<br>Analytics<br>Empresarial">Enterprise<br>Analytics<br>Dashboard</h1>
+    <p class="proj-hero-desc" data-fade style="--fd:.2s" data-pt="Plataforma de analytics para gestores de supply chain em grandes redes de varejo — transformando mais de 200 fontes de dados em decisões claras e acionáveis em tempo real.">Analytics platform for supply chain managers at large retail chains — transforming 200+ data sources into clear, actionable decisions in real time.</p>
+  </div>
+  <div class="proj-hero-right">
+    <div class="proj-hero-bg"></div>
+  </div>
+</header>
+
+<div class="case-wrap">
+  <aside class="case-left">
+    <div class="acc-wrap">
+      <p class="acc-section-label" data-pt="Estrutura do caso">Case structure</p>
+
+      <div class="acc-item is-open" data-section="0">
+        <button class="acc-head"><span class="acc-num">01</span><span class="acc-label" data-pt="Visão geral">Overview</span><span class="acc-plus">+</span></button>
+        <div class="acc-body"><div class="acc-inner">
+          <p class="acc-text" data-pt="Dashboard de analytics para gestores de operações em redes de varejo com mais de 50 lojas. O produto precisava integrar mais de 200 fontes de dados e apresentá-las de forma que um gestor não técnico pudesse tomar decisões com confiança.">Analytics dashboard for operations managers at retail chains with 50+ stores. The product needed to integrate 200+ data sources and present them in a way that a non-technical manager could make confident decisions.</p>
+          <div class="attr-grid">
+            <div class="attr-row"><span class="attr-dt" data-pt="Empresa">Company</span><span class="attr-dd">RetailIQ (SaaS B2B)</span></div>
+            <div class="attr-row"><span class="attr-dt" data-pt="Duração">Duration</span><span class="attr-dd" data-pt="5 meses · 2024">5 months · 2024</span></div>
+            <div class="attr-row"><span class="attr-dt" data-pt="Função">Role</span><span class="attr-dd">Product Designer · Data UX</span></div>
+            <div class="attr-row"><span class="attr-dt" data-pt="Equipe">Team</span><span class="attr-dd" data-pt="2 designers, 2 engenheiros de dados, 6 devs">2 designers, 2 data engineers, 6 devs</span></div>
+            <div class="attr-row"><span class="attr-dt" data-pt="Usuários">Users</span><span class="attr-dd" data-pt="Gestores de operações, C-level">Operations managers, C-level</span></div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="acc-item" data-section="1">
+        <button class="acc-head"><span class="acc-num">02</span><span class="acc-label" data-pt="Contexto &amp; Desafios">Context &amp; Challenges</span><span class="acc-plus">+</span></button>
+        <div class="acc-body"><div class="acc-inner">
+          <p class="acc-text" data-pt="O produto existente era um relatório estático gerado semanalmente em PDF. Os gestores tomavam decisões com dados de até 7 dias atrás. O objetivo era substituir isso por um dashboard em tempo real — sem aumentar a complexidade percebida.">The existing product was a static report generated weekly as a PDF. Managers were making decisions with data 7 days old. The goal was to replace this with a real-time dashboard — without increasing perceived complexity.</p>
+          <ul class="insight-list">
+            <li data-pt="Os dados vinham de mais de 200 fontes: ERP, WMS, PDV, planilhas manuais">Data came from 200+ sources: ERP, WMS, POS, manual spreadsheets</li>
+            <li data-pt="Os gestores não eram &quot;pessoas de dados&quot; — a maioria não tinha background em analytics">Managers were not "data people" — most had no analytics background</li>
+            <li data-pt="Alto custo de erro: uma decisão errada de estoque podia causar R$2M em perdas">High cost of error: a wrong inventory decision could cause R$2M in losses</li>
+            <li data-pt="O produto anterior tinha NPS de 18 entre clientes enterprise">Previous product had an NPS of 18 with enterprise clients</li>
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="acc-item" data-section="2">
+        <button class="acc-head"><span class="acc-num">03</span><span class="acc-label" data-pt="Pesquisa com Usuários">User Research</span><span class="acc-plus">+</span></button>
+        <div class="acc-body"><div class="acc-inner">
+          <p class="acc-text" data-pt="Acompanhamos 12 gestores ao longo de uma semana de trabalho. Descoberta: os gestores não queriam mais dados — queriam saber &quot;o que fazer agora&quot;.">Shadowing 12 managers over a working week. Finding: managers didn't want more data — they wanted to know "what to do now".</p>
+          <ul class="insight-list">
+            <li data-pt="Os gestores gastavam 3h/dia interpretando dados que outras pessoas haviam coletado">Managers spent 3h/day interpreting data that others had collected</li>
+            <li data-pt="As decisões mais frequentes se enquadravam em 3 tipos: repor estoque, redistribuir entre lojas, escalar alertas">The most frequent decisions fell into 3 types: replenish stock, redistribute between stores, escalate alerts</li>
+            <li data-pt="Nenhum gestor usava mais de 4 métricas regularmente — apesar de terem acesso a mais de 80">No manager used more than 4 metrics regularly — despite having access to 80+</li>
+            <li data-pt="Insight central: o produto deveria recomendar ações, não apenas exibir dados">Core insight: the product should recommend actions, not just display data</li>
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="acc-item" data-section="3">
+        <button class="acc-head"><span class="acc-num">04</span><span class="acc-label" data-pt="Arquitetura de Dados">Data Architecture</span><span class="acc-plus">+</span></button>
+        <div class="acc-body"><div class="acc-inner">
+          <p class="acc-text" data-pt="Trabalhamos junto com os engenheiros de dados para construir um modelo em torno de &quot;decisões&quot;, não de métricas. Cada dado exibido na UI precisava responder a uma pergunta específica para um perfil específico de gestor.">We worked alongside the data engineers to build a model around "decisions", not metrics. Every piece of data surfaced in the UI had to answer a specific question for a specific manager profile.</p>
+          <ul class="insight-list">
+            <li data-pt="Taxonomia de 3 níveis: Alertas → Status → Histórico">3-level taxonomy: Alerts → Status → History</li>
+            <li data-pt="Pontuação de urgência calculada automaticamente para cada alerta">Urgency score automatically calculated for each alert</li>
+            <li data-pt="Visualizações adaptadas por função: operacional, regional, C-level">Visualizations adapted to role: operational, regional, C-level</li>
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="acc-item" data-section="4">
+        <button class="acc-head"><span class="acc-num">05</span><span class="acc-label" data-pt="Solução Visual">Visual Solution</span><span class="acc-plus">+</span></button>
+        <div class="acc-body"><div class="acc-inner">
+          <p class="acc-text" data-pt="Um dashboard orientado a alertas com 3 visões: o feed de ações urgentes, o painel de status atual e o módulo de análise histórica. A hierarquia visual foi construída para guiar o olhar do gestor para o que importa.">An alert-driven dashboard with 3 views: the urgent actions feed, the current status panel, and the historical analysis module. The visual hierarchy was built to guide the manager's eye toward what matters.</p>
+          <ul class="insight-list">
+            <li data-pt="Página inicial = lista priorizada de &quot;ações recomendadas&quot;">Home page = prioritized list of "recommended actions"</li>
+            <li data-pt="Sistema de cores tipo semáforo: verde (ok), amarelo (atenção), vermelho (urgente)">Traffic-light color system: green (ok), yellow (attention), red (urgent)</li>
+            <li data-pt="Gráficos simplificados: sparklines, barras — sem pizza ou radar">Simplified charts: sparklines, bars — no pies or radars</li>
+            <li data-pt="Modo compacto para C-level: apenas KPIs e variações semanais">Compact mode for C-level: KPIs and weekly changes only</li>
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="acc-item" data-section="5">
+        <button class="acc-head"><span class="acc-num">06</span><span class="acc-label" data-pt="Lançamento &amp; Impacto">Rollout &amp; Impact</span><span class="acc-plus">+</span></button>
+        <div class="acc-body"><div class="acc-inner">
+          <p class="acc-text" data-pt="Lançamento em fases: 3 clientes piloto ao longo de 8 semanas, seguido de expansão para 40 clientes enterprise. O produto se tornou o principal argumento para renovações de contrato.">Phased rollout: 3 pilot clients over 8 weeks, then expansion to 40 enterprise clients. The product became the main argument for contract renewals.</p>
+          <div class="metrics-grid">
+            <div class="metric-box"><div class="metric-val">+47 pts</div><div class="metric-lbl">NPS: 18 → 65</div></div>
+            <div class="metric-box"><div class="metric-val">–72%</div><div class="metric-lbl" data-pt="Tempo de resposta a alertas">Alert response time</div></div>
+            <div class="metric-box"><div class="metric-val">3→0.8h</div><div class="metric-lbl" data-pt="Tempo diário gasto analisando dados">Daily time spent on data analysis</div></div>
+            <div class="metric-box"><div class="metric-val">94%</div><div class="metric-lbl" data-pt="Taxa de renovação de contratos">Contract renewal rate</div></div>
+          </div>
+        </div></div>
+      </div>
+
+    </div>
+  </aside>
+
+  <div class="case-right">
+    <div class="gallery">
+
+      <div class="gal-block" data-fade data-trigger="0">
+        <div class="gal-img r-wide ph-navy">
+          <div class="desktop-mock"></div>
+          <span class="ph-label" data-pt="Dashboard · Visão operacional">Dashboard · Operational view</span>
+        </div>
+      </div>
+
+      <div class="gal-block" data-fade data-trigger="1">
+        <div class="gal-img r-wide ph-dark">
+          <span class="ph-label" data-pt="Diagnóstico · Produto anterior">Diagnosis · Previous product</span>
+        </div>
+      </div>
+
+      <div class="gal-block" data-fade data-trigger="1">
+        <div class="gal-img r-ultra ph-grid">
+          <span class="ph-label" data-pt="Fluxo de dados · +200 fontes">Data flow · 200+ sources</span>
+        </div>
+      </div>
+
+      <div class="gal-block" data-fade data-trigger="2">
+        <div class="gal-img r-card ph-dots">
+          <span class="ph-label" data-pt="Acompanhamento · Gestores em campo">Shadowing · Managers in the field</span>
+        </div>
+      </div>
+
+      <div class="gal-block" data-fade data-trigger="2">
+        <div class="gal-img r-tall ph-warm"><span class="ph-label" data-pt="Perfil · Gestor de operações">Profile · Operations manager</span></div>
+      </div>
+
+      <div class="gal-block" data-fade data-trigger="2">
+        <div class="gal-img r-tall ph-warm"><span class="ph-label" data-pt="Perfil · C-level">Profile · C-level</span></div>
+      </div>
+
+      <div class="gal-block" data-fade data-trigger="3">
+        <div class="gal-img r-ultra ph-grid">
+          <span class="ph-label" data-pt="Arquitetura · 3 níveis de informação">Architecture · 3 information levels</span>
+        </div>
+      </div>
+
+      <div class="gal-block" data-fade data-trigger="4">
+        <div class="gal-img r-wide ph-navy">
+          <div class="desktop-mock"></div>
+          <span class="ph-label" data-pt="Dashboard · Feed de alertas">Dashboard · Alert feed</span>
+        </div>
+      </div>
+
+      <div class="gal-block" data-fade data-trigger="4">
+        <div class="gal-img r-wide ph-slate"><span class="ph-label" data-pt="Visão · Operacional">View · Operational</span></div>
+      </div>
+
+      <div class="gal-block" data-fade data-trigger="4">
+        <div class="gal-img r-wide ph-charcoal"><span class="ph-label" data-pt="Visão · C-level">View · C-level</span></div>
+      </div>
+
+      <div class="gal-block" data-fade data-trigger="4">
+        <div class="gal-img r-wide ph-navy">
+          <div class="desktop-mock"></div>
+          <span class="ph-label" data-pt="Dashboard · Análise histórica">Dashboard · Historical analysis</span>
+        </div>
+      </div>
+
+      <div class="gal-block" data-fade data-trigger="5">
+        <div class="gal-img r-wide ph-dark">
+          <span class="ph-label" data-pt="Impacto · NPS + renovações de contrato">Impact · NPS + contract renewals</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<section class="next-proj">
+  <a class="next-link" href="project-1.html">
+    <p class="next-eyebrow" data-split-words data-pt="Próximo projeto">Next project</p>
+    <div class="next-body">
+      <div class="next-info">
+        <span class="next-idx" data-fade style="--fd:0.1s">01 · Fitness &amp; Health</span>
+        <div class="next-tags" data-fade style="--fd:0.18s">
+          <span class="next-tag-item">Product Design</span>
+          <span class="next-tag-item">Mobile</span>
+          <span class="next-tag-item">Desktop</span>
+        </div>
+        <h2 class="next-h2" data-split-lines data-pt="Projetando uma Experiência de Coaching<br>Multiplataforma">Designing a Cross-Platform<br>Coaching Experience</h2>
+      </div>
+      <div class="next-arr" data-fade style="--fd:0.35s">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9H15M15 9L10 4M15 9L10 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+  </a>
+</section>
+
+  <!-- ── Responsive overrides ── -->
+  <style>
+    @media (hover: none) {
+      .cur-h,.cur-v,.cur-plus { display:none !important; }
+      body { cursor:auto !important; }
+    }
+    @media (max-width: 767px) {
+      nav { padding: 18px 24px !important; }
+      .nav-panel-drawer { right: 24px; left: 24px; width: auto; }
+      .proj-hero { grid-template-columns: 1fr !important; min-height: auto !important; padding-top: 62px !important; }
+      .proj-hero-left { padding: 40px 24px 36px !important; justify-content: flex-start !important; gap: 18px !important; }
+      .proj-h1 { font-size: clamp(30px, 9vw, 44px) !important; }
+      .proj-hero-desc { max-width: 100% !important; font-size: 15px !important; }
+      .proj-hero-right { height: 200px !important; min-height: 0 !important; aspect-ratio: unset !important; }
+      .case-wrap { display: flex !important; flex-direction: column !important; }
+      .case-left { position: static !important; height: auto !important; border-right: none !important; border-bottom: 1px solid var(--black-10) !important; }
+      .acc-wrap { padding: 36px 24px 48px !important; }
+      .case-right { padding: 36px 24px 56px !important; }
+      .next-proj { padding: 56px 24px 72px !important; }
+      .next-body { flex-direction: column !important; align-items: flex-start !important; gap: 28px !important; }
+      .next-h2 { font-size: clamp(28px, 9vw, 44px) !important; }
+      .next-arr { width: 44px !important; height: 44px !important; }
+    }
+    @media (min-width: 768px) and (max-width: 1023px) {
+      nav { padding: 20px 32px !important; }
+      .nav-panel-drawer { right: 32px; }
+      .proj-hero-left { padding: 56px 40px !important; }
+      .case-wrap { grid-template-columns: 300px 1fr !important; }
+      .acc-wrap { padding: 40px 32px 80px !important; }
+      .case-right { padding: 48px 40px 64px 40px !important; }
+      .next-proj { padding: 60px 32px 80px !important; }
+    }
+  </style>
+
+<!-- I18N — EN/PT-BR. Reads the choice made in index.html's footer switcher
+     (localStorage 'site-lang'); no switcher control on this page itself, but
+     the language still applies. Must run before the Text Reveal script below
+     so split-lines/split-words operate on the already-correct-language text.
+     Duplicated verbatim on every page — see rules.md (no shared JS file). -->
+<script>
+  (function () {
+    var lang = localStorage.getItem('site-lang') || 'en';
+    window.__siteLang = lang;
+    document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+    if (lang === 'pt') {
+      document.querySelectorAll('[data-pt]').forEach(function (el) {
+        el.innerHTML = el.getAttribute('data-pt');
+      });
+      document.querySelectorAll('[data-pt-aria]').forEach(function (el) {
+        el.setAttribute('aria-label', el.getAttribute('data-pt-aria'));
+      });
+    }
+  })();
+</script>
+
+<script>
+  const curH=document.getElementById('curH'),curV=document.getElementById('curV'),curPlus=document.getElementById('curPlus');
+  if(window.matchMedia('(pointer: fine)').matches)
+  document.addEventListener('mousemove',e=>{curH.style.top=e.clientY+'px';curV.style.left=e.clientX+'px';curPlus.style.left=e.clientX+'px';curPlus.style.top=e.clientY+'px';});
+
+  /* ── Text Reveal ── */
+  document.querySelectorAll('[data-split-lines]').forEach(el=>{
+    const parts=el.innerHTML.split(/<br\s*\/?>/i);
+    el.innerHTML=parts.map((p,i)=>`<span class="reveal-line"><span class="reveal-line-inner" style="--li:${i}">${p.trim()}</span></span>`).join('');
+  });
+  document.querySelectorAll('[data-split-words]').forEach(el=>{
+    const words=el.innerText.trim().split(/\s+/);
+    el.innerHTML=words.map((w,i)=>`<span class="reveal-word"><span class="reveal-word-inner" style="--wi:${i}">${w}</span></span>`).join(' ');
+  });
+  const _io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('is-visible');_io.unobserve(e.target);}});},{threshold:.05,rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('[data-split-lines],[data-split-words],[data-fade]').forEach(el=>_io.observe(el));
+  window.addEventListener('load',()=>setTimeout(()=>{
+    document.querySelectorAll('.proj-hero [data-split-lines],.proj-hero [data-split-words],.proj-hero [data-fade]').forEach(el=>{el.classList.add('is-visible');_io.unobserve(el);});
+  },120));
+
+  const accItems=document.querySelectorAll('.acc-item'),caseLeft=document.querySelector('.case-left');
+  function openSection(id){accItems.forEach(i=>i.classList.toggle('is-open',i.dataset.section===id));const a=document.querySelector(`.acc-item[data-section="${id}"]`);if(a)caseLeft.scrollTo({top:a.offsetTop-80,behavior:'smooth'});}
+  const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)openSection(e.target.dataset.trigger);});},{threshold:0,rootMargin:'-20% 0px -50% 0px'});
+  document.querySelectorAll('[data-trigger]').forEach(el=>obs.observe(el));
+  document.querySelectorAll('.acc-head').forEach(btn=>{btn.addEventListener('click',()=>{const item=btn.closest('.acc-item'),isOpen=item.classList.contains('is-open');accItems.forEach(i=>i.classList.remove('is-open'));if(!isOpen)item.classList.add('is-open');});});
+
+  /* ── Projects side panel ── */
+  const panelBtn=document.getElementById('navProjectsBtn');
+  const panelDrawer=document.getElementById('navPanelDrawer');
+  const panelOverlay=document.getElementById('navPanelOverlay');
+  function openPanel(){panelDrawer.classList.add('is-open');panelOverlay.classList.add('is-open');panelBtn.setAttribute('aria-expanded','true');document.body.style.overflow='hidden';}
+  function closePanel(){panelDrawer.classList.remove('is-open');panelOverlay.classList.remove('is-open');panelBtn.setAttribute('aria-expanded','false');document.body.style.overflow='';}
+  if(panelBtn)panelBtn.addEventListener('click',()=>{panelDrawer.classList.contains('is-open')?closePanel():openPanel();});
+  if(panelOverlay)panelOverlay.addEventListener('click',closePanel);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&panelDrawer.classList.contains('is-open'))closePanel();});
+</script>
+</body>
+</html>

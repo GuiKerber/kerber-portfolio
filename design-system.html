@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design System — Guilherme Kerber</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --orange:     #FF4D00;
+      --black:      #080808;
+      --off-white:  #EDECEA;
+      --ink:        #111110;
+
+      --white-4:  rgba(255,255,255,0.04);
+      --white-8:  rgba(255,255,255,0.08);
+      --white-16: rgba(255,255,255,0.16);
+      --white-32: rgba(255,255,255,0.32);
+      --white-48: rgba(255,255,255,0.48);
+      --white-56: rgba(255,255,255,0.56);
+
+      --black-4:  rgba(0,0,0,0.04);
+      --black-10: rgba(0,0,0,0.10);
+      --black-18: rgba(0,0,0,0.18);
+      --black-28: rgba(0,0,0,0.28);
+      --black-38: rgba(0,0,0,0.38);
+      --black-52: rgba(0,0,0,0.52);
+      --black-64: rgba(0,0,0,0.64);
+
+      --orange-8:  rgba(255,77,0,0.08);
+      --orange-20: rgba(255,77,0,0.20);
+      --orange-36: rgba(255,77,0,0.36);
+      --orange-52: rgba(255,77,0,0.52);
+
+      --mono: 'JetBrains Mono', monospace;
+    }
+    html { scroll-behavior: smooth; font-size: 16px; scrollbar-gutter: stable; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--off-white);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Page nav ── */
+    .ds-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 64px;
+      background: rgba(8,8,8,0.9); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--white-8);
+    }
+    .ds-nav-logo { display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; }
+    .ds-nav-logo img { width: 24px; height: 24px; filter: brightness(0) invert(1); }
+    .ds-nav-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; color: var(--white-56); letter-spacing: -0.01em; }
+    .ds-nav a.back { display: flex; align-items: center; gap: 8px; padding: 8px 18px; border-radius: 4px; background: #fff; color: #080808; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: -0.03em; text-decoration: none; transition: opacity .2s ease, transform .15s ease; }
+    .ds-nav a.back:hover { opacity: .88; transform: translateY(-1px); }
+
+    /* ── Section shell ── */
+    .ds-hero {
+      padding: 150px 64px 72px;
+      background: var(--black);
+      color: #fff;
+    }
+    .ds-kicker { font-size: 10px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange); margin-bottom: 20px; }
+    .ds-h1 { font-family: 'Syne', sans-serif; font-size: clamp(40px, 6vw, 68px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.02; margin-bottom: 20px; }
+    .ds-hero-desc { font-size: 16px; font-weight: 300; line-height: 1.7; color: var(--white-56); max-width: 560px; }
+
+    .ds-section { padding: 72px 64px; border-bottom: 1px solid var(--black-10); }
+    .ds-section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; margin-bottom: 40px; flex-wrap: wrap; }
+    .ds-section-num { font-family: var(--mono); font-size: 12px; color: var(--orange); letter-spacing: 0.05em; }
+    .ds-section-title { font-family: 'Syne', sans-serif; font-size: clamp(24px, 3vw, 32px); font-weight: 700; letter-spacing: -0.02em; color: var(--ink); }
+    .ds-section-sub { font-size: 13px; color: var(--black-52); max-width: 420px; line-height: 1.6; }
+
+    /* ── Color swatches ── */
+    .ds-color-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--black-10); border: 1px solid var(--black-10); border-radius: 8px; overflow: hidden; }
+    .ds-swatch { background: var(--off-white); padding: 20px; display: flex; flex-direction: column; gap: 40px; min-height: 130px; }
+    .ds-swatch-fill { height: 56px; border-radius: 6px; border: 1px solid var(--black-10); }
+    .ds-swatch-name { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--ink); }
+    .ds-swatch-hex { font-family: var(--mono); font-size: 11px; color: var(--black-38); margin-top: 2px; }
+
+    .ds-scale-row { display: flex; border-radius: 8px; overflow: hidden; border: 1px solid var(--black-10); margin-bottom: 14px; }
+    .ds-scale-cell { flex: 1; padding: 14px 10px; text-align: center; }
+    .ds-scale-cell .n { font-family: var(--mono); font-size: 10px; display: block; margin-top: 6px; }
+    .ds-scale-label { font-family: var(--mono); font-size: 11px; color: var(--black-38); margin-bottom: 8px; }
+
+    /* ── Typography specimens ── */
+    .ds-type-row { display: flex; align-items: baseline; gap: 32px; padding: 28px 0; border-top: 1px solid var(--black-10); }
+    .ds-type-row:last-child { border-bottom: 1px solid var(--black-10); }
+    .ds-type-meta { flex: 0 0 190px; }
+    .ds-type-tag { font-family: var(--mono); font-size: 11px; color: var(--orange); margin-bottom: 6px; }
+    .ds-type-spec { font-family: var(--mono); font-size: 11px; color: var(--black-38); line-height: 1.6; }
+    .ds-type-sample { flex: 1; min-width: 0; color: var(--ink); overflow-wrap: break-word; }
+    .ds-h1-sample { font-family: 'Syne', sans-serif; font-size: clamp(32px, 5vw, 60px); font-weight: 400; line-height: 0.96; letter-spacing: -0.03em; }
+    .ds-h2-sample { font-family: 'Syne', sans-serif; font-size: clamp(32px, 4vw, 56px); font-weight: 700; letter-spacing: -0.01em; line-height: 1; }
+    .ds-h3-sample { font-family: 'Syne', sans-serif; font-size: clamp(26px, 3vw, 38px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+    .ds-h4-sample { font-family: 'Syne', sans-serif; font-size: clamp(22px, 2.4vw, 30px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; }
+    .ds-h5-sample { font-size: 10px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; }
+    .ds-body-sample { font-size: 18px; font-weight: 300; line-height: 1.75; color: rgba(17,17,16,0.8); max-width: 480px; }
+    .ds-small-sample { font-size: 13px; font-weight: 400; line-height: 1.68; color: var(--black-64); max-width: 420px; }
+
+    /* ── Buttons ── */
+    .ds-row { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 28px 0; border-top: 1px solid var(--black-10); }
+    .ds-row:last-child { border-bottom: 1px solid var(--black-10); }
+    .ds-row-label { flex: 0 0 190px; font-family: var(--mono); font-size: 11px; color: var(--black-38); }
+    .ds-row-demo { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; flex: 1; padding: 20px; background: #fff; border-radius: 8px; border: 1px solid var(--black-10); }
+    .ds-row-demo.dark { background: var(--black); }
+
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 20px; border-radius: 4px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: -0.03em; line-height: 1.4; text-decoration: none; cursor: pointer; border: none; transition: opacity .2s ease, transform .15s ease; }
+    .btn:hover { opacity: .88; transform: translateY(-1px); }
+    .btn-primary { background: var(--orange); color: #fff; }
+    .btn-secondary { background: #fff; color: #080808; }
+
+    .arrow-link { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); text-decoration: none; cursor: pointer; }
+    .arrow-icon { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: 1px solid var(--black-18); border-radius: 50%; transition: background .25s, border-color .25s, transform .25s; }
+    .arrow-link:hover .arrow-icon { background: var(--orange); border-color: var(--orange); transform: translateX(4px); }
+    .arrow-link:hover .arrow-icon svg path { stroke: #fff; }
+
+    .pill-tag { font-size: 10px; font-weight: 500; letter-spacing: 0.13em; text-transform: uppercase; padding: 4px 10px; border: 1px solid var(--black-10); border-radius: 100px; color: var(--black-38); }
+    .pill-tag.hero-tag { color: var(--white-48); border-color: var(--white-8); background: transparent; }
+
+    /* ── Card demo ── */
+    .ds-card-demo { border: 1px solid var(--black-10); border-radius: 8px; overflow: hidden; display: flex; background: var(--off-white); }
+    .ds-card-info { flex: 0 0 55%; padding: 32px; display: flex; flex-direction: column; justify-content: space-between; gap: 24px; }
+    .ds-card-visual { flex: 1; background: linear-gradient(135deg, #1e1e1c 0%, #3a3630 100%); position: relative; min-height: 220px; }
+    .ds-card-visual::after { content: 'Cover image'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; color: var(--white-32); }
+    .ds-card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0 14px; }
+    .ds-card-title { font-family: 'Syne', sans-serif; font-size: clamp(22px, 2.6vw, 30px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; }
+    .ds-card-desc { font-size: 13px; line-height: 1.68; color: var(--black-52); }
+    .ds-card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 18px; border-top: 1px solid var(--black-10); }
+
+    /* ── Spacing / radius ── */
+    .ds-scale-list { display: flex; flex-direction: column; gap: 12px; }
+    .ds-scale-item { display: flex; align-items: center; gap: 20px; }
+    .ds-scale-item .bar { height: 10px; background: var(--orange); border-radius: 2px; }
+    .ds-scale-item .lbl { font-family: var(--mono); font-size: 12px; color: var(--black-52); flex: 0 0 60px; }
+
+    .ds-radius-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+    .ds-radius-item { text-align: center; }
+    .ds-radius-box { height: 72px; background: #fff; border: 1px solid var(--black-18); margin-bottom: 10px; }
+    .ds-radius-label { font-family: var(--mono); font-size: 11px; color: var(--black-52); }
+    .ds-radius-use { font-size: 10px; color: var(--black-38); margin-top: 2px; }
+
+    /* ── Icon spec ── */
+    .ds-icon-demo { display: flex; align-items: center; gap: 16px; }
+    .ds-icon-box { width: 44px; height: 44px; border: 1px solid var(--black-18); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+    /* ── Rules list ── */
+    .ds-rules { display: flex; flex-direction: column; gap: 0; }
+    .ds-rule { display: flex; gap: 24px; padding: 22px 0; border-top: 1px solid var(--black-10); }
+    .ds-rules .ds-rule:last-child { border-bottom: 1px solid var(--black-10); }
+    .ds-rule-num { font-family: var(--mono); font-size: 12px; color: var(--orange); flex: 0 0 32px; }
+    .ds-rule-body h4 { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.01em; }
+    .ds-rule-body p { font-size: 13px; line-height: 1.65; color: var(--black-52); max-width: 620px; }
+    .ds-rule-body code { font-family: var(--mono); font-size: 12px; background: var(--black-4); padding: 1px 6px; border-radius: 3px; }
+
+    .ds-footer { padding: 48px 64px; background: var(--black); color: var(--white-32); font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; text-align: center; }
+
+    @media (max-width: 900px) {
+      .ds-nav, .ds-hero, .ds-section, .ds-footer { padding-left: 24px; padding-right: 24px; }
+      .ds-color-grid { grid-template-columns: repeat(2, 1fr); }
+      .ds-type-row { flex-direction: column; gap: 10px; }
+      .ds-type-meta { flex: none; }
+      .ds-card-demo { flex-direction: column; }
+      .ds-card-visual { min-height: 160px; }
+      .ds-radius-grid { grid-template-columns: repeat(3, 1fr); row-gap: 24px; }
+      .ds-row { flex-direction: column; align-items: flex-start; }
+      .ds-row-demo { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="ds-nav">
+  <a class="ds-nav-logo" href="index.html">
+    <img src="assets/logo.svg" alt="GK logo">
+    <span class="ds-nav-title">Design System</span>
+  </a>
+  <a class="back" href="index.html">← Back to site</a>
+</nav>
+
+<header class="ds-hero">
+  <p class="ds-kicker">Reference · Internal</p>
+  <h1 class="ds-h1">Design System</h1>
+  <p class="ds-hero-desc">Every color, type style, component and rule used across this portfolio — extracted directly from the live site so this page never drifts from what's actually shipped.</p>
+</header>
+
+<!-- ── COLORS ── -->
+<section class="ds-section" id="colors">
+  <div class="ds-section-head">
+    <div>
+      <p class="ds-section-num">01</p>
+      <h2 class="ds-section-title">Colors</h2>
+    </div>
+    <p class="ds-section-sub">Four base colors plus three alpha scales (white, black, orange) used for borders, muted text and hover states.</p>
+  </div>
+
+  <div class="ds-color-grid">
+    <div class="ds-swatch">
+      <div class="ds-swatch-fill" style="background:#FF4D00;"></div>
+      <div><div class="ds-swatch-name">--orange</div><div class="ds-swatch-hex">#FF4D00</div></div>
+    </div>
+    <div class="ds-swatch">
+      <div class="ds-swatch-fill" style="background:#080808;"></div>
+      <div><div class="ds-swatch-name">--black</div><div class="ds-swatch-hex">#080808</div></div>
+    </div>
+    <div class="ds-swatch">
+      <div class="ds-swatch-fill" style="background:#EDECEA;"></div>
+      <div><div class="ds-swatch-name">--off-white</div><div class="ds-swatch-hex">#EDECEA</div></div>
+    </div>
+    <div class="ds-swatch">
+      <div class="ds-swatch-fill" style="background:#111110;"></div>
+      <div><div class="ds-swatch-name">--ink</div><div class="ds-swatch-hex">#111110</div></div>
+    </div>
+  </div>
+
+  <div style="height:40px;"></div>
+
+  <p class="ds-scale-label">White scale — used on dark surfaces (nav, hero, contact)</p>
+  <div class="ds-scale-row">
+    <div class="ds-scale-cell" style="background:var(--black);color:var(--white-4);">4%<span class="n">--white-4</span></div>
+    <div class="ds-scale-cell" style="background:var(--black);color:var(--white-8);">8%<span class="n">--white-8</span></div>
+    <div class="ds-scale-cell" style="background:var(--black);color:var(--white-16);">16%<span class="n">--white-16</span></div>
+    <div class="ds-scale-cell" style="background:var(--black);color:var(--white-32);">32%<span class="n">--white-32</span></div>
+    <div class="ds-scale-cell" style="background:var(--black);color:var(--white-48);">48%<span class="n">--white-48</span></div>
+    <div class="ds-scale-cell" style="background:var(--black);color:var(--white-56);">56%<span class="n">--white-56</span></div>
+  </div>
+
+  <p class="ds-scale-label">Black scale — used on light surfaces (cards, body text, borders)</p>
+  <div class="ds-scale-row">
+    <div class="ds-scale-cell" style="background:#fff;color:var(--black-4);">4%<span class="n">--black-4</span></div>
+    <div class="ds-scale-cell" style="background:#fff;color:var(--black-10);">10%<span class="n">--black-10</span></div>
+    <div class="ds-scale-cell" style="background:#fff;color:var(--black-18);">18%<span class="n">--black-18</span></div>
+    <div class="ds-scale-cell" style="background:#fff;color:var(--black-28);">28%<span class="n">--black-28</span></div>
+    <div class="ds-scale-cell" style="background:#fff;color:var(--black-38);">38%<span class="n">--black-38</span></div>
+    <div class="ds-scale-cell" style="background:#fff;color:var(--black-52);">52%<span class="n">--black-52</span></div>
+    <div class="ds-scale-cell" style="background:#fff;color:var(--black-64);">64%<span class="n">--black-64</span></div>
+  </div>
+
+  <p class="ds-scale-label">Orange scale — accent fills, highlight overlays</p>
+  <div class="ds-scale-row">
+    <div class="ds-scale-cell" style="background:var(--black);color:var(--orange-8);">8%<span class="n">--orange-8</span></div>
+    <div class="ds-scale-cell" style="background:var(--black);color:var(--orange-20);">20%<span class="n">--orange-20</span></div>
+    <div class="ds-scale-cell" style="background:var(--black);color:var(--orange-36);">36%<span class="n">--orange-36</span></div>
+    <div class="ds-scale-cell" style="background:var(--black);color:var(--orange-52);">52%<span class="n">--orange-52</span></div>
+  </div>
+</section>
+
+<!-- ── TYPOGRAPHY ── -->
+<section class="ds-section" id="type">
+  <div class="ds-section-head">
+    <div>
+      <p class="ds-section-num">02</p>
+      <h2 class="ds-section-title">Typography</h2>
+    </div>
+    <p class="ds-section-sub">Syne for display headings, Inter for everything functional — body copy, labels, UI text.</p>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">
+      <div class="ds-type-tag">H1 · .hero-title</div>
+      <div class="ds-type-spec">Syne 400<br>clamp(44–88px)<br>line-height 0.96 · −0.03em</div>
+    </div>
+    <div class="ds-type-sample ds-h1-sample">Product Designer</div>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">
+      <div class="ds-type-tag">H2 · .contact-title</div>
+      <div class="ds-type-spec">Syne 700<br>clamp(48–96px)<br>line-height 1 · −0.01em</div>
+    </div>
+    <div class="ds-type-sample ds-h2-sample">Say hello</div>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">
+      <div class="ds-type-tag">H3 · .section-tagline</div>
+      <div class="ds-type-spec">Syne 700<br>clamp(28–44px)<br>line-height 1.1 · −0.02em</div>
+    </div>
+    <div class="ds-type-sample ds-h3-sample">Selected Work</div>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">
+      <div class="ds-type-tag">H4 · .project-title</div>
+      <div class="ds-type-spec">Syne 700<br>clamp(20–32px)<br>line-height 1.05 · −0.02em</div>
+    </div>
+    <div class="ds-type-sample ds-h4-sample">Checkout Conversion Engine</div>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">
+      <div class="ds-type-tag">H5 · .section-label</div>
+      <div class="ds-type-spec">Inter 500 · 10px<br>uppercase · 0.14em</div>
+    </div>
+    <div class="ds-type-sample ds-h5-sample">Selected Work — eyebrow label</div>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">
+      <div class="ds-type-tag">Body · .about-bio</div>
+      <div class="ds-type-spec">Inter 300 · 18–20px<br>line-height 1.75</div>
+    </div>
+    <p class="ds-type-sample ds-body-sample">I'm a Senior Product Designer with 12+ years of experience crafting digital products that balance clarity, strategy, and visual quality.</p>
+  </div>
+
+  <div class="ds-type-row">
+    <div class="ds-type-meta">
+      <div class="ds-type-tag">Small · .project-desc</div>
+      <div class="ds-type-spec">Inter 400 · 13px<br>line-height 1.68</div>
+    </div>
+    <p class="ds-type-sample ds-small-sample">Card descriptions, accordion body copy and other supporting text sit at 13px with generous line-height for readability at small sizes.</p>
+  </div>
+</section>
+
+<!-- ── BUTTONS & LINKS ── -->
+<section class="ds-section" id="buttons">
+  <div class="ds-section-head">
+    <div>
+      <p class="ds-section-num">03</p>
+      <h2 class="ds-section-title">Buttons &amp; Links</h2>
+    </div>
+    <p class="ds-section-sub">One button component reused everywhere — nav CTAs, project card actions, hero links.</p>
+  </div>
+
+  <div class="ds-row">
+    <div class="ds-row-label">.btn-primary<br>+ .btn-secondary</div>
+    <div class="ds-row-demo dark">
+      <a class="btn btn-secondary" href="#">My Projects</a>
+      <a class="btn btn-primary" href="#">Get in touch</a>
+    </div>
+  </div>
+
+  <div class="ds-row">
+    <div class="ds-row-label">Same component<br>on light surfaces</div>
+    <div class="ds-row-demo">
+      <a class="btn btn-secondary" href="#">View Prototype</a>
+      <a class="btn btn-primary" href="#">View Project</a>
+    </div>
+  </div>
+
+  <div class="ds-row">
+    <div class="ds-row-label">.arrow-link<br>circular icon CTA</div>
+    <div class="ds-row-demo">
+      <a class="arrow-link" href="#">
+        <span>View project</span>
+        <span class="arrow-icon">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </a>
+    </div>
+  </div>
+
+  <div class="ds-row">
+    <div class="ds-row-label">.pill-tag</div>
+    <div class="ds-row-demo">
+      <span class="pill-tag">Product Design</span>
+      <span class="pill-tag">Fintech</span>
+      <span class="pill-tag">Mobile</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── COMPONENT: CARD ── -->
+<section class="ds-section" id="cards">
+  <div class="ds-section-head">
+    <div>
+      <p class="ds-section-num">04</p>
+      <h2 class="ds-section-title">Project Card</h2>
+    </div>
+    <p class="ds-section-sub">50/50 split — copy on one side, cover image on the other. Alternates sides down the page. Industry stripe anchored to the edge that meets the image.</p>
+  </div>
+
+  <div class="ds-card-demo">
+    <div class="ds-card-info">
+      <div>
+        <div class="ds-card-tags">
+          <span class="pill-tag">AI Agent</span>
+          <span class="pill-tag">Automation</span>
+        </div>
+        <h3 class="ds-card-title">Project Title Goes Here</h3>
+      </div>
+      <div class="ds-card-footer">
+        <span style="font-size:10px;font-weight:500;letter-spacing:0.13em;text-transform:uppercase;color:var(--black-38);">2026</span>
+        <a class="arrow-link" href="#">
+          <span>View project</span>
+          <span class="arrow-icon">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </a>
+      </div>
+    </div>
+    <div class="ds-card-visual"></div>
+  </div>
+</section>
+
+<!-- ── SPACING & RADIUS ── -->
+<section class="ds-section" id="spacing">
+  <div class="ds-section-head">
+    <div>
+      <p class="ds-section-num">05</p>
+      <h2 class="ds-section-title">Spacing &amp; Radius</h2>
+    </div>
+    <p class="ds-section-sub">An 8px-rooted spacing scale and four radius sizes, each tied to a specific use.</p>
+  </div>
+
+  <div class="ds-scale-list">
+    <div class="ds-scale-item"><span class="lbl">6px</span><div class="bar" style="width:6px;"></div></div>
+    <div class="ds-scale-item"><span class="lbl">8px</span><div class="bar" style="width:8px;"></div></div>
+    <div class="ds-scale-item"><span class="lbl">14px</span><div class="bar" style="width:14px;"></div></div>
+    <div class="ds-scale-item"><span class="lbl">20px</span><div class="bar" style="width:20px;"></div></div>
+    <div class="ds-scale-item"><span class="lbl">24px</span><div class="bar" style="width:24px;"></div></div>
+    <div class="ds-scale-item"><span class="lbl">32px</span><div class="bar" style="width:32px;"></div></div>
+    <div class="ds-scale-item"><span class="lbl">64px</span><div class="bar" style="width:64px;"></div></div>
+    <div class="ds-scale-item"><span class="lbl">80px</span><div class="bar" style="width:80px;"></div></div>
+  </div>
+
+  <div style="height:48px;"></div>
+
+  <div class="ds-radius-grid">
+    <div class="ds-radius-item">
+      <div class="ds-radius-box" style="border-radius:2px;"></div>
+      <div class="ds-radius-label">2px</div>
+      <div class="ds-radius-use">Scrollbar thumb</div>
+    </div>
+    <div class="ds-radius-item">
+      <div class="ds-radius-box" style="border-radius:4px;"></div>
+      <div class="ds-radius-label">4px</div>
+      <div class="ds-radius-use">Buttons</div>
+    </div>
+    <div class="ds-radius-item">
+      <div class="ds-radius-box" style="border-radius:6px;"></div>
+      <div class="ds-radius-label">6px</div>
+      <div class="ds-radius-use">Cards, panels</div>
+    </div>
+    <div class="ds-radius-item">
+      <div class="ds-radius-box" style="border-radius:100px;"></div>
+      <div class="ds-radius-label">100px</div>
+      <div class="ds-radius-use">Tags, pill buttons</div>
+    </div>
+    <div class="ds-radius-item">
+      <div class="ds-radius-box" style="border-radius:50%;"></div>
+      <div class="ds-radius-label">50%</div>
+      <div class="ds-radius-use">Icon circles, dots</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ICONS ── -->
+<section class="ds-section" id="icons">
+  <div class="ds-section-head">
+    <div>
+      <p class="ds-section-num">06</p>
+      <h2 class="ds-section-title">Icons</h2>
+    </div>
+    <p class="ds-section-sub">One 12×12 stroke arrow, reused for every directional action — card links, next-project nav, hero CTAs.</p>
+  </div>
+
+  <div class="ds-icon-demo">
+    <div class="ds-icon-box">
+      <svg width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="var(--ink)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="ds-icon-box">
+      <svg width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M4 8L8 4M8 4H4.5M8 4V7.5" stroke="var(--ink)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="ds-icon-box">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M13.5 2.5L1.5 6.5L6.5 8.5M13.5 2.5L10 13.5L6.5 8.5M13.5 2.5L6.5 8.5" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="ds-icon-box">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><line x1="2.5" y1="4.5" x2="13.5" y2="4.5" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round"/><line x1="2.5" y1="8" x2="13.5" y2="8" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round"/><line x1="2.5" y1="11.5" x2="13.5" y2="11.5" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </div>
+  </div>
+</section>
+
+<!-- ── RULES ── -->
+<section class="ds-section" id="rules" style="border-bottom:none;">
+  <div class="ds-section-head">
+    <div>
+      <p class="ds-section-num">07</p>
+      <h2 class="ds-section-title">Rules &amp; Conventions</h2>
+    </div>
+    <p class="ds-section-sub">The behaviors and constraints that hold the system together.</p>
+  </div>
+
+  <div class="ds-rules">
+    <div class="ds-rule">
+      <div class="ds-rule-num">01</div>
+      <div class="ds-rule-body">
+        <h4>Two typefaces only</h4>
+        <p><code>Syne</code> for anything that needs to feel designed — headings, buttons, numbers. <code>Inter</code> for everything read at length — body copy, labels, UI chrome. Never mixed within the same text block.</p>
+      </div>
+    </div>
+    <div class="ds-rule">
+      <div class="ds-rule-num">02</div>
+      <div class="ds-rule-body">
+        <h4>Orange is the only accent</h4>
+        <p>Used for primary CTAs, hover states, active nav indicators and the industry stripe on project cards. Never used for large fills or body text — always a small, deliberate hit of color against black, white or off-white.</p>
+      </div>
+    </div>
+    <div class="ds-rule">
+      <div class="ds-rule-num">03</div>
+      <div class="ds-rule-body">
+        <h4>Cards alternate sides</h4>
+        <p>Project cards flip copy/image position on every other row (<code>.project-card--reversed</code>) so the page reads with a visual rhythm instead of a static list.</p>
+      </div>
+    </div>
+    <div class="ds-rule">
+      <div class="ds-rule-num">04</div>
+      <div class="ds-rule-body">
+        <h4>Eyebrow + heading pairing</h4>
+        <p>Every section opens with a small uppercase label (<code>.section-label</code>, 10px, 0.14em tracking) directly above a large Syne heading — never a heading on its own.</p>
+      </div>
+    </div>
+    <div class="ds-rule">
+      <div class="ds-rule-num">05</div>
+      <div class="ds-rule-body">
+        <h4>Custom cursor on desktop</h4>
+        <p>A crosshair + coordinates readout replaces the system cursor on pointer devices (<code>hover: hover</code>), reinforced by a film-grain noise overlay across the whole page. Both are disabled on touch.</p>
+      </div>
+    </div>
+    <div class="ds-rule">
+      <div class="ds-rule-num">06</div>
+      <div class="ds-rule-body">
+        <h4>Mobile: image always first</h4>
+        <p>Below 768px, every card's cover image renders above its copy regardless of desktop side — reading order is never sacrificed for visual alternation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="ds-footer">Guilherme Kerber · Design System · Internal Reference</footer>
+
+</body>
+</html>

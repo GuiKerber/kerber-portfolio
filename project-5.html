@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Designing an AI Front Desk for Photographers — Guilherme Kerber</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --orange:#FF4D00; --black:#080808; --off-white:#EDECEA; --ink:#111110;
+
+      /* ── White scale (dark surfaces) ── */
+      --white-4:  rgba(255,255,255,0.04);
+      --white-8:  rgba(255,255,255,0.08);
+      --white-16: rgba(255,255,255,0.16);
+      --white-32: rgba(255,255,255,0.32);
+      --white-48: rgba(255,255,255,0.48);
+      --white-56: rgba(255,255,255,0.56);
+
+      /* ── Black scale (light surfaces) ── */
+      --black-4:  rgba(0,0,0,0.04);
+      --black-10: rgba(0,0,0,0.10);
+      --black-18: rgba(0,0,0,0.18);
+      --black-28: rgba(0,0,0,0.28);
+      --black-38: rgba(0,0,0,0.38);
+      --black-52: rgba(0,0,0,0.52);
+      --black-64: rgba(0,0,0,0.64);
+
+      /* ── Orange scale ── */
+      --orange-8:  rgba(255,77,0,0.08);
+      --orange-20: rgba(255,77,0,0.20);
+      --orange-36: rgba(255,77,0,0.36);
+      --orange-52: rgba(255,77,0,0.52);
+    }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { font-family:'Inter',system-ui,sans-serif; background:var(--off-white); color:var(--ink); overflow-x:hidden; -webkit-font-smoothing:antialiased; cursor:none; }
+
+    /* ── Noise overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.12;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 256px 256px;
+    }
+
+    .cur-h,.cur-v { position:fixed; pointer-events:none; z-index:9999; }
+    .cur-h { left:0; right:0; height:1px; background:var(--black-18); transform:translateY(-50%); }
+    .cur-v { top:0; bottom:0; width:1px; background:var(--black-18); transform:translateX(-50%); }
+    .cur-plus { position:fixed; pointer-events:none; z-index:10000; width:16px; height:16px; transform:translate(-50%,-50%); }
+    .cur-plus::before,.cur-plus::after { content:''; position:absolute; background:#FF4D00; }
+    .cur-plus::before { left:50%; top:0; bottom:0; width:1px; transform:translateX(-50%); }
+    .cur-plus::after  { top:50%; left:0; right:0; height:1px; transform:translateY(-50%); }
+
+    /* ─── TEXT REVEAL ANIMATIONS ─── */
+    .reveal-line { display:block; overflow:hidden; padding-bottom:.1em; }
+    .reveal-line-inner { display:block; transform:translateY(108%); }
+    [data-split-lines].is-visible .reveal-line-inner {
+      transform:translateY(0);
+      transition:transform .95s cubic-bezier(.16,1,.3,1);
+      transition-delay:calc(var(--li,0) * .08s);
+    }
+    .reveal-word { display:inline-block; overflow:hidden; vertical-align:bottom; }
+    .reveal-word-inner { display:inline-block; transform:translateY(105%); }
+    [data-split-words].is-visible .reveal-word-inner {
+      transform:translateY(0);
+      transition:transform .7s cubic-bezier(.16,1,.3,1);
+      transition-delay:calc(var(--wi,0) * .05s);
+    }
+    [data-fade] { opacity:0; transform:translateY(16px); }
+    [data-fade].is-visible {
+      opacity:1; transform:translateY(0);
+      transition:opacity .8s ease, transform .8s cubic-bezier(.16,1,.3,1);
+      transition-delay:var(--fd,0s);
+    }
+
+    html { scrollbar-gutter: stable; }
+    nav { position:fixed; top:0; left:0; right:0; z-index:200; display:flex; justify-content:space-between; align-items:center; padding:20px 64px; background:rgba(8,8,8,0.88); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border-bottom:1px solid var(--white-8); }
+    .nav-logo { display:flex; align-items:center; color:#fff; text-decoration:none; flex-shrink:0; }
+    .nav-logo img { width:28px; height:28px; display:block; filter:brightness(0) invert(1); }
+    .nav-actions { display:flex; align-items:center; gap:8px; }
+    .nav-btn { display:flex; align-items:center; gap:8px; padding:8px 20px; border-radius:4px; font-family:'Syne',sans-serif; font-size:13px; font-weight:500; letter-spacing:-0.03em; cursor:pointer; border:none; text-decoration:none; white-space:nowrap; transition:opacity .2s ease, transform .15s ease; line-height:1.4; }
+    .nav-btn:hover { opacity:.88; transform:translateY(-1px); }
+    .nav-btn-projects { background:#fff; color:#080808; }
+    .nav-btn-contact  { background:var(--orange); color:#fff; }
+    .nav-panel-overlay { position:fixed; inset:0; z-index:300; opacity:0; pointer-events:none; transition:opacity .25s ease; }
+    .nav-panel-overlay.is-open { opacity:1; pointer-events:all; }
+    .nav-panel-drawer { position:fixed; top:68px; right:64px; width:360px; background:#fff; border-radius:6px; box-shadow:0 4px 6px rgba(0,0,0,0.04),0 12px 40px rgba(0,0,0,0.10),0 1px 2px rgba(0,0,0,0.06); z-index:301; transform:translateY(-10px) scale(0.97); transform-origin:top right; opacity:0; pointer-events:none; transition:transform .35s cubic-bezier(.16,1,.3,1), opacity .25s ease; overflow:hidden; }
+    .nav-panel-drawer.is-open { transform:translateY(0) scale(1); opacity:1; pointer-events:all; }
+    .nav-panel-items { padding-top:6px; padding-bottom:6px; }
+    .nav-panel-item { border-top:1px solid var(--black-10); }
+    .nav-panel-item:first-child { border-top:none; }
+    .nav-panel-link { display:flex; align-items:center; justify-content:space-between; padding:18px 24px; text-decoration:none; gap:16px; transition:background .18s ease; }
+    .nav-panel-link:hover { background:rgba(0,0,0,0.025); }
+    .nav-panel-link:hover .nav-panel-title { color:var(--orange); }
+    .nav-panel-link:hover .nav-panel-arrow-icon { background:var(--orange); border-color:var(--orange); transform:translateX(3px); }
+    .nav-panel-link:hover .nav-panel-arrow-icon svg path { stroke:#fff; }
+    .nav-panel-title { font-family:'Syne',sans-serif; font-size:16px; font-weight:700; color:var(--ink); letter-spacing:-0.02em; line-height:1.2; transition:color .18s; }
+    .nav-panel-arrow-icon { display:flex; align-items:center; justify-content:center; width:26px; height:26px; border:1px solid var(--black-18); border-radius:50%; flex-shrink:0; transition:background .22s, border-color .22s, transform .22s; color:var(--ink); }
+
+    .proj-hero { display:grid; grid-template-columns:1fr 1fr; align-items:stretch; background:var(--black); padding-top:68px; min-height: clamp(480px, 56vw * 0.75, 800px); }
+    .proj-hero-left { padding:72px 56px 72px 64px; display:flex; flex-direction:column; justify-content:flex-end; gap:28px; }
+    .proj-h1 { font-family:'Syne',sans-serif; font-size:clamp(40px,5vw,68px); font-weight:700; color:#fff; line-height:1.02; letter-spacing:-0.03em; }
+    .proj-hero-desc { font-size:16px; font-weight:300; line-height:1.7; color:var(--white-56); max-width:400px; }
+    .proj-meta-strip { display:flex; align-items:center; gap:10px; flex-wrap:wrap; width:100%; }
+    .proj-tag-hero { font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--white-48); padding:5px 10px; border:1px solid var(--white-8); border-radius:40px; }
+    .proj-dur { margin-left:auto; font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--white-32); }
+    .proj-hero-right { position:relative; overflow:hidden; background:#0c0b08; min-height: clamp(400px, 40vw, 700px); }
+    .proj-hero-bg {
+      position:absolute; inset:0;
+      background:
+        radial-gradient(ellipse 70% 60% at 65% 35%, rgba(255,77,0,0.07) 0%, transparent 70%),
+        repeating-linear-gradient(0deg, transparent 0px, transparent 39px, rgba(255,255,255,0.02) 39px, rgba(255,255,255,0.02) 40px),
+        repeating-linear-gradient(90deg, transparent 0px, transparent 39px, rgba(255,255,255,0.02) 39px, rgba(255,255,255,0.02) 40px);
+    }
+    .proj-hero-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center top; display:block; }
+    /* Same component as the nav's "My Projects" / "Get in touch" buttons */
+    .proj-cta-row { display:flex; align-items:center; gap:8px; }
+    .proj-btn { display:inline-flex; align-items:center; gap:8px; padding:8px 20px; border-radius:4px; font-family:'Syne',sans-serif; font-size:13px; font-weight:500; letter-spacing:-0.03em; line-height:1.4; text-decoration:none; white-space:nowrap; cursor:pointer; transition:opacity .2s ease, transform .15s ease; }
+    .proj-btn:hover { opacity:.88; transform:translateY(-1px); }
+    .proj-btn-primary { background:var(--orange); color:#fff; }
+    .proj-btn-secondary { background:#fff; color:#080808; }
+
+    .case-wrap { display:grid; grid-template-columns:380px 1fr; align-items:start; }
+    .case-left { position:sticky; top:68px; height:calc(100vh - 68px); overflow-y:auto; scrollbar-width:none; border-right:1px solid var(--black-10); background:var(--off-white); }
+    .case-left::-webkit-scrollbar { display:none; }
+    .acc-wrap { padding:48px 64px 100px; }
+    .acc-section-label { font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--black-38); margin-bottom:28px; }
+    .acc-item { border-top:1px solid var(--black-10); }
+    .acc-item:last-child { border-bottom:1px solid var(--black-10); }
+    .acc-head { width:100%; display:flex; align-items:center; gap:12px; padding:18px 0; background:none; border:none; cursor:pointer; text-align:left; }
+    .acc-num { font-size:10px; font-weight:500; letter-spacing:0.13em; color:var(--black-38); min-width:22px; transition:color .2s ease; }
+    .acc-label { font-family:'Syne',sans-serif; font-size:14px; font-weight:600; color:var(--ink); flex:1; letter-spacing:0.01em; transition:color .2s ease; }
+    .acc-plus { font-size:18px; font-weight:300; color:var(--black-38); line-height:1; transition:transform .35s cubic-bezier(.25,0,0,1),color .2s ease; }
+    .acc-item.is-open .acc-plus { transform:rotate(45deg); color:var(--orange); }
+    .acc-item.is-open .acc-label { color:var(--orange); }
+    .acc-item.is-open .acc-num { color:var(--orange); }
+    .acc-body { overflow:hidden; max-height:0; transition:max-height .55s cubic-bezier(.25,0,0,1); }
+    .acc-item.is-open .acc-body { max-height:1600px; }
+    .acc-inner { padding:0 0 28px 34px; display:flex; flex-direction:column; gap:18px; }
+    .acc-text { font-size:13px; font-weight:400; line-height:1.68; color:var(--black-64); }
+    .attr-grid { display:flex; flex-direction:column; gap:7px; }
+    .attr-row { display:grid; grid-template-columns:84px 1fr; gap:8px; align-items:baseline; }
+    .attr-dt { font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--black-38); }
+    .attr-dd { font-size:13px; font-weight:400; line-height:1.68; color:var(--ink); }
+    .insight-list { list-style:none; display:flex; flex-direction:column; gap:9px; }
+    .insight-list li { font-size:13px; font-weight:400; line-height:1.68; color:var(--black-64); padding-left:14px; position:relative; }
+    .insight-list li::before { content:''; position:absolute; left:0; top:9px; width:5px; height:1px; background:var(--orange); }
+    .acc-sub-label { font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--black-38); margin-top:4px; }
+    .kpi-list { display:flex; flex-direction:column; gap:0; }
+    .kpi-item { padding:12px 0; border-bottom:1px solid var(--black-10); }
+    .kpi-item:last-child { border-bottom:none; }
+    .kpi-name { font-family:'Syne',sans-serif; font-size:13px; font-weight:600; color:var(--ink); display:block; margin-bottom:4px; letter-spacing:-0.01em; }
+    .kpi-desc { font-size:12px; font-weight:400; line-height:1.6; color:var(--black-52); }
+
+    .case-right { padding:60px 80px 80px 60px; }
+    .gallery { display:flex; flex-direction:column; gap:20px; }
+    .gal-img { width:100%; border-radius:8px; overflow:hidden; }
+    .gal-img img { width:100%; height:auto; display:block; }
+
+    .next-proj { background:var(--black); padding:80px 64px 100px; }
+    .next-link { display:flex; flex-direction:column; gap:36px; text-decoration:none; max-width:960px; }
+    .next-eyebrow { font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--white-32); }
+    .next-body { display:flex; justify-content:space-between; align-items:flex-end; border-top:1px solid var(--white-8); padding-top:36px; gap:24px; }
+    .next-info { display:flex; flex-direction:column; gap:14px; }
+    .next-idx { font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--orange); }
+    .next-tags { display:flex; gap:8px; flex-wrap:wrap; }
+    .next-tag-item { font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--white-32); padding:4px 9px; border:1px solid var(--white-8); border-radius:20px; }
+    .next-h2 { font-family:'Syne',sans-serif; font-size:clamp(28px,4.5vw,54px); font-weight:700; color:#fff; letter-spacing:-0.03em; line-height:1.0; transition:color .3s ease; }
+    .next-link:hover .next-h2 { color:var(--orange); }
+    .next-arr { width:56px; height:56px; flex-shrink:0; border:1px solid var(--white-16); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; transition:background .25s ease,border-color .25s ease,transform .25s ease; }
+    .next-link:hover .next-arr { background:var(--orange); border-color:var(--orange); transform:rotate(45deg); }
+  </style>
+</head>
+<body>
+
+<div class="cur-h"      id="curH"></div>
+<div class="cur-v"      id="curV"></div>
+<div class="cur-plus"   id="curPlus"></div>
+
+<!-- PROJECTS SIDE PANEL -->
+<div class="nav-panel-overlay" id="navPanelOverlay" aria-hidden="true"></div>
+<div class="nav-panel-drawer" id="navPanelDrawer" role="dialog" aria-label="Projects" aria-modal="true">
+  <div class="nav-panel-items">
+    <div class="nav-panel-item">
+      <a class="nav-panel-link" href="project-5.html">
+        <span class="nav-panel-title" data-pt="Projetando uma Recepção com IA para Fotógrafos">Designing an AI Front Desk for Photographers</span>
+        <div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </a>
+    </div>
+    <div class="nav-panel-item">
+      <a class="nav-panel-link" href="project-2.html">
+        <span class="nav-panel-title" data-pt="Levando um Marketplace de Staking a uma Carteira Multi-Chain">Introducing a Staking Marketplace to a Multi-Chain Wallet</span>
+        <div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </a>
+    </div>
+    <div class="nav-panel-item">
+      <a class="nav-panel-link" href="project-1.html">
+        <span class="nav-panel-title" data-pt="Projetando uma Experiência de Coaching Multiplataforma">Designing a Cross-Platform Coaching Experience</span>
+        <div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <a class="nav-logo" href="index.html" aria-label="Guilherme Kerber — Home" data-pt-aria="Guilherme Kerber — Início">
+    <img src="assets/logo.svg" alt="GK logo" width="28" height="28">
+  </a>
+  <div class="nav-actions">
+    <button class="nav-btn nav-btn-projects" id="navProjectsBtn" aria-expanded="false" aria-controls="navPanelDrawer">
+      <span data-pt="Meus Projetos">My Projects</span>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <line x1="2.5" y1="4.5" x2="13.5" y2="4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="2.5" y1="8" x2="13.5" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="2.5" y1="11.5" x2="13.5" y2="11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <a class="nav-btn nav-btn-contact" href="index.html#contact">
+      <span data-pt="Entre em contato">Get in touch</span>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M13.5 2.5L1.5 6.5L6.5 8.5M13.5 2.5L10 13.5L6.5 8.5M13.5 2.5L6.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+</nav>
+
+<header class="proj-hero">
+  <div class="proj-hero-left">
+    <div class="proj-meta-strip" data-fade>
+      <span class="proj-tag-hero" data-pt="Agente de IA">AI Agent</span>
+      <span class="proj-tag-hero" data-pt="Automação">Automation</span>
+      <span class="proj-tag-hero">SaaS</span>
+      <span class="proj-dur">2026</span>
+    </div>
+    <h1 class="proj-h1" data-split-lines data-pt="Projetando uma<br>Recepção com IA<br>para Fotógrafos">Designing an AI<br>Front Desk for<br>Photographers</h1>
+    <p class="proj-hero-desc" data-fade style="--fd:.2s" data-pt="Um agente de IA que lê as mensagens recebidas, responde e negocia no tom de voz e na tabela de preços do próprio fotógrafo, e agenda sessões confirmadas direto no calendário — assim o fotógrafo gasta menos tempo com tarefas administrativas e mais tempo fotografando.">An AI agent that reads inbound inquiries, replies and negotiates in the photographer's own tone and rate card, and books confirmed sessions straight onto the calendar, so the photographers spend less time on admin and more time shooting.</p>
+    <!-- Prototype buttons hidden until the Aperture prototype is deployed as its
+         own site. The AI/aperture/ folder is not part of this repo, so these
+         links would 404 in production. To restore: uncomment and replace the
+         hrefs with the prototype's live URL.
+    <div class="proj-cta-row" data-fade style="--fd:.35s">
+      <a class="proj-btn proj-btn-secondary" href="AI/aperture/dist/index.html#/design-system" target="_blank" rel="noopener" data-pt="Sistema de Design">Design System</a>
+      <a class="proj-btn proj-btn-primary" href="AI/aperture/dist/index.html" target="_blank" rel="noopener" data-pt="Ver Protótipo">View Prototype</a>
+    </div>
+    -->
+  </div>
+  <div class="proj-hero-right">
+    <div class="proj-hero-bg"></div>
+    <img class="proj-hero-img" src="assets/project-5/aperture-cover.png" alt="Aperture AI agent dashboard cover" draggable="false">
+  </div>
+</header>
+
+<div class="case-wrap">
+  <aside class="case-left">
+    <div class="acc-wrap">
+      <p class="acc-section-label" data-pt="Estrutura do caso">Case structure</p>
+
+      <div class="acc-item is-open" data-section="0">
+        <button class="acc-head"><span class="acc-num">01</span><span class="acc-label" data-pt="Visão geral">Overview</span><span class="acc-plus">+</span></button>
+        <div class="acc-body"><div class="acc-inner">
+          <p class="acc-text" data-pt="A nova funcionalidade da 46graus é um agente de IA que fica dentro do dashboard do fotógrafo e cuida do lado administrativo do trabalho: triando mensagens recebidas, respondendo e negociando, e agendando sessões confirmadas direto no calendário. O fotógrafo continua sendo quem aprova qualquer coisa que realmente importa; o agente elimina o trabalho burocrático em torno dessa decisão, não a decisão em si.">46graus's new feature is an AI agent that sits inside a photographer's dashboard and handles the business side of the job: triaging inbound inquiries, replying and negotiating, and booking confirmed sessions straight onto the calendar. The photographer stays the final approver on anything that matters; the agent removes the busywork around that decision, not the decision itself.</p>
+          <div class="attr-grid">
+            <div class="attr-row"><span class="attr-dt" data-pt="Empresa">Company</span><span class="attr-dd">46graus</span></div>
+            <div class="attr-row"><span class="attr-dt" data-pt="Duração">Duration</span><span class="attr-dd" data-pt="2 meses">2 months</span></div>
+            <div class="attr-row"><span class="attr-dt" data-pt="Função">Role</span><span class="attr-dd">Product design &amp; Vibe Code</span></div>
+            <div class="attr-row"><span class="attr-dt" data-pt="Equipe">Team</span><span class="attr-dd">Solo</span></div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="acc-item" data-section="1">
+        <button class="acc-head"><span class="acc-num">02</span><span class="acc-label" data-pt="Problema &amp; Objetivo">Problem &amp; Objective</span><span class="acc-plus">+</span></button>
+        <div class="acc-body"><div class="acc-inner">
+          <p class="acc-text" data-pt="Fotógrafos profissionais perdem horas por semana com trabalho que não tem nada a ver com fotografia: responder mensagens, cotar preços, cobrar retorno de propostas e checar manualmente um calendário antes de confirmar uma data. A 46graus já dava aos fotógrafos um criador de sites, um CRM, uma loja e um calendário de agendamentos; o que faltava era alguém para cuidar da recepção.">Professional photographers lose hours a week to work that has nothing to do with photography: replying to inquiries, quoting rates, chasing proposal follow-ups, and manually checking a calendar before confirming a date. 46graus already gave photographers a site builder, a CRM, a store and a booking calendar; what it didn't give them was someone to run the front desk.</p>
+          <p class="acc-sub-label" data-pt="Objetivos">Objectives</p>
+          <ul class="insight-list">
+            <li data-pt="Avaliar e responder mensagens recebidas assim que chegam, em vez de em uma checagem única por dia">Score and reply to inbound inquiries the moment they land, instead of during a once-a-day inbox pass</li>
+            <li data-pt="Negociar usando os próprios preços do fotógrafo e uma margem de flexibilidade combinada — não um script genérico">Negotiate using the photographer's own service rates and an agreed negotiation flex — not a generic script</li>
+            <li data-pt="Manter propostas, agendamento de sessões e histórico de clientes em um só lugar, em vez de espalhados entre email, DMs e um app de calendário separado">Keep proposals, session scheduling, and client history in one place instead of split across email, DMs, and a separate calendar app</li>
+            <li data-pt="Trazer à tona apenas as decisões que realmente precisam de um humano, como um conflito de agenda, um orçamento fugindo da faixa combinada, entre outros">Surface only the decisions that actually need a human, such as a scheduling conflict, a quote drifting outside range, and more</li>
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="acc-item" data-section="2">
+        <button class="acc-head"><span class="acc-num">03</span><span class="acc-label" data-pt="Abordagem">Approach</span><span class="acc-plus">+</span></button>
+        <div class="acc-body"><div class="acc-inner">
+          <p class="acc-text" data-pt="Como construir um dashboard em que cada tela também seja algo sobre o qual o agente possa agir através de uma mensagem de chat? Dois núcleos respondem a isso. O dashboard acompanha o desempenho do agente e as conversas, enquanto um chat persistente é onde os fotógrafos perguntam ao agente o que importa agora — melhor lead, maior oportunidade, o que precisa de uma decisão — e recebem uma resposta com um caminho a seguir.">How do you build a dashboard where every screen is also something the agent can act on through a chat message? Two cores answer that. The dashboard tracks agent performance and conversations, while a persistent chat is where photographers ask their agents what matters right now — best lead, top opportunity, what needs a decision — and get an answer with a path to follow.</p>
+          <p class="acc-text" data-pt="A personalização é propositalmente simples: os fotógrafos ensinam seus agentes com seus próprios preços e serviços através de uma configuração simples, mas o treinamento vem dos dados da 46graus. A ideia é dar aos fotógrafos uma solução simples e eficaz, não um construtor complexo de agentes personalizados.">Customization stays simple by design: photographers teach their agents their own rates and services with a simple personalization, but the training comes from 46graus's data. The idea is to give photographers a simple and effective solution, not a complex custom agent builder.</p>
+          <p class="acc-text" data-pt="Por fim, o agente também é sensível ao contexto: no dashboard, ele varre todas as conversas em busca de oportunidades e conflitos; dentro de uma conversa específica, ele foca nesse contexto e sugere o próximo passo, reduzindo o tempo gasto cruzando mensagens e calendários.">Lastly, the agent is also context-aware: on the dashboard it scans every conversation for opportunities and conflicts; inside one thread it narrows to that context and suggests the next step, cutting time spent cross-checking messages and calendars.</p>
+        </div></div>
+      </div>
+
+      <div class="acc-item" data-section="3">
+        <button class="acc-head"><span class="acc-num">04</span><span class="acc-label" data-pt="Autonomia do Agente">Agent Autonomy</span><span class="acc-plus">+</span></button>
+        <div class="acc-body"><div class="acc-inner">
+          <p class="acc-text" data-pt="Autonomia não é tudo ou nada. A regra do agente é simples: agir sempre que o resultado for seguro, perguntar sempre que não for. Ele cuida de respostas, agendamentos e negociações sozinho, exatamente como o fotógrafo o treinou, mas trava e pede confirmação em conflitos de data, pedidos de orçamento fora da faixa combinada, decisões de carga de trabalho como ajustes de preço em meses fracos, entre outros. Essas são as poucas decisões em que errar o palpite realmente custa algo ao fotógrafo. Todo o resto simplesmente é feito — e era exatamente aí que ia a maior parte do tempo administrativo do fotógrafo.">Autonomy isn't all-or-nothing. The agent's rule is simple: act whenever the outcome is safe, ask whenever it isn't. It handles replies, scheduling, and negotiation on its own, using exactly how the photographer trained it, but locks and asks for confirmation on date conflicts, budget requests outside range, workload calls such as price adjustments on low months, and more. Those are the few decisions where guessing wrong actually costs the photographer something. Everything else just gets done, which is where most of a photographer's admin time was going in the first place.</p>
+        </div></div>
+      </div>
+
+      <div class="acc-item" data-section="4">
+        <button class="acc-head"><span class="acc-num">05</span><span class="acc-label" data-pt="Conectando o Hub">Connecting the Hub</span><span class="acc-plus">+</span></button>
+        <div class="acc-body"><div class="acc-inner">
+          <p class="acc-text" data-pt="A 46graus já dá aos fotógrafos um criador de sites, um CRM de clientes, uma loja online, um sistema de aprovação e um calendário de agendamentos. Cada um é uma funcionalidade madura e completa, e todos são conectados entre si.">46graus already gives photographers a website builder, a client CRM, an online store, an approval system, and a booking calendar. Each one is a mature and complete feature, and each is connected to the others.</p>
+          <p class="acc-text" data-pt="A nova funcionalidade do agente entra como uma funcionalidade própria. Ela não constrói um site nem controla produtos da loja, mas está conectada a todos os outros serviços que a 46graus oferece. Por isso, uma nova função principal foi adicionada à barra de navegação primária, onde todos esses produtos vivem.">The new agent feature enters as its own feature. It doesn't build a website or control store products, but it is connected to all the other services 46graus provides. So a new core function has been added to the primary navigation bar, where all these products live.</p>
+          <p class="acc-text" data-pt="O agente pode se conectar a todo esse hub de ferramentas do fotógrafo ativando conexões, e interagir com outras funcionalidades principais, como adicionar agendamentos ao calendário, enviar produtos da loja para um cliente, adicionar novos leads ao CRM, entre outros.">The agent can connect to this full hub of photographer tools by enabling connections, and interact with other core features like adding bookings to the calendar, sending products from the store to a customer, adding new leads to the CRM, and more.</p>
+        </div></div>
+      </div>
+
+      <div class="acc-item" data-section="5">
+        <button class="acc-head"><span class="acc-num">06</span><span class="acc-label" data-pt="Medindo o Sucesso">Measuring Success</span><span class="acc-plus">+</span></button>
+        <div class="acc-body"><div class="acc-inner">
+          <p class="acc-sub-label" data-pt="Controle de produto pós-lançamento">Post-launch product control</p>
+          <div class="kpi-list">
+            <div class="kpi-item">
+              <span class="kpi-name" data-pt="Taxa de adoção">Adoption rate</span>
+              <p class="kpi-desc" data-pt="Quantos fotógrafos ativam o agente, e com que rapidez, depois do lançamento.">How many photographers turn the agent on, and how quickly, after it ships.</p>
+            </div>
+            <div class="kpi-item">
+              <span class="kpi-name" data-pt="Autonomia do agente">Agent autonomy</span>
+              <p class="kpi-desc" data-pt="Qual a parcela de conversas que o agente conduz do início ao fim, sem intervenção do fotógrafo.">What share of conversations the agent handles end-to-end, with no photographer intervention.</p>
+            </div>
+            <div class="kpi-item">
+              <span class="kpi-name" data-pt="Conversão do agente">Agent conversion</span>
+              <p class="kpi-desc" data-pt="Qual a parcela de mensagens que o agente transforma em sessões agendadas, e a receita que isso representa.">What share of inquiries the agent turns into booked sessions, and the revenue that represents.</p>
+            </div>
+            <div class="kpi-item">
+              <span class="kpi-name" data-pt="Taxa de intervenção manual">Manual override rate</span>
+              <p class="kpi-desc" data-pt="Onde os fotógrafos intervêm e agem por conta própria em vez de deixar o agente cuidar disso — revela novos casos de uso e lacunas no que o agente consegue fazer.">Where photographers step in and act themselves instead of letting the agent handle it — surfaces new use cases and gaps in what the agent can do.</p>
+            </div>
+          </div>
+        </div></div>
+      </div>
+
+    </div>
+  </aside>
+
+  <div class="case-right">
+    <div class="gallery">
+      <div class="gal-block" data-fade data-trigger="0">
+        <div class="gal-img"><img src="assets/project-5/1 dashboard.png" alt="Aperture dashboard — agent performance, conversion, and inbound status at a glance" loading="lazy" draggable="false"></div>
+      </div>
+      <div class="gal-block" data-fade data-trigger="1">
+        <div class="gal-img"><img src="assets/project-5/2 mobile.png" alt="Chatting with the agent and approving a quote from a phone" loading="lazy" draggable="false"></div>
+      </div>
+      <div class="gal-block" data-fade data-trigger="2">
+        <div class="gal-img"><img src="assets/project-5/3 status card.png" alt="Status card — live agent status alongside conversion and autonomy metrics" loading="lazy" draggable="false"></div>
+      </div>
+      <div class="gal-block" data-fade data-trigger="3">
+        <div class="gal-img"><img src="assets/project-5/4 expanded chat.png" alt="Expanded chat thread with an AI-drafted counter-offer" loading="lazy" draggable="false"></div>
+      </div>
+      <div class="gal-block" data-fade data-trigger="4">
+        <div class="gal-img"><img src="assets/project-5/5 chat widget.png" alt="Chat widget across empty state, dashboard, conversation, and history views" loading="lazy" draggable="false"></div>
+      </div>
+      <div class="gal-block" data-fade data-trigger="5">
+        <div class="gal-img"><img src="assets/project-5/6 internal pages.png" alt="Internal pages — connections, conversation detail, plans, and agent customization" loading="lazy" draggable="false"></div>
+      </div>
+      <div class="gal-block" data-fade data-trigger="5">
+        <div class="gal-img"><img src="assets/project-5/7 onboarding.png" alt="Onboarding — uploading a rate sheet and previewing the agent's first booked conversation" loading="lazy" draggable="false"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="next-proj">
+  <a class="next-link" href="project-2.html">
+    <p class="next-eyebrow" data-split-words data-pt="Próximo projeto">Next project</p>
+    <div class="next-body">
+      <div class="next-info">
+        <span class="next-idx" data-fade style="--fd:0.1s">02 · Fintech</span>
+        <div class="next-tags" data-fade style="--fd:0.18s">
+          <span class="next-tag-item">Product Design</span>
+          <span class="next-tag-item">Crypto</span>
+          <span class="next-tag-item">Fintech</span>
+        </div>
+        <h2 class="next-h2" data-split-lines data-pt="Levando um Marketplace de Staking<br>a uma Carteira Multi-Chain">Introducing a Staking Marketplace<br>to a Multi-Chain Wallet</h2>
+      </div>
+      <div class="next-arr" data-fade style="--fd:0.35s">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9H15M15 9L10 4M15 9L10 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+  </a>
+</section>
+
+  <!-- ── Responsive overrides ── -->
+  <style>
+    @media (hover: none) {
+      .cur-h,.cur-v,.cur-plus { display:none !important; }
+      body { cursor:auto !important; }
+    }
+    @media (max-width: 767px) {
+      nav { padding: 18px 24px !important; }
+      .nav-panel-drawer { right: 24px; left: 24px; width: auto; }
+      .proj-hero { grid-template-columns: 1fr !important; min-height: auto !important; padding-top: 62px !important; }
+      .proj-hero-left { padding: 40px 24px 36px !important; justify-content: flex-start !important; gap: 18px !important; }
+      .proj-h1 { font-size: clamp(30px, 9vw, 44px) !important; }
+      .proj-hero-desc { max-width: 100% !important; font-size: 15px !important; }
+      .proj-hero-right { height: 200px !important; min-height: 0 !important; aspect-ratio: unset !important; }
+      .case-wrap { display: flex !important; flex-direction: column !important; }
+      .case-left { position: static !important; height: auto !important; border-right: none !important; border-bottom: 1px solid var(--black-10) !important; }
+      .acc-wrap { padding: 36px 24px 48px !important; }
+      .case-right { padding: 36px 24px 56px !important; }
+      .next-proj { padding: 56px 24px 72px !important; }
+      .next-body { flex-direction: column !important; align-items: flex-start !important; gap: 28px !important; }
+      .next-h2 { font-size: clamp(28px, 9vw, 44px) !important; }
+      .next-arr { width: 44px !important; height: 44px !important; }
+    }
+    @media (min-width: 768px) and (max-width: 1023px) {
+      nav { padding: 20px 32px !important; }
+      .nav-panel-drawer { right: 32px; }
+      .proj-hero-left { padding: 56px 40px !important; }
+      .case-wrap { grid-template-columns: 300px 1fr !important; }
+      .acc-wrap { padding: 40px 32px 80px !important; }
+      .case-right { padding: 48px 40px 64px 40px !important; }
+      .next-proj { padding: 60px 32px 80px !important; }
+    }
+  </style>
+
+  <!-- ─────────────────────────────────────────
+       MOTION SYSTEM — Project Page
+       Spring: cubic-bezier(0.16, 1, 0.3, 1)
+  ───────────────────────────────────────── -->
+  <style>
+    @media (prefers-reduced-motion: reduce) {
+      .proj-hero-img { animation:none !important; opacity:1 !important; transform:none !important; }
+      .gal-img img { transition:none !important; }
+    }
+    @keyframes proj-img-in {
+      from { opacity: 0; transform: scale(1.06); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    .proj-hero-img {
+      opacity: 0;
+      animation-name: proj-img-in;
+      animation-duration: 900ms;
+      animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+      animation-fill-mode: both;
+      animation-delay: 120ms;
+      will-change: transform;
+    }
+    .gal-block[data-fade] { transform: translateY(28px); }
+    .gal-img img {
+      transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1),
+                  filter  600ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @media (hover: hover) {
+      .gal-img:hover img { transform: scale(1.02); filter: brightness(1.04); }
+    }
+  </style>
+
+<!-- I18N — EN/PT-BR. Reads the choice made in index.html's footer switcher
+     (localStorage 'site-lang'); no switcher control on this page itself, but
+     the language still applies. Must run before the Text Reveal script below
+     so split-lines/split-words operate on the already-correct-language text.
+     Duplicated verbatim on every page — see rules.md (no shared JS file). -->
+<script>
+  (function () {
+    var lang = localStorage.getItem('site-lang') || 'en';
+    window.__siteLang = lang;
+    document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+    if (lang === 'pt') {
+      document.querySelectorAll('[data-pt]').forEach(function (el) {
+        el.innerHTML = el.getAttribute('data-pt');
+      });
+      document.querySelectorAll('[data-pt-aria]').forEach(function (el) {
+        el.setAttribute('aria-label', el.getAttribute('data-pt-aria'));
+      });
+    }
+  })();
+</script>
+
+<script>
+  /* ── Crosshair cursor (pointer devices only) ── */
+  const curH=document.getElementById('curH'),curV=document.getElementById('curV');
+  const curPlus=document.getElementById('curPlus');
+  if (window.matchMedia('(pointer: fine)').matches)
+  document.addEventListener('mousemove',e=>{
+    curH.style.top=e.clientY+'px'; curV.style.left=e.clientX+'px';
+    curPlus.style.left=e.clientX+'px'; curPlus.style.top=e.clientY+'px';
+  });
+
+  /* ── Text Reveal ── */
+  document.querySelectorAll('[data-split-lines]').forEach(el=>{
+    const parts=el.innerHTML.split(/<br\s*\/?>/i);
+    el.innerHTML=parts.map((p,i)=>
+      `<span class="reveal-line"><span class="reveal-line-inner" style="--li:${i}">${p.trim()}</span></span>`
+    ).join('');
+  });
+  document.querySelectorAll('[data-split-words]').forEach(el=>{
+    const words=el.innerText.trim().split(/\s+/);
+    el.innerHTML=words.map((w,i)=>
+      `<span class="reveal-word"><span class="reveal-word-inner" style="--wi:${i}">${w}</span></span>`
+    ).join(' ');
+  });
+  const _io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('is-visible'); _io.unobserve(e.target); }});
+  },{threshold:.05,rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('[data-split-lines],[data-split-words],[data-fade]').forEach(el=>_io.observe(el));
+  window.addEventListener('load',()=>setTimeout(()=>{
+    document.querySelectorAll('.proj-hero [data-split-lines],.proj-hero [data-split-words],.proj-hero [data-fade]')
+      .forEach(el=>{ el.classList.add('is-visible'); _io.unobserve(el); });
+  },120));
+
+  /* ── Scroll-driven accordion ── */
+  const accItems = document.querySelectorAll('.acc-item');
+  const caseLeft = document.querySelector('.case-left');
+
+  function openSection(id) {
+    accItems.forEach(item => {
+      item.classList.toggle('is-open', item.dataset.section === id);
+    });
+    const active = document.querySelector(`.acc-item[data-section="${id}"]`);
+    if (active) {
+      const top = active.offsetTop;
+      caseLeft.scrollTo({ top: top - 80, behavior: 'smooth' });
+    }
+  }
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) openSection(e.target.dataset.trigger);
+    });
+  }, { threshold: 0, rootMargin: '-20% 0px -50% 0px' });
+
+  document.querySelectorAll('[data-trigger]').forEach(el => obs.observe(el));
+
+  /* ── Manual click on accordion ── */
+  document.querySelectorAll('.acc-head').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item   = btn.closest('.acc-item');
+      const isOpen = item.classList.contains('is-open');
+      accItems.forEach(i => i.classList.remove('is-open'));
+      if (!isOpen) item.classList.add('is-open');
+    });
+  });
+
+  /* ── Projects side panel ── */
+  const panelBtn=document.getElementById('navProjectsBtn');
+  const panelDrawer=document.getElementById('navPanelDrawer');
+  const panelOverlay=document.getElementById('navPanelOverlay');
+  function openPanel(){panelDrawer.classList.add('is-open');panelOverlay.classList.add('is-open');panelBtn.setAttribute('aria-expanded','true');document.body.style.overflow='hidden';}
+  function closePanel(){panelDrawer.classList.remove('is-open');panelOverlay.classList.remove('is-open');panelBtn.setAttribute('aria-expanded','false');document.body.style.overflow='';}
+  if(panelBtn)panelBtn.addEventListener('click',()=>{panelDrawer.classList.contains('is-open')?closePanel():openPanel();});
+  if(panelOverlay)panelOverlay.addEventListener('click',closePanel);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&panelDrawer.classList.contains('is-open'))closePanel();});
+</script>
+</body>
+</html>

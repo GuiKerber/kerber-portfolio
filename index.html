@@ -1,0 +1,2472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guilherme Kerber · Product Designer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+
+  <style>
+    /* ─────────────────────────────────────────
+       RESET & TOKENS
+    ───────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange:     #FF4D00;
+      --black:      #080808;
+      --off-white:  #EDECEA;
+      --ink:        #111110;
+
+      /* ── White scale (dark surfaces) ── */
+      --white-4:  rgba(255,255,255,0.04);
+      --white-8:  rgba(255,255,255,0.08);
+      --white-16: rgba(255,255,255,0.16);
+      --white-32: rgba(255,255,255,0.32);
+      --white-48: rgba(255,255,255,0.48);
+      --white-56: rgba(255,255,255,0.56);
+
+      /* ── Black scale (light surfaces) ── */
+      --black-4:  rgba(0,0,0,0.04);
+      --black-10: rgba(0,0,0,0.10);
+      --black-18: rgba(0,0,0,0.18);
+      --black-28: rgba(0,0,0,0.28);
+      --black-38: rgba(0,0,0,0.38);
+      --black-52: rgba(0,0,0,0.52);
+      --black-64: rgba(0,0,0,0.64);
+
+      /* ── Orange scale ── */
+      --orange-8:  rgba(255,77,0,0.08);
+      --orange-20: rgba(255,77,0,0.20);
+      --orange-36: rgba(255,77,0,0.36);
+      --orange-52: rgba(255,77,0,0.52);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+      scrollbar-gutter: stable;
+    }
+
+    /* ─────────────────────────────────────────
+       TYPOGRAPHY SYSTEM
+       ─────────────────────────────────────────
+       H1  .hero-title        Syne 400  clamp(44–88px)   Hero section
+       H2  .contact-title     Syne 700  clamp(48–96px)   Contact CTA
+       H3  .section-tagline   Syne 700  clamp(28–44px)   Section titles
+       H4  .project-title     Syne 700  clamp(20–32px)   Card headings
+       H5  .section-label     Inter 500 10px uppercase    Eyebrows / labels
+    ───────────────────────────────────────── */
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--off-white);
+      color: var(--ink);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Noise overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.12;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 256px 256px;
+    }
+
+    /* ─────────────────────────────────────────
+       NAV
+    ───────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 64px;
+      transition: background 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease;
+      border-bottom: 1px solid transparent;
+    }
+
+    nav.scrolled {
+      background: rgba(8,8,8,0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom-color: var(--white-8);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      color: #ffffff;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .nav-logo img {
+      width: 28px;
+      height: 28px;
+      display: block;
+      filter: brightness(0) invert(1); /* always white — nav is on dark bg */
+    }
+
+    /* ── Nav action buttons ── */
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      border-radius: 4px;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: opacity 0.2s ease, transform 0.15s ease;
+      line-height: 1.4;
+    }
+
+    .nav-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    .nav-btn-projects {
+      background: #ffffff;
+      color: #080808;
+    }
+
+    .nav-btn-contact {
+      background: var(--orange);
+      color: #ffffff;
+    }
+
+    /* ── Projects dropdown panel (offmenu style) ── */
+    .nav-panel-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .nav-panel-overlay.is-open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .nav-panel-drawer {
+      position: fixed;
+      top: 68px;
+      right: 64px;
+      width: 360px;
+      background: #ffffff;
+      border-radius: 6px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.04), 0 12px 40px rgba(0,0,0,0.10), 0 1px 2px rgba(0,0,0,0.06);
+      z-index: 301;
+      transform: translateY(-10px) scale(0.97);
+      transform-origin: top right;
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+      overflow: hidden;
+    }
+
+    .nav-panel-drawer.is-open {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+      pointer-events: all;
+    }
+
+
+    .nav-panel-items {
+      padding-top: 6px;
+      padding-bottom: 6px;
+    }
+
+    .nav-panel-item {
+      border-top: 1px solid var(--black-10);
+    }
+
+    .nav-panel-item:first-child { border-top: none; }
+
+    .nav-panel-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      text-decoration: none;
+      gap: 16px;
+      transition: background 0.18s ease;
+    }
+
+    .nav-panel-link:hover { background: rgba(0,0,0,0.025); }
+    .nav-panel-link:hover .nav-panel-title { color: var(--orange); }
+    .nav-panel-link:hover .nav-panel-arrow-icon {
+      background: var(--orange);
+      border-color: var(--orange);
+      transform: translateX(3px);
+    }
+    .nav-panel-link:hover .nav-panel-arrow-icon svg path { stroke: #fff; }
+
+
+
+    .nav-panel-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      transition: color 0.18s;
+    }
+
+    .nav-panel-arrow-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px; height: 26px;
+      border: 1px solid var(--black-18);
+      border-radius: 50%;
+      flex-shrink: 0;
+      transition: background 0.22s, border-color 0.22s, transform 0.22s;
+      color: var(--ink);
+    }
+
+    /* ─────────────────────────────────────────
+       HERO
+    ───────────────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 160px 64px 100px; /* top clears the nav */
+      overflow: hidden;
+      cursor: none;
+    }
+
+    /* Base gradient: rich maroon → vibrant orange → off-white (matches next section) */
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        #0d0400   0%,
+        #250b00  10.2%,
+        #3d1200  20.4%,
+        #6d2100  26.76%,
+        #9e3000  33.11%,
+        #ce3e00  39.47%,
+        #FF4D00  45.82%,
+        #ff580d  48.66%,
+        #ff621a  51.5%,
+        #ff7733  57.19%,
+        #ff9155  64.09%,
+        #ffaa77  70.99%,
+        #ffd4b8  82%,
+        #f0ecea  92%,
+        #EDECEA 100%
+      );
+      z-index: 0;
+    }
+
+    /* Animated gradient embed, layered over the CSS gradient above.
+       pointer-events:none is required — the hero uses a custom crosshair
+       cursor, which an interactive iframe would swallow. */
+    .hero-bg-embed {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      border: 0;
+      pointer-events: none;
+    }
+
+    /* Fall back to the static CSS gradient when motion is not wanted */
+    @media (prefers-reduced-motion: reduce) {
+      .hero-bg-embed { display: none; }
+    }
+
+    /* Subtle noise grain */
+    .hero-grain {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* Decorative grid lines */
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .hero-grid::before,
+    .hero-grid::after {
+      content: '';
+      position: absolute;
+    }
+
+    /* Horizontal rule at 30% */
+    .hero-grid::before {
+      top: 30%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,77,0,0.12) 30%, rgba(255,77,0,0.25) 50%, rgba(255,77,0,0.12) 70%, transparent 100%);
+    }
+
+    /* Vertical rule at 65% */
+    .hero-grid::after {
+      left: 65%;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(180deg, transparent 0%, rgba(255,77,0,0.08) 20%, rgba(255,77,0,0.18) 55%, rgba(0,0,0,0.06) 80%, transparent 100%);
+    }
+
+    /* ── Crosshair cursor ── */
+    .cur-h, .cur-v {
+      position: fixed; pointer-events: none; z-index: 9999;
+    }
+    .cur-h {
+      left: 0; right: 0; height: 1px;
+      background: var(--black-18);
+      transform: translateY(-50%);
+    }
+    .cur-v {
+      top: 0; bottom: 0; width: 1px;
+      background: var(--black-18);
+      transform: translateX(-50%);
+    }
+    .cur-plus {
+      position: fixed; pointer-events: none; z-index: 10000;
+      width: 16px; height: 16px;
+      transform: translate(-50%, -50%);
+    }
+    .cur-plus::before, .cur-plus::after {
+      content: ''; position: absolute; background: #FF4D00;
+    }
+    .cur-plus::before { left: 50%; top: 0; bottom: 0; width: 1px; transform: translateX(-50%); }
+    .cur-plus::after  { top: 50%; left: 0; right: 0; height: 1px; transform: translateY(-50%); }
+
+    /* ── Name hover photo ── */
+    .name-hover {
+      display: inline;
+      position: relative;
+      white-space: nowrap;
+      color: inherit;
+      transition: color 0.25s ease;
+    }
+    .name-hover:hover {
+      color: var(--white-32);
+    }
+    .name-photo {
+      position: fixed;
+      pointer-events: none;
+      z-index: 500;
+      width: 200px;
+      aspect-ratio: 2/3;
+      border-radius: 6px;
+      overflow: hidden;
+      opacity: 0;
+      transform: rotate(-8deg) scale(0.88);
+      transition: opacity .28s ease, transform .35s cubic-bezier(.16,1,.3,1);
+      will-change: left, top, transform;
+    }
+    .name-photo.is-visible {
+      opacity: 1;
+      transform: rotate(-8deg) scale(1);
+    }
+    .name-photo img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      display: block;
+    }
+
+    /* Coordinates decoration */
+    /* Hero body: content left + coords right, top-aligned */
+    .hero-body {
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      width: 100%;
+      /* 260px = .hero's top+bottom padding (160px + 100px) — never exceeds the fold */
+      min-height: calc(100vh - 260px);
+      gap: 48px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .hero-coords {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .hero-coords span {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--white-48);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .hero-coords-line {
+      width: 20px;
+      height: 1px;
+      background: var(--orange-36);
+      margin: 4px 0;
+    }
+
+    /* Spinning circular badge — pinned to the bottom of hero-coords, aligning
+       with hero-sub (pinned to the bottom of hero-content) on the other side. */
+    .hero-badge {
+      position: relative;
+      width: 184px;   /* matches Figma badge frame */
+      height: 184px;
+      margin-top: auto;
+      flex-shrink: 0;
+    }
+
+    .hero-badge-ring {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      animation: heroBadgeSpin 26s linear infinite;
+    }
+
+    @keyframes heroBadgeSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    .hero-badge-text {
+      font-family: 'Inter', sans-serif;
+      font-size: 11.96px;
+      font-weight: 500;
+      letter-spacing: 0.085em;
+      text-transform: uppercase;
+      fill: var(--black-52);
+    }
+
+    /* Canvas box, enlarged from Figma's 61% so the mark reads bigger.
+       No background/box — the glass mark sits directly on the hero gradient. */
+    .hero-badge-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 70%;
+      height: 71%;
+    }
+
+    .hero-badge-center canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Hero content: eyebrow + title pinned top, subtitle pinned to the bottom
+       of the (stretched) hero-body box via margin-top:auto — still inside
+       the fold since hero-body's min-height fits within the 100vh hero. */
+    .hero-content {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .dot-pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--orange);
+      flex-shrink: 0;
+      animation: dotPulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes dotPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.35; transform: scale(0.7); }
+    }
+
+    .hero-eyebrow-text {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--white-48);
+    }
+
+    .hero-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(44px, 6.5vw, 88px);
+      font-weight: 400;
+      line-height: 0.96;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      margin-bottom: 28px;
+    }
+
+    .hero-title .accent { color: #ffffff; }
+
+    .hero-rule {
+      display: flex;
+      align-items: center;
+      margin-top: auto;
+      margin-bottom: 16px;
+    }
+
+    .hero-sub {
+      font-size: 16px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--black-52);
+      max-width: 408px;  /* Figma width — wraps the copy to two lines */
+    }
+
+
+
+
+
+    @keyframes trackAnim {
+      0%   { top: -100%; }
+      100% { top: 200%; }
+    }
+
+    /* ─────────────────────────────────────────
+       SELECTED WORK
+    ───────────────────────────────────────── */
+    .section-work {
+      background: var(--off-white);
+      color: var(--ink);
+      position: relative;
+    }
+
+    .work-header {
+      padding: 64px 64px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 1px solid var(--black-10);
+    }
+
+    .work-header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-label .dot-sm {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--ink);
+      flex-shrink: 0;
+    }
+
+    .section-label span {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+
+    .section-tagline {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(28px, 3.5vw, 44px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      color: var(--ink);
+    }
+
+    .work-count {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--black-38);
+      text-align: right;
+    }
+
+    /* ── Card Stack ── */
+    .project-stack {
+      position: relative;
+    }
+
+    /* Closing rule under the last project card — spans the full page width,
+       edge to edge, unlike the content-width dividers inside the cards. */
+    .project-stack::after {
+      content: '';
+      display: block;
+      height: 1px;
+      background: var(--black-10);
+    }
+
+    .project-card {
+      background: var(--off-white);
+      display: flex;
+      align-items: stretch;
+    }
+
+    /* Cards 2 & 4 have visual before info in DOM — no extra CSS needed */
+
+    /* ── Project Info ── */
+    .project-info {
+      flex: 0 0 50%;
+      width: 50%;
+      padding: 64px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ── Project Industry Stripe ── */
+    .project-stripe {
+      position: absolute;
+      top: 0;
+      display: flex;
+      pointer-events: none;
+    }
+
+    /* Anchor the stripe flush against the edge that meets the project image
+       (right edge on normal cards, left edge on reversed cards) so there is
+       zero gap between the colored stripe and the visual. */
+    .project-card:not(.project-card--reversed) .project-stripe {
+      right: 0;
+      justify-content: flex-end;
+    }
+    .project-card--reversed .project-stripe {
+      left: 0;
+      justify-content: flex-start;
+    }
+
+    .project-stripe-label {
+      display: block;
+      writing-mode: vertical-lr;
+      background: linear-gradient(to bottom, #ff4d00 0%, rgba(237,236,234,0) 100%);
+      padding: 12px 11px 100px 11px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: #ffffff;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .project-top { display: flex; flex-direction: column; gap: 0; }
+
+.project-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(28px, 3.5vw, 44px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      color: var(--ink);
+      margin-bottom: 22px;
+    }
+
+    .project-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .tag {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border: 1px solid var(--black-10);
+      border-radius: 100px;
+      color: var(--black-38);
+    }
+
+
+    .project-desc {
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.68;
+      color: var(--black-52);
+      max-width: 320px;
+    }
+
+    /* ── Project footer ── */
+    .project-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--black-10);
+    }
+
+    /* Row so the year and an optional client tag sit side by side */
+    .project-meta-bottom {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .project-industry {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--black-28);
+    }
+
+    .project-duration {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--black-38);
+    }
+
+    /* Arrow CTA */
+    .project-arrow {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+      cursor: pointer;
+      padding: 10px 0;
+      transition: color 0.2s;
+    }
+
+    .arrow-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--black-18);
+      border-radius: 50%;
+      flex-shrink: 0;
+      transition: background 0.25s, border-color 0.25s, transform 0.25s;
+    }
+
+    .project-arrow:hover .arrow-icon {
+      background: var(--orange);
+      border-color: var(--orange);
+      transform: translateX(4px);
+    }
+
+    .project-arrow:hover .arrow-icon svg path {
+      stroke: #fff;
+    }
+
+    /* CTA button pair — same component as the nav's "My Projects" /
+       "Get in touch" buttons (same size, font, colors), reused in the
+       card footer for projects that have both a case study and a live
+       prototype. */
+    .project-cta-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .project-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      border-radius: 4px;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      line-height: 1.4;
+      text-decoration: none;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: opacity 0.2s ease, transform 0.15s ease;
+    }
+
+    .project-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    .project-btn-primary {
+      background: var(--orange);
+      color: #ffffff;
+    }
+
+    .project-btn-secondary {
+      background: #ffffff;
+      color: #080808;
+    }
+
+    /* ── Project Visual ── */
+    .project-visual {
+      flex: 0 0 50%;
+      width: 50%;
+      aspect-ratio: 4 / 3;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      background: linear-gradient(154.73deg, #ECEAE6 3.67%, #DDDBD6 96.33%);
+    }
+
+    .placeholder-frame {
+      width: 56px;
+      height: 40px;
+      border: 1px solid var(--black-10);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--white-48);
+    }
+
+    .placeholder-label {
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--black-18);
+    }
+
+    /* ─────────────────────────────────────────
+       SCROLLBAR
+    ───────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--orange-36); border-radius: 2px; }
+
+    /* ─────────────────────────────────────────
+       RESPONSIVE
+    ───────────────────────────────────────── */
+
+    /* ── Hide cursor on touch devices ── */
+    @media (hover: none) {
+      .cur-h, .cur-v, .cur-plus,
+      .name-photo { display: none !important; }
+      body  { cursor: auto !important; }
+      .hero { cursor: default !important; }
+    }
+
+    /* ── Nav tablet / mobile ── */
+    @media (min-width: 768px) and (max-width: 1023px) {
+      nav { padding: 16px 32px; }
+      .nav-panel-drawer { right: 32px; }
+    }
+    @media (max-width: 767px) {
+      nav { padding: 16px 24px; }
+      .nav-panel-drawer { right: 24px; left: 24px; width: auto; }
+    }
+    @media (max-width: 1023px) {
+      .nav-btn { font-size: 12px; padding: 7px 14px; gap: 6px; }
+      .nav-btn svg { width: 14px; height: 14px; }
+    }
+
+    /* ── Mobile: < 768px ── */
+    @media (max-width: 767px) {
+
+      /* ─ Global side padding token ─ */
+      :root { --px: 24px; }
+
+      /* ─ Hero ─ */
+      .hero {
+        padding: 110px var(--px) 64px;
+        min-height: 100svh;
+        cursor: default;
+      }
+      /* Allow name to wrap naturally on small screens */
+      .name-hover   { white-space: normal; }
+      .hero-title   { margin-bottom: 16px; }
+      .hero-coords  { display: none; }
+
+      /* ─ Selected Work header: keep side-by-side ─ */
+      .work-header {
+        padding: 48px var(--px) 28px;
+        flex-direction: row;
+        align-items: flex-end;
+      }
+      .work-count { text-align: right; }
+
+      /* ─ Project cards: visual always first ─ */
+      .project-card  { flex-direction: column !important; }
+      .project-info,
+      .project-visual {
+        flex: none !important;
+        width: 100% !important;
+      }
+      .project-visual {
+        aspect-ratio: 4 / 3;  /* same ratio as desktop */
+        order: -1;              /* always render cover before info */
+      }
+      .project-info  { padding: 32px var(--px) 28px; }
+      .project-title { font-size: clamp(28px, 8vw, 40px); }
+      .project-stripe { display: none; }
+
+      /* ─ About ─ */
+      .about-intro    { padding: 48px var(--px); gap: 40px; }
+      .about-headline { font-size: clamp(28px, 8vw, 34px); }
+      .about-workflow { grid-template-columns: 1fr; }
+      .wf-step {
+        padding: 40px var(--px);
+        gap: 40px;
+        border-right: none;
+      }
+
+      /* ─ Contact ─ */
+      .contact-inner  { padding: 64px var(--px) 48px; gap: 36px; }
+      .contact-body   { flex-direction: column; align-items: flex-start; gap: 24px; }
+      .contact-links  { align-items: flex-start; }
+      .contact-social { gap: 20px; }
+      .contact-footer { flex-direction: column; align-items: flex-start; gap: 10px; }
+
+      /* Email copy: static tap button on mobile */
+      .contact-email-wrap { display: flex; flex-direction: column; gap: 0; }
+      .email-copy-btn {
+        position: static !important;
+        transform: none !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        margin-top: 20px;
+        align-self: flex-start;
+        font-size: 13px;
+        padding: 12px 20px;
+      }
+    }
+
+    /* ── Tablet mid (768–1023) ── */
+    @media (min-width: 768px) and (max-width: 1023px) {
+      :root { --px: 32px; }
+      .hero          { padding: 140px var(--px) 80px; }
+      .work-header   { padding: 48px var(--px) 28px; }
+      .project-info  { padding: 48px var(--px); }
+      .project-title { font-size: clamp(28px, 5vw, 40px); }
+      .about-intro    { padding: 80px var(--px); }
+      .about-headline { font-size: 34px; }
+      .wf-step        { padding: 40px 32px; gap: 48px; }
+      .contact-inner  { padding: 80px var(--px) 48px; }
+      .contact-body   { flex-direction: column; align-items: flex-start; gap: 28px; }
+      .contact-links  { align-items: flex-start; }
+    }
+  </style>
+
+  <!-- ── OTHER COOL PROJECTS section styles ── -->
+  <style>
+    .section-more-projects {
+      background: var(--off-white);
+      border-bottom: 1px solid var(--black-10);
+    }
+    /* No border-bottom here — it would span the full section width. The first
+       .mp-row's border-top already draws this divider inset to content width. */
+    .mp-header {
+      padding: 64px 64px 40px;
+    }
+    .mp-categories { display: flex; flex-direction: column; padding: 0 64px; }
+
+    .mp-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 40px;
+      padding: 18px 0;
+      border-top: 1px solid var(--black-10);
+    }
+    .mp-category {
+      flex: 1 0 0;
+      min-width: 0;
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(28px, 3.5vw, 44px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      color: var(--ink);
+    }
+    .mp-list { flex: 1 0 0; min-width: 0; display: flex; flex-direction: column; }
+
+    .mp-project {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 18px 0;
+      border-top: 1px solid var(--black-10);
+    }
+    .mp-list .mp-project:first-child { border-top: none; padding-top: 0; }
+    .mp-project-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: default;
+    }
+    .mp-project-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--ink);
+      transition: color 0.2s ease;
+    }
+    .mp-project-top:hover .mp-project-title { color: var(--orange); }
+
+    /* Right-hand meta: optional client tag, then the year */
+    .mp-project-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .mp-project-year,
+    .mp-project-client {
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      color: var(--black-38);
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .mp-project-client { text-transform: uppercase; }
+    .mp-project-desc {
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.68;
+      color: var(--black-38);
+    }
+
+    /* Floating hover preview — 3 images cycling fast, infinite, while hovering the title */
+    .mp-preview {
+      position: absolute;
+      top: 50%;
+      right: 40px;
+      width: 220px;
+      height: 165px;
+      border-radius: 4px;
+      overflow: hidden;
+      transform: translateY(-50%) rotate(-7deg);
+      box-shadow: 0 24px 48px rgba(0,0,0,0.28);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 20;
+    }
+    .mp-project:has(.mp-project-title:hover) .mp-preview { opacity: 1; }
+    .mp-preview img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      opacity: 0;
+      animation: mp-cycle 600ms steps(1, end) infinite;
+    }
+    .mp-preview img:nth-child(1) { animation-delay: 0ms; }
+    .mp-preview img:nth-child(2) { animation-delay: -400ms; }
+    .mp-preview img:nth-child(3) { animation-delay: -200ms; }
+    @keyframes mp-cycle {
+      0%     { opacity: 1; }
+      33.32% { opacity: 1; }
+      33.33% { opacity: 0; }
+      100%   { opacity: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .mp-preview img { animation: none !important; opacity: 1 !important; }
+    }
+
+    @media (max-width: 767px) {
+      .mp-header { padding: 48px var(--px) 24px; }
+      .mp-categories { padding: 0 var(--px); }
+      .mp-row { flex-direction: column; gap: 4px; }
+      .mp-category { font-size: clamp(28px, 8vw, 36px); }
+      .mp-preview { display: none; } /* no hover on touch */
+    }
+    @media (min-width: 768px) and (max-width: 1023px) {
+      .mp-header { padding: 56px 32px 32px; }
+      .mp-categories { padding: 0 32px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom cursor -->
+  <div class="cur-h"      id="curH"></div>
+  <div class="cur-v"      id="curV"></div>
+  <div class="cur-plus"   id="curPlus"></div>
+  <div class="name-photo" id="namePhoto">
+    <img src="assets/photo-guilherme.png" alt="Guilherme Kerber">
+  </div>
+
+  <!-- ── NAV ── -->
+  <nav id="mainNav">
+    <a class="nav-logo" href="#home" aria-label="Guilherme Kerber — Home" data-pt-aria="Guilherme Kerber — Início">
+      <img src="assets/logo.svg" alt="GK logo" width="28" height="28">
+    </a>
+    <div class="nav-actions">
+      <button class="nav-btn nav-btn-projects" id="navProjectsBtn" aria-expanded="false" aria-controls="navPanelDrawer">
+        <span data-pt="Meus Projetos">My Projects</span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <line x1="2.5" y1="4.5" x2="13.5" y2="4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="2.5" y1="8" x2="13.5" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="2.5" y1="11.5" x2="13.5" y2="11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <a class="nav-btn nav-btn-contact" href="#contact">
+        <span data-pt="Entre em contato">Get in touch</span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M13.5 2.5L1.5 6.5L6.5 8.5M13.5 2.5L10 13.5L6.5 8.5M13.5 2.5L6.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+  </nav>
+
+  <!-- ── PROJECTS SIDE PANEL ── -->
+  <div class="nav-panel-overlay" id="navPanelOverlay" aria-hidden="true"></div>
+  <div class="nav-panel-drawer" id="navPanelDrawer" role="dialog" aria-label="Projects" aria-modal="true">
+    <div class="nav-panel-items">
+      <div class="nav-panel-item">
+        <a class="nav-panel-link" href="project-5.html">
+          <span class="nav-panel-title" data-pt="Projetando uma Recepção com IA para Fotógrafos">Designing an AI Front Desk for Photographers</span>
+          <div class="nav-panel-arrow-icon">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </a>
+      </div>
+      <div class="nav-panel-item">
+        <a class="nav-panel-link" href="project-2.html">
+          <span class="nav-panel-title" data-pt="Levando um Marketplace de Staking a uma Carteira Multi-Chain">Introducing a Staking Marketplace to a Multi-Chain Wallet</span>
+          <div class="nav-panel-arrow-icon">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </a>
+      </div>
+      <div class="nav-panel-item">
+        <a class="nav-panel-link" href="project-1.html">
+          <span class="nav-panel-title" data-pt="Projetando uma Experiência de Coaching Multiplataforma">Designing a Cross-Platform Coaching Experience</span>
+          <div class="nav-panel-arrow-icon">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── HERO ── -->
+  <section class="hero" id="home">
+    <!-- EXPERIMENT: animated ColorFlow gradient. The original CSS gradient is
+         kept on .hero-bg underneath and shows if this fails to load or if the
+         viewer prefers reduced motion. To revert, delete the iframe only. -->
+    <div class="hero-bg">
+      <iframe class="hero-bg-embed"
+              src="https://colorflow-embed.b-cdn.net/embed.html#e=xes2wxYX"
+              title="Decorative animated gradient"
+              aria-hidden="true" tabindex="-1"
+              frameborder="0" scrolling="no" loading="eager"></iframe>
+    </div>
+    <div class="hero-grain"></div>
+    <div class="hero-grid"></div>
+
+    <!-- Main copy + decorative coords in a row -->
+    <div class="hero-body">
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span class="dot-pulse"></span>
+        <span class="hero-eyebrow-text" data-pt="Aberto a trabalho · 2026">Open to Work · 2026</span>
+      </div>
+
+      <h1 class="hero-title">
+        <span class="hl" data-pt="Sou o <span class=&quot;name-hover&quot;>Guilherme Kerber</span>,">I'm <span class="name-hover">Guilherme Kerber</span>,</span>
+        <span class="hl" data-pt="um <span class=&quot;accent&quot;>Product Designer Sênior</span>">a <span class="accent">Senior Product Designer</span></span>
+        <span class="hl" data-pt="criando experiências digitais">crafting digital experiences</span>
+        <span class="hl" data-pt="do Brasil para o mundo.">from Brazil for the world.</span>
+      </h1>
+
+      <div class="hero-rule">
+        <span class="hero-sub" data-pt="Projetando experiências cuidadosas que equilibram objetivos de negócio, necessidades do usuário e precisão visual.">Designing thoughtful experiences that balance business goals, user needs, and visual precision.</span>
+      </div>
+    </div>
+
+    <!-- Decorative coordinates -->
+    <div class="hero-coords">
+      <span>23.5505° S</span>
+      <div class="hero-coords-line"></div>
+      <span>46.6333° W</span>
+      <div class="hero-coords-line"></div>
+      <span>Porto Alegre · BR</span>
+
+      <!-- Spinning circular badge + live 3D glass logomark, aligned with hero-sub -->
+      <div class="hero-badge" aria-hidden="true">
+        <svg class="hero-badge-ring" viewBox="0 0 184 184">
+          <defs>
+            <path id="heroBadgeCircle" d="M92,92 m-82,0 a82,82 0 1,1 164,0 a82,82 0 1,1 -164,0" />
+          </defs>
+          <text class="hero-badge-text">
+            <textPath href="#heroBadgeCircle" startOffset="0%" data-pt="CONSTRUÍDO COM CLAUDE CODE E FIGMA * CONSTRUÍDO COM CLAUDE CODE E FIGMA * ">BUILT WITH CLAUDE CODE &amp; FIGMA * BUILT WITH CLAUDE CODE &amp; FIGMA * </textPath>
+          </text>
+        </svg>
+        <div class="hero-badge-center">
+          <canvas id="glassLogoCanvas"></canvas>
+        </div>
+      </div>
+    </div>
+
+    </div><!-- /.hero-body -->
+
+  </section>
+
+  <!-- ── SELECTED WORK ── -->
+  <section class="section-work" id="work">
+
+    <div class="work-header">
+      <div class="work-header-left">
+        <div class="section-label">
+          <span class="dot-sm"></span>
+          <span data-pt="O Que Eu Já Lancei">What I've Shipped</span>
+        </div>
+        <h2 class="section-tagline" data-pt="Trabalhos Selecionados">Selected Work</h2>
+      </div>
+      <!-- Removed per updated design — project count/date range no longer shown next to the title.
+      <div class="work-count">
+        <span data-pt="04 projetos">04 projects</span><br>
+        <span style="color:var(--black-18); font-size:9px;">2022–2026</span>
+      </div>
+      -->
+    </div>
+
+    <div class="project-stack">
+
+      <!-- ── Card 01 ── -->
+      <div class="project-card" id="project-5">
+        <div class="project-info">
+          <div class="project-stripe"><span class="project-stripe-label" data-pt="01 · Inteligência Artificial">01 · Artificial Intelligence</span></div>
+          <div class="project-top">
+            <h3 class="project-title" data-pt="Projetando uma<br>Recepção com IA<br>para Fotógrafos">Designing an AI<br>Front Desk for<br>Photographers</h3>
+            <div class="project-tags">
+              <span class="tag" data-pt="Agente de IA">AI Agent</span>
+              <span class="tag" data-pt="Automação">Automation</span>
+              <span class="tag">SaaS</span>
+            </div>
+            <p class="project-desc" data-pt="Um agente de IA que lê as mensagens recebidas, responde e negocia no tom de voz e na tabela de preços do próprio fotógrafo, e agenda sessões confirmadas direto no calendário — assim o fotógrafo gasta menos tempo com tarefas administrativas e mais tempo fotografando.">
+              An AI agent that reads inbound inquiries, replies and negotiates in the photographer's own tone and rate card, and books confirmed sessions straight onto the calendar, so the photographers spend less time on admin and more time shooting.
+            </p>
+          </div>
+          <div class="project-footer">
+            <div class="project-meta-bottom">
+              <span class="project-duration">[ 2026 ]</span>
+            </div>
+            <div class="project-cta-group">
+              <!-- Secondary "View Prototype" button removed per updated design — primary orange button only.
+              <a class="project-btn project-btn-secondary" href="AI/aperture/dist/index.html" target="_blank" rel="noopener" data-pt="Ver Protótipo">View Prototype</a>
+              -->
+              <a class="project-btn project-btn-primary" href="project-5.html" data-pt="Ver Projeto">View Project</a>
+            </div>
+          </div>
+        </div>
+        <div class="project-visual">
+          <img src="assets/project-5/aperture-cover.png" alt="Aperture AI agent dashboard cover" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block;border-radius:inherit;" loading="lazy" draggable="false">
+        </div>
+      </div>
+
+      <!-- ── Card 02 ── -->
+      <div class="project-card project-card--reversed" id="project-2">
+        <div class="project-visual">
+          <img src="assets/project-2/fintech%20cover.png" alt="Staking marketplace in a crypto wallet" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block;border-radius:inherit;" loading="lazy" draggable="false">
+        </div>
+        <div class="project-info">
+          <div class="project-stripe"><span class="project-stripe-label">02 · Fintech</span></div>
+          <div class="project-top">
+            <h3 class="project-title" data-pt="Levando um Marketplace de Staking<br>a uma Carteira Multi-Chain">Introducing a Staking Marketplace<br>to a Multi-Chain Wallet</h3>
+            <div class="project-tags">
+              <span class="tag">Product Design</span>
+              <span class="tag">Crypto</span>
+              <span class="tag">Fintech</span>
+              <span class="tag">iOS</span>
+            </div>
+            <p class="project-desc" data-pt="Um mercado de lances para stake delegado, integrado a uma carteira cripto multi-chain. Delegadores publicam o que possuem e operadores de nó fazem lances com termos de comissão.">
+              A bid market for delegated stake, built into a multi-chain crypto wallet. Delegators post what they hold and node operators bid commission terms against it.
+            </p>
+          </div>
+          <div class="project-footer">
+            <div class="project-meta-bottom">
+              <span class="project-duration">[ 2025 ]</span>
+            </div>
+            <a class="project-btn project-btn-primary" href="project-2.html" data-pt="Ver Projeto">View Project</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Card 03 ── -->
+      <div class="project-card" id="project-1">
+        <div class="project-info">
+          <div class="project-stripe"><span class="project-stripe-label" data-pt="03 · Fitness &amp; Saúde">03 · Fitness &amp; Health</span></div>
+          <div class="project-top">
+            <h3 class="project-title" data-pt="Projetando uma<br>Experiência de Coaching<br>Multiplataforma">Designing a<br>Cross-Platform<br>Coaching Experience</h3>
+            <div class="project-tags">
+              <span class="tag">Product Design</span>
+              <span class="tag">Mobile</span>
+              <span class="tag">Desktop</span>
+            </div>
+            <p class="project-desc" data-pt="Redesign de desktop + MVP mobile para uma plataforma de coaching fitness remoto, conectando treinadores e alunos quando sessões presenciais deixaram de ser possíveis.">
+              Desktop redesign + mobile MVP for a remote fitness coaching platform, connecting trainers and students when in-person sessions were no longer possible.
+            </p>
+          </div>
+          <div class="project-footer">
+            <div class="project-meta-bottom">
+              <span class="project-duration">[ 2020–2021 ]</span>
+              <span class="project-duration" data-pt="[ PARA KONCEPTED ]">[ FOR KONCEPTED ]</span>
+            </div>
+            <a class="project-btn project-btn-primary" href="project-1.html" data-pt="Ver Projeto">View Project</a>
+          </div>
+        </div>
+        <div class="project-visual">
+          <img src="assets/project-1/project1-cover.png" alt="Fitness coaching platform cover" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block;border-radius:inherit;" loading="lazy" draggable="false">
+        </div>
+      </div>
+
+    </div><!-- /project-stack -->
+  </section>
+
+  <!-- ── OTHER COOL PROJECTS ── -->
+  <section class="section-more-projects" id="more-projects">
+    <div class="mp-header">
+      <div class="section-label">
+        <span class="dot-sm"></span>
+        <span data-pt="Outros Projetos Legais">Other Cool Projects</span>
+      </div>
+    </div>
+
+    <div class="mp-categories">
+
+      <!-- Web3 -->
+      <div class="mp-row">
+        <h3 class="mp-category" data-pt="Em Web3">In Web3</h3>
+        <div class="mp-list">
+
+          <div class="mp-project">
+            <div class="mp-project-top">
+              <span class="mp-project-title" data-pt="Mercado de crédito para carteira multi-chain Cardano">Credit market for multi-chain Cardano wallet</span>
+              <span class="mp-project-meta"><span class="mp-project-year">[ 2025 ]</span></span>
+            </div>
+            <p class="mp-project-desc" data-pt="Criando uma nova experiência de mercado de crédito em uma carteira cripto conhecida.">Creating a new credit market experience on a well known crypto wallet.</p>
+            <div class="mp-preview" aria-hidden="true">
+              <img src="assets/NDA.png" alt="" loading="lazy" draggable="false">
+              <img src="assets/NDA.png" alt="" loading="lazy" draggable="false">
+              <img src="assets/NDA.png" alt="" loading="lazy" draggable="false">
+            </div>
+          </div>
+
+          <div class="mp-project">
+            <div class="mp-project-top">
+              <span class="mp-project-title" data-pt="Plataforma de negociação orderbook">Orderbook trading platform</span>
+              <span class="mp-project-meta"><span class="mp-project-year">[ 2025 ]</span></span>
+            </div>
+            <p class="mp-project-desc" data-pt="Criando uma nova experiência de orderbook para traders em uma carteira cripto conhecida.">Creating a new orderbook experience for traders on a well known crypto wallet.</p>
+            <div class="mp-preview" aria-hidden="true">
+              <img src="assets/NDA.png" alt="" loading="lazy" draggable="false">
+              <img src="assets/NDA.png" alt="" loading="lazy" draggable="false">
+              <img src="assets/NDA.png" alt="" loading="lazy" draggable="false">
+            </div>
+          </div>
+
+          <div class="mp-project">
+            <div class="mp-project-top">
+              <span class="mp-project-title" data-pt="Rebranding web3 da Koncepted">Koncepted web3 rebrand</span>
+              <span class="mp-project-meta"><span class="mp-project-client" data-pt="[ PARA KONCEPTED ]">[ FOR KONCEPTED ]</span><span class="mp-project-year">[ 2022 ]</span></span>
+            </div>
+            <p class="mp-project-desc" data-pt="Ajudando a Koncepted a se reposicionar como um estúdio de design especializado em web3.">Helping Koncepted rebrand themself to a design studio specialized in web3.</p>
+            <div class="mp-preview" aria-hidden="true">
+              <img src="assets/Koncepted1.png" alt="" loading="lazy" draggable="false">
+              <img src="assets/Koncepted2.png" alt="" loading="lazy" draggable="false">
+              <img src="assets/Koncepted3.png" alt="" loading="lazy" draggable="false">
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Gaming -->
+      <div class="mp-row">
+        <h3 class="mp-category" data-pt="Em Gaming">In Gaming</h3>
+        <div class="mp-list">
+
+          <div class="mp-project">
+            <div class="mp-project-top">
+              <span class="mp-project-title" data-pt="Agentes Forum.AI para NPCs de jogos">Forum.AI agents for gaming NPCs</span>
+              <span class="mp-project-meta"><span class="mp-project-client" data-pt="[ PARA KONCEPTED ]">[ FOR KONCEPTED ]</span><span class="mp-project-year">[ 2025 ]</span></span>
+            </div>
+            <p class="mp-project-desc" data-pt="Landing page e MVP de produto para uma ferramenta agêntica que cria NPCs inteligentes para jogos.">Landing page and product MVP to an agentic tool that creates smart NPCs for games.</p>
+            <div class="mp-preview" aria-hidden="true">
+              <img src="assets/forumai1.png" alt="" loading="lazy" draggable="false">
+              <img src="assets/forumai2.png" alt="" loading="lazy" draggable="false">
+              <img src="assets/forumai3.png" alt="" loading="lazy" draggable="false">
+            </div>
+          </div>
+
+          <div class="mp-project">
+            <div class="mp-project-top">
+              <span class="mp-project-title" data-pt="Plataforma de treinamento Novus">Novus training platform</span>
+              <span class="mp-project-meta"><span class="mp-project-client" data-pt="[ PARA KONCEPTED ]">[ FOR KONCEPTED ]</span><span class="mp-project-year">[ 2020 ]</span></span>
+            </div>
+            <p class="mp-project-desc" data-pt="Uma plataforma de treinamento para jogadores de Fortnite, ajudando-os a evoluir suas habilidades.">A training platform for Fortnite gamers, making players level up their skills.</p>
+            <div class="mp-preview" aria-hidden="true">
+              <img src="assets/novos1.png" alt="" loading="lazy" draggable="false">
+              <img src="assets/novos2.png" alt="" loading="lazy" draggable="false">
+              <img src="assets/novos3.png" alt="" loading="lazy" draggable="false">
+            </div>
+          </div>
+
+          <div class="mp-project">
+            <div class="mp-project-top">
+              <span class="mp-project-title" data-pt="Plataforma de torneios Gamercraft">Gamercraft tournament platform</span>
+              <span class="mp-project-meta"><span class="mp-project-client" data-pt="[ PARA KONCEPTED ]">[ FOR KONCEPTED ]</span><span class="mp-project-year">[ 2019 ]</span></span>
+            </div>
+            <p class="mp-project-desc" data-pt="Plataformas de torneios de League of Legends com controle de toxicidade e torneios personalizados.">League of Legends tournament platforms with player toxicity control and custom tournaments.</p>
+            <div class="mp-preview" aria-hidden="true">
+              <img src="assets/gamercraft1.png" alt="" loading="lazy" draggable="false">
+              <img src="assets/gamercraft2.png" alt="" loading="lazy" draggable="false">
+              <img src="assets/gamercraft3.png" alt="" loading="lazy" draggable="false">
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- SaaS -->
+      <div class="mp-row">
+        <h3 class="mp-category">In SaaS</h3>
+        <div class="mp-list">
+
+          <div class="mp-project">
+            <div class="mp-project-top">
+              <span class="mp-project-title" data-pt="Blog e canal de redes sociais da 46graus">Blog and Social media channel for 46graus</span>
+              <span class="mp-project-meta"><span class="mp-project-year">[ 2018 ]</span></span>
+            </div>
+            <p class="mp-project-desc" data-pt="Nova funcionalidade conectada ao construtor de sites da 46graus que permite aos fotógrafos compartilhar todo o seu conteúdo social.">New feature connected to 46graus website builder that allow photographers to share all their social content.</p>
+            <div class="mp-preview" aria-hidden="true">
+              <img src="assets/46blog1.png" alt="" loading="lazy" draggable="false">
+              <img src="assets/46blog2.png" alt="" loading="lazy" draggable="false">
+              <img src="assets/46blog3.png" alt="" loading="lazy" draggable="false">
+            </div>
+          </div>
+
+          <div class="mp-project">
+            <div class="mp-project-top">
+              <span class="mp-project-title" data-pt="Plataforma de loja própria da 46graus">In-house store platform for 46graus</span>
+              <span class="mp-project-meta"><span class="mp-project-year">[ 2017 ]</span></span>
+            </div>
+            <p class="mp-project-desc" data-pt="Nova funcionalidade conectada ao construtor de sites da 46graus que permite aos fotógrafos vender seus serviços e produtos.">New feature connected to 46graus website builder that allow photographers to sell their services and goods.</p>
+            <div class="mp-preview" aria-hidden="true">
+              <img src="assets/46store1.png" alt="" loading="lazy" draggable="false">
+              <img src="assets/46store2.png" alt="" loading="lazy" draggable="false">
+              <img src="assets/46store3.png" alt="" loading="lazy" draggable="false">
+            </div>
+          </div>
+
+          <div class="mp-project">
+            <div class="mp-project-top">
+              <span class="mp-project-title" data-pt="App mobile de tarefas para iOS e Android">Mobile to-do app for iOS and Android</span>
+              <span class="mp-project-meta"><span class="mp-project-client" data-pt="[ PARA KONCEPTED ]">[ FOR KONCEPTED ]</span><span class="mp-project-year">[ 2024 ]</span></span>
+            </div>
+            <p class="mp-project-desc" data-pt="Tornando as tarefas do seu dia a dia mais divertidas e recompensadoras.">Making tasks fun and rewarding for your day-to-day life tasks.</p>
+            <div class="mp-preview" aria-hidden="true">
+              <img src="assets/todo1.png" alt="" loading="lazy" draggable="false">
+              <img src="assets/todo2.png" alt="" loading="lazy" draggable="false">
+              <img src="assets/todo3.png" alt="" loading="lazy" draggable="false">
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── ABOUT ── -->
+  <section class="section-about" id="about">
+
+    <!-- Intro: eyebrow + headline + body copy -->
+    <div class="about-intro">
+
+      <div class="about-head">
+        <div class="section-label">
+          <span class="dot-sm" style="background: var(--ink);"></span>
+          <span class="about-eyebrow" data-pt="SOBRE MIM">ABOUT ME</span>
+        </div>
+
+        <h2 class="about-headline" data-pt="Product Designer Sênior com mais de 15 anos de experiência criando produtos digitais complexos em Fintech, SaaS, IA e Games.">
+          Senior Product Designer with 15+ years of experience designing complex digital products across Fintech, SaaS, AI, and Gaming.
+        </h2>
+      </div>
+
+    </div>
+
+    <!-- Workflow — three numbered steps, each with its diagram -->
+    <div class="about-workflow">
+
+      <article class="wf-step">
+        <div class="wf-text">
+          <div class="wf-header">
+            <h3 class="wf-title" data-pt="Estratégia de Produto<br>&amp; Estrutura de UX">Product Strategy<br>&amp; UX Structure</h3>
+            <span class="wf-num">[ 01 ]</span>
+          </div>
+          <p class="wf-desc" data-pt="Antes de começar qualquer projeto, gosto de fazer entrevistas com stakeholders para entender melhor os objetivos e necessidades do negócio e dos usuários. Depois disso, defino a estrutura geral e os requisitos mínimos do produto para viabilizar o projeto. Só então sigo para a próxima etapa.">
+            Before starting any project, I like to jump on stakeholders interview to better understand the business and user goals and needs. After that, I like to define overall structure and minimal product requirements to make the project viable. Only then I proceed to the next step.
+          </p>
+        </div>
+        <div class="wf-figure">
+          <img src="assets/about/workflow-01.svg" alt="" loading="lazy" draggable="false">
+        </div>
+      </article>
+
+      <article class="wf-step">
+        <div class="wf-text">
+          <div class="wf-header">
+            <h3 class="wf-title" data-pt="Design de Interface<br>&amp; Protótipo vibe coded">Product Interface Design<br>&amp; Vibe coded prototype</h3>
+            <span class="wf-num">[ 02 ]</span>
+          </div>
+          <p class="wf-desc" data-pt="Tenho pulado toda a etapa de wireframes de baixa fidelidade e começado direto no Figma e no Claude Code para explorar designs. Enquanto o Claude Code trabalha no meu prompt, começo com um frame em branco no Figma para colocar meu cérebro para trabalhar e julgar qual resultado é melhor.">
+            I have been skipping the whole low-fidelity wireframes and start right away with Figma and Claude Code to explore designs. While Claude code is working on my prompt, I continue to start with a blank frame in Figma to put my brain to work and judge which result is better.
+          </p>
+        </div>
+        <div class="wf-figure">
+          <img src="assets/about/workflow-02.svg" alt="" loading="lazy" draggable="false">
+        </div>
+      </article>
+
+      <article class="wf-step">
+        <div class="wf-text">
+          <div class="wf-header">
+            <h3 class="wf-title" data-pt="Design System<br>&amp; Handoff do Projeto">Design system<br>&amp; Project Handoff</h3>
+            <span class="wf-num">[ 03 ]</span>
+          </div>
+          <p class="wf-desc" data-pt="Por fim, entrego um design system completo com variáveis no Figma e também em um arquivo HTML conectado ao protótipo final do Claude Code. Ambos os arquivos podem servir como fonte da verdade do design, e devem ser mantidos atualizados nos dois sentidos.">
+            At last, I deliver a full design system and variables in Figma and also in an HTML file connected to the Claude Code final prototype. Both files can act as the true source of design, and they should be kept updated both ways.
+          </p>
+        </div>
+        <div class="wf-figure">
+          <img src="assets/about/workflow-03.svg" alt="" loading="lazy" draggable="false">
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ── CONTACT ── -->
+  <section class="section-contact" id="contact">
+
+    <div class="contact-inner">
+
+      <div class="contact-top">
+        <div class="section-label" style="margin-bottom: 24px;">
+          <span class="dot-sm" style="background: var(--white-48);"></span>
+          <span style="color: var(--white-48); letter-spacing: 0.14em; font-size: 10px; font-weight: 500; text-transform: uppercase;" data-pt="CONTATO">CONTACT</span>
+        </div>
+        <h2 class="contact-title">
+          <span class="ct-line-wrap"><span class="ct-line" data-pt="Fale comigo em">Say hello at</span></span>
+          <span class="ct-email-line"><span class="contact-email-wrap" id="contactEmailWrap">
+            <span class="contact-email-text">guilherme@kerber.co</span>
+            <button class="email-copy-btn" id="emailCopyBtn" aria-label="Copy email address" data-pt-aria="Copiar endereço de email" data-pt="Copiar Email">
+              Copy Email
+            </button>
+          </span></span>
+        </h2>
+      </div>
+
+      <div class="contact-body">
+        <p class="contact-desc" data-pt="Aberto a projetos freelance, posições full-time e colaborações criativas. Se você tem um problema de produto que precisa de atenção, vamos conversar.">
+          Open to freelance projects, full-time positions, and creative collaborations. If you have a product problem that needs attention, let's talk.
+        </p>
+
+        <div class="contact-links">
+          <div class="contact-social">
+            <a class="social-link" href="https://www.linkedin.com/in/guilherme-kerber-6854b6289/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+            <a class="social-link" href="https://dribbble.com/kerber" target="_blank" rel="noopener noreferrer">Dribbble ↗</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer strip -->
+      <div class="contact-footer">
+        <span class="footer-copy">© 2026 GUILHERME KERBER</span>
+        <a class="back-top" href="#home" data-pt="VOLTAR AO TOPO ↑">BACK TO TOP ↑</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────
+       STYLES: About + Contact
+  ───────────────────────────────────────── -->
+  <style>
+    /* ── ABOUT ── */
+    .section-about {
+      background: var(--off-white);
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Intro block — padded; the workflow row below is full-bleed */
+    .about-intro {
+      display: flex;
+      flex-direction: column;
+      gap: 80px;
+      padding: 100px 64px;
+    }
+
+    .about-head {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .about-eyebrow {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+
+    .about-headline {
+      font-family: 'Syne', sans-serif;
+      font-size: 44px;
+      font-weight: 700;
+      line-height: 1.1;          /* 48.4px at 44px */
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      max-width: 1050px;         /* Figma heading width */
+      text-wrap: balance;
+    }
+
+    /* Body copy sits in the first of three columns, per Figma */
+
+    /* Both paragraphs stack inside column 1 — in Figma they are one text block
+       separated by a blank line, not two side-by-side columns. */
+
+
+    /* ── Workflow — 3 full-bleed columns ── */
+    .about-workflow {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .wf-step {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 80px;
+      padding: 64px;
+      min-width: 0;
+      overflow: hidden;
+      border-top: 1px solid var(--black-10);
+      border-right: 1px solid var(--black-10);
+    }
+
+    /* Figma draws a right border on all three, but on the last column that
+       line lands flush against the viewport edge and reads as an artifact. */
+    .wf-step:last-child { border-right: none; }
+
+    .wf-text {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .wf-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .wf-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 1.2;
+      color: var(--ink);
+    }
+
+    .wf-num {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      color: var(--black-38);
+      flex-shrink: 0;
+    }
+
+    .wf-desc {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.68;
+      color: var(--black-52);
+    }
+
+    .wf-figure {
+      align-self: center;
+      width: 320px;
+      max-width: 100%;
+    }
+
+    .wf-figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+
+    /* ── CONTACT ── */
+    .section-contact {
+      background: var(--black);
+      color: #ffffff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Background accent line */
+    .section-contact::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 48px; right: 48px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,77,0,0.3) 30%, rgba(255,77,0,0.6) 50%, rgba(255,77,0,0.3) 70%, transparent);
+    }
+
+    .contact-inner {
+      position: relative;
+      z-index: 1;
+      padding: 100px 64px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 64px;
+    }
+
+    .contact-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(48px, 7vw, 96px);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1;
+      color: #ffffff;
+    }
+
+    /* Email hover wrapper — inline so it wraps with the text */
+    .contact-email-wrap {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .contact-email-text {
+      display: inline;
+      color: #ffffff;
+      transition: color 0.25s ease;
+    }
+
+    .contact-email-wrap:hover .contact-email-text {
+      color: var(--white-32);
+    }
+
+    /* Copy button — follows cursor, fades in on email hover */
+    .email-copy-btn {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform: translate(-50%, -50%) scale(0.9);
+      background: var(--orange);
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      padding: 16px 24px;
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      line-height: 1.4;
+      white-space: nowrap;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.25s cubic-bezier(.16,1,.3,1);
+      min-width: 120px;
+      text-align: center;
+    }
+
+    .contact-email-wrap:hover .email-copy-btn {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+      pointer-events: auto;
+    }
+
+    .contact-body {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 48px;
+    }
+
+    .contact-desc {
+      font-size: 16px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--white-56);
+      max-width: 440px;
+    }
+
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .contact-social {
+      display: flex;
+      gap: 24px;
+    }
+
+    .social-link {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--white-48);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .social-link:hover { color: #ffffff; }
+
+    /* Footer strip */
+    .contact-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 0;
+      border-top: 1px solid var(--white-8);
+    }
+
+    .footer-copy {
+      flex: 1 0 0;
+      min-width: 0;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--white-32);
+    }
+
+    .back-top {
+      flex: 1 0 0;
+      min-width: 0;
+      text-align: right;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--white-32);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .back-top:hover { color: #ffffff; }
+
+    /* ── Language switcher (footer) ── */
+    .lang-switch {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+    }
+    .lang-switch-sep { color: var(--white-16); }
+    .lang-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      font: inherit;
+      letter-spacing: inherit;
+      text-transform: uppercase;
+      color: var(--white-32);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .lang-btn:hover { color: #ffffff; }
+    .lang-btn.is-active { color: #ffffff; pointer-events: none; }
+  </style>
+  <!-- ─────────────────────────────────────────
+       I18N — EN/PT-BR switch. Persists via localStorage('site-lang'); every
+       translatable node carries its PT string in data-pt (innerHTML swap,
+       so nested tags like <br>/<span> survive). Duplicated verbatim across
+       every page (see rules.md — no shared JS file in this static site) so
+       the language choice made in this footer's switcher still applies on
+       project pages that don't render a switcher themselves.
+  ───────────────────────────────────────── -->
+  <script>
+    (function () {
+      var lang = localStorage.getItem('site-lang') || 'en';
+      window.__siteLang = lang;
+      document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+
+      if (lang === 'pt') {
+        document.querySelectorAll('[data-pt]').forEach(function (el) {
+          el.innerHTML = el.getAttribute('data-pt');
+        });
+        document.querySelectorAll('[data-pt-suffix]').forEach(function (el) {
+          el.setAttribute('data-suffix', el.getAttribute('data-pt-suffix'));
+        });
+        document.querySelectorAll('[data-pt-aria]').forEach(function (el) {
+          el.setAttribute('aria-label', el.getAttribute('data-pt-aria'));
+        });
+        document.querySelectorAll('[data-pt-alt]').forEach(function (el) {
+          el.setAttribute('alt', el.getAttribute('data-pt-alt'));
+        });
+      }
+
+      document.querySelectorAll('.lang-btn').forEach(function (btn) {
+        if (btn.getAttribute('data-lang') === lang) btn.classList.add('is-active');
+        btn.addEventListener('click', function () {
+          var target = btn.getAttribute('data-lang');
+          if (target === lang) return;
+          localStorage.setItem('site-lang', target);
+          location.reload();
+        });
+      });
+    })();
+  </script>
+
+  <!-- ─────────────────────────────────────────
+       SCRIPTS
+  ───────────────────────────────────────── -->
+  <script>
+    // ── Pointer detection: coarse = touch, fine = mouse
+    const isPointer = window.matchMedia('(pointer: fine)').matches;
+
+    // ── Crosshair cursor (pointer only)
+    if (isPointer) {
+      const curH      = document.getElementById('curH');
+      const curV      = document.getElementById('curV');
+      const curPlus   = document.getElementById('curPlus');
+
+      document.addEventListener('mousemove', e => {
+        const mx = e.clientX, my = e.clientY;
+        curH.style.top        = my + 'px';
+        curV.style.left       = mx + 'px';
+        curPlus.style.left    = mx + 'px';
+        curPlus.style.top     = my + 'px';
+      });
+    }
+
+    // ── Nav: toggle .scrolled class based on scroll position
+    const mainNav = document.getElementById('mainNav');
+    window.addEventListener('scroll', () => {
+      mainNav.classList.toggle('scrolled', window.scrollY > 120);
+    }, { passive: true });
+
+    // ── Projects side panel
+    const panelBtn     = document.getElementById('navProjectsBtn');
+    const panelDrawer  = document.getElementById('navPanelDrawer');
+    const panelOverlay = document.getElementById('navPanelOverlay');
+    const panelClose   = document.getElementById('navPanelClose');
+
+    function openPanel() {
+      panelDrawer.classList.add('is-open');
+      panelOverlay.classList.add('is-open');
+      panelBtn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePanel() {
+      panelDrawer.classList.remove('is-open');
+      panelOverlay.classList.remove('is-open');
+      panelBtn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    if (panelBtn) {
+      panelBtn.addEventListener('click', () => {
+        panelDrawer.classList.contains('is-open') ? closePanel() : openPanel();
+      });
+    }
+    if (panelClose)   panelClose.addEventListener('click', closePanel);
+    if (panelOverlay) panelOverlay.addEventListener('click', closePanel);
+
+    // Close on Escape key
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && panelDrawer.classList.contains('is-open')) closePanel();
+    });
+
+    // ── Name hover photo (pointer only)
+    if (isPointer) (function() {
+      const nameEl  = document.querySelector('.name-hover');
+      const photoEl = document.getElementById('namePhoto');
+      if (!nameEl || !photoEl) return;
+
+      let px = 0, py = 0, tx = 0, ty = 0, raf = null, active = false;
+      function lerp(a, b, t) { return a + (b - a) * t; }
+      function trackFrame() {
+        px = lerp(px, tx, 0.13); py = lerp(py, ty, 0.13);
+        photoEl.style.left = px + 'px'; photoEl.style.top = py + 'px';
+        if (active) raf = requestAnimationFrame(trackFrame);
+      }
+      nameEl.addEventListener('mouseenter', e => {
+        active = true; tx = e.clientX + 28; ty = e.clientY - 210;
+        px = tx; py = ty;
+        photoEl.style.left = px + 'px'; photoEl.style.top = py + 'px';
+        photoEl.classList.add('is-visible');
+        raf = requestAnimationFrame(trackFrame);
+      });
+      nameEl.addEventListener('mousemove', e => { tx = e.clientX + 28; ty = e.clientY - 210; });
+      nameEl.addEventListener('mouseleave', () => {
+        active = false; cancelAnimationFrame(raf);
+        photoEl.classList.remove('is-visible');
+      });
+    })();
+
+    // ── Project cards: click anywhere navigates to project page
+    document.querySelectorAll('.project-card').forEach(card => {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', e => {
+        if (e.target.closest('a')) return; // let inner links handle themselves
+        const link = card.querySelector('.project-btn-primary');
+        if (link && link.href) window.location.href = link.href;
+      });
+    });
+
+    // ── Email copy button ─────────────────────────────────────────────
+    const emailCopyBtn  = document.getElementById('emailCopyBtn');
+    const emailWrap     = document.getElementById('contactEmailWrap');
+    if (emailCopyBtn && emailWrap) {
+      // Follow cursor inside the email wrap (pointer only)
+      if (isPointer) {
+        emailWrap.addEventListener('mousemove', e => {
+          const rect = emailWrap.getBoundingClientRect();
+          emailCopyBtn.style.left = (e.clientX - rect.left)  + 'px';
+          emailCopyBtn.style.top  = (e.clientY - rect.top)   + 'px';
+        });
+      }
+
+      let resetTimer = null;
+      emailCopyBtn.addEventListener('click', e => {
+        e.preventDefault();
+        navigator.clipboard.writeText('guilherme@kerber.co').catch(() => {
+          const ta = document.createElement('textarea');
+          ta.value = 'guilherme@kerber.co';
+          ta.style.cssText = 'position:fixed;opacity:0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        });
+        // Lock width, swap text
+        emailCopyBtn.style.minWidth = emailCopyBtn.offsetWidth + 'px';
+        const isPt = window.__siteLang === 'pt';
+        emailCopyBtn.textContent = isPt ? 'Copiado' : 'Copied';
+        clearTimeout(resetTimer);
+        resetTimer = setTimeout(() => {
+          emailCopyBtn.textContent = isPt ? 'Copiar Email' : 'Copy Email';
+          emailCopyBtn.style.minWidth = '';
+        }, 2500);
+      });
+    }
+
+  </script>
+
+  <!-- ─────────────────────────────────────────
+       RESPONSIVE OVERRIDES — must come last to
+       win over all earlier style blocks
+  ───────────────────────────────────────── -->
+  <style>
+    @media (max-width: 767px) {
+
+      /* ── Hero ── */
+      .hero { padding: 110px 24px 64px; overflow-x: hidden; }
+      .hero-title {
+        font-size: clamp(32px, 9vw, 42px);
+        margin-bottom: 16px;
+        word-break: break-word;
+      }
+      .name-hover  { white-space: normal; }
+      .hero-body   { min-height: 0; }
+      .hero-rule   { gap: 10px; margin-top: 32px; }
+      .hero-sub    { font-size: 14px; }
+      .hero-coords { display: none; }
+
+      /* ── Work header: side-by-side, no overflow ── */
+      .work-header {
+        padding: 48px 24px 28px;
+        flex-direction: row;
+        align-items: flex-end;
+        gap: 12px;
+      }
+      .work-header-left { flex: 1; min-width: 0; }
+      .work-count {
+        flex-shrink: 0;
+        text-align: right;
+        font-size: 9px;
+      }
+
+      /* ── Project cards: cover always on top ── */
+      .project-card  { flex-direction: column !important; }
+      .project-info,
+      .project-visual { flex: none !important; width: 100% !important; }
+      .project-visual { aspect-ratio: 4 / 3; order: -1; }
+      .project-info   { padding: 32px 24px 28px; }
+      .project-stripe { display: none; }
+      .project-desc   { max-width: 100%; }
+
+      /* ── About ── */
+      .about-intro    { padding: 48px 24px !important; gap: 40px !important; }
+      .about-headline { font-size: clamp(28px, 8vw, 34px) !important; }
+      .about-workflow { grid-template-columns: 1fr !important; }
+      .wf-step {
+        padding: 40px 24px !important;
+        gap: 40px !important;
+        border-right: none !important;
+      }
+
+      /* ── Contact ── */
+      .contact-title {
+        font-size: clamp(32px, 9vw, 48px) !important;
+        word-break: break-word !important;
+      }
+      .contact-email-wrap { white-space: normal !important; }
+      .contact-inner {
+        padding: 64px 24px 48px !important;
+        gap: 36px !important;
+      }
+      .contact-body {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 24px !important;
+      }
+      .contact-links  { align-items: flex-start !important; }
+      .contact-social { gap: 20px !important; }
+      .contact-footer {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+      }
+
+      /* Email copy: static tap button ── */
+      .contact-email-wrap { display: flex !important; flex-direction: column !important; }
+      .email-copy-btn {
+        position: static !important;
+        transform: none !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        margin-top: 20px;
+        align-self: flex-start;
+        font-size: 13px;
+        padding: 12px 20px;
+      }
+    }
+
+    @media (min-width: 768px) and (max-width: 1023px) {
+      .about-intro    { padding: 80px 32px !important; }
+      .about-headline { font-size: 34px !important; }
+      .wf-step        { padding: 40px 32px !important; gap: 48px !important; }
+      .contact-inner  { padding: 80px 32px 48px !important; }
+      .contact-body   { flex-direction: column !important; align-items: flex-start !important; gap: 28px !important; }
+      .contact-links  { align-items: flex-start !important; }
+    }
+  </style>
+
+  <!-- ─────────────────────────────────────────
+       MOTION SYSTEM
+       Spring: cubic-bezier(0.16, 1, 0.3, 1)
+  ───────────────────────────────────────── -->
+  <style>
+
+    /* ── Reduced-motion: immediately show all animated elements ── */
+    @media (prefers-reduced-motion: reduce) {
+      .nav-logo, .nav-btn-projects, .nav-btn-contact,
+      .hero-eyebrow, .hero-title .hl, .hero-rule {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+      }
+      .will-reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+      .ct-line        { transform: none !important; transition: none !important; }
+      .ct-email-line  { opacity: 1 !important; transform: none !important; transition: none !important; }
+      .dot-pulse      { animation-duration: 0.01ms !important; }
+    }
+
+    /* ── Keyframes ── */
+    @keyframes m-fade-up {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes m-fade-down {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ────────────────────────────────
+       NAV entrance (on load)
+    ──────────────────────────────── */
+    .nav-logo {
+      opacity: 0;
+      animation-name: m-fade-down;
+      animation-duration: 400ms;
+      animation-timing-function: ease-out;
+      animation-fill-mode: both;
+      animation-delay: 80ms;
+    }
+    .nav-btn-projects {
+      opacity: 0;
+      animation-name: m-fade-down;
+      animation-duration: 400ms;
+      animation-timing-function: ease-out;
+      animation-fill-mode: both;
+      animation-delay: 180ms;
+    }
+    .nav-btn-contact {
+      opacity: 0;
+      animation-name: m-fade-down;
+      animation-duration: 400ms;
+      animation-timing-function: ease-out;
+      animation-fill-mode: both;
+      animation-delay: 250ms;
+    }
+
+    /* ────────────────────────────────
+       HERO entrance (on load, stagger per line)
+    ──────────────────────────────── */
+    .hero-eyebrow {
+      opacity: 0;
+      animation-name: m-fade-up;
+      animation-duration: 600ms;
+      animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+      animation-fill-mode: both;
+      animation-delay: 150ms;
+    }
+    .hero-title .hl {
+      display: block;
+      opacity: 0;
+      animation-name: m-fade-up;
+      animation-duration: 600ms;
+      animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+      animation-fill-mode: both;
+    }
+    .hero-title .hl:nth-child(1) { animation-delay: 220ms; }
+    .hero-title .hl:nth-child(2) { animation-delay: 300ms; }
+    .hero-title .hl:nth-child(3) { animation-delay: 380ms; }
+    .hero-title .hl:nth-child(4) { animation-delay: 460ms; }
+    .hero-rule {
+      opacity: 0;
+      animation-name: m-fade-up;
+      animation-duration: 600ms;
+      animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+      animation-fill-mode: both;
+      animation-delay: 540ms;
+    }
+
+    /* ────────────────────────────────
+       SCROLL REVEAL utility
+    ──────────────────────────────── */
+    .will-reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition:
+        opacity  600ms cubic-bezier(0.16, 1, 0.3, 1),
+        transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .will-reveal.is-revealed {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ────────────────────────────────
+       PROJECT CARD cover — hover parallax
+    ──────────────────────────────── */
+    .project-visual img {
+      transition: transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .project-card:hover .project-visual img {
+      transform: scale(1.04) translateY(-4px);
+    }
+
+    /* ────────────────────────────────
+       CONTACT title — curtain reveal
+    ──────────────────────────────── */
+    .ct-line-wrap {
+      display: block;
+      overflow: hidden;
+      padding-bottom: 0.06em;
+      margin-bottom: -0.06em;
+    }
+    .ct-line {
+      display: block;
+      transform: translateY(108%);
+      transition: transform 800ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .ct-email-line {
+      display: block;
+      opacity: 0;
+      transform: translateY(18px);
+      transition:
+        opacity   700ms ease-out 200ms,
+        transform 700ms cubic-bezier(0.16, 1, 0.3, 1) 200ms;
+    }
+    .section-contact.ct-in-view .ct-line      { transform: translateY(0); }
+    .section-contact.ct-in-view .ct-email-line { opacity: 1; transform: none; }
+
+  </style>
+
+  <script>
+    // ── MOTION: scroll reveals ─────────────────────────────────────────
+    (function () {
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /**
+       * Attach IntersectionObserver reveal to a set of elements.
+       * @param {string} selector
+       * @param {{ stagger?: number, threshold?: number }} opts
+       */
+      function initReveal(selector, { stagger = 0, threshold = 0.12 } = {}) {
+        const els = document.querySelectorAll(selector);
+        if (!els.length) return;
+
+        // Reduced-motion: elements are already visible via CSS override
+        if (prefersReduced) return;
+
+        els.forEach((el, i) => {
+          el.classList.add('will-reveal');
+          if (stagger) el.style.transitionDelay = (i * stagger) + 'ms';
+        });
+
+        const obs = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('is-revealed');
+            obs.unobserve(entry.target);
+          });
+        }, { threshold });
+
+        els.forEach(el => obs.observe(el));
+      }
+
+      // ── Selected Work ──────────────────────────────────────────────
+      initReveal('.work-header',  { threshold: 0.25 });
+      initReveal('.project-card', { stagger: 100, threshold: 0.08 });
+
+      // ── About ──────────────────────────────────────────────────────
+      initReveal('.about-head', { threshold: 0.2 });
+      initReveal('.wf-step',    { stagger: 90, threshold: 0.1 });
+
+      // ── Contact: curtain trigger on section entry ──────────────────
+      const contactSection = document.querySelector('.section-contact');
+      if (contactSection) {
+        if (prefersReduced) {
+          contactSection.classList.add('ct-in-view');
+        } else {
+          const ctObs = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+              if (!entry.isIntersecting) return;
+              contactSection.classList.add('ct-in-view');
+              ctObs.unobserve(entry.target);
+            });
+          }, { threshold: 0.2 });
+          ctObs.observe(contactSection);
+        }
+      }
+
+      // ── Contact body elements ──────────────────────────────────────
+      initReveal('.contact-desc',  { threshold: 0.2 });
+      initReveal('.contact-links', { threshold: 0.2 });
+      // Secondary stagger: links come in slightly after desc
+      const contactLinks = document.querySelector('.contact-links');
+      if (contactLinks && !prefersReduced) contactLinks.style.transitionDelay = '80ms';
+
+    })();
+  </script>
+
+  <!-- Live 3D glass logomark in the hero badge.
+       Deliberately a CLASSIC script, not type="module": ES module imports are
+       blocked by CORS when the page is opened straight from disk (file://),
+       which left the badge empty. A classic <script src> loads either way.
+       Injected on demand — the badge is hidden below 768px, so mobile never
+       pays for the Three.js bundle or a WebGL context. -->
+  <script>
+    (function () {
+      var canvas = document.getElementById('glassLogoCanvas');
+      if (!canvas || canvas.offsetParent === null) return;
+      var s = document.createElement('script');
+      s.src = 'assets/vendor/glass-logo.js';
+      s.onload = function () {
+        if (window.__mountGlassLogo) window.__mountGlassLogo(canvas);
+        else console.error('[glass-logo] bundle loaded but no mount function');
+      };
+      s.onerror = function () { console.error('[glass-logo] failed to load bundle'); };
+      document.body.appendChild(s);
+    })();
+  </script>
+
+</body>
+</html>
