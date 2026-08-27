@@ -274,24 +274,17 @@
     .hero-bg {
       position: absolute;
       inset: 0;
-      background: linear-gradient(
-        180deg,
-        #0d0400   0%,
-        #250b00  10.2%,
-        #3d1200  20.4%,
-        #6d2100  26.76%,
-        #9e3000  33.11%,
-        #ce3e00  39.47%,
-        #FF4D00  45.82%,
-        #ff580d  48.66%,
-        #ff621a  51.5%,
-        #ff7733  57.19%,
-        #ff9155  64.09%,
-        #ffaa77  70.99%,
-        #ffd4b8  82%,
-        #f0ecea  92%,
-        #EDECEA 100%
-      );
+      background:
+        /* Layered to approximate the animated ColorFlow scene so the static
+           fallback stays close to the real hero instead of collapsing to flat
+           bands. Shown when the embed cannot render: reduced motion, no WebGL,
+           or the CDN blocked. Topmost layer first. */
+        linear-gradient(180deg, #0d0400 0%, rgba(24,7,0,0.85) 9%, rgba(45,14,0,0.28) 19%, rgba(45,14,0,0) 30%),
+        radial-gradient(95% 44% at 62% 102%, rgba(237,236,234,0.98) 0%, rgba(237,236,234,0.5) 42%, rgba(237,236,234,0) 78%),
+        radial-gradient(58% 48% at 106% 72%, rgba(237,236,234,0.95) 0%, rgba(240,231,224,0.4) 42%, rgba(237,236,234,0) 76%),
+        radial-gradient(48% 40% at 38% 58%, #ff7a35 0%, #ff5a0f 48%, rgba(255,77,0,0) 85%),
+        radial-gradient(78% 66% at 36% 50%, rgba(255,105,25,0.88) 0%, rgba(200,60,0,0.4) 52%, rgba(150,40,0,0) 86%),
+        linear-gradient(180deg, #0d0400 0%, #240a00 11%, #431500 22%, #7d2a00 32%, #c24000 42%, #ff5a12 52%, #ff8b57 63%, #ffbb95 73%, #ffe0cc 82%, #EDECEA 92%, #EDECEA 100%);
       z-index: 0;
     }
 
@@ -2214,24 +2207,12 @@
       /* Gradient resolves to off-white by ~70% — about 100px below the
          headline, carrying the orange further down the screen. */
       .hero-bg {
-        background: linear-gradient(
-          180deg,
-          #0d0400  0%,
-          #250b00  7.13%,
-          #3d1200  14.29%,
-          #6d2100  18.74%,
-          #9e3000  23.18%,
-          #ce3e00  27.64%,
-          #FF4D00  32.08%,
-          #ff580d  34.06%,
-          #ff621a  36.06%,
-          #ff7733  40.04%,
-          #ff9155  44.87%,
-          #ffaa77  49.7%,
-          #ffd4b8  57.41%,
-          #f0ecea  64.41%,
-          #EDECEA  70%
-        );
+        background:
+          linear-gradient(180deg, #0d0400 0%, rgba(24,7,0,0.85) 6%, rgba(45,14,0,0.25) 14%, rgba(45,14,0,0) 24%),
+          radial-gradient(140% 30% at 50% 80%, rgba(237,236,234,0.98) 0%, rgba(237,236,234,0.5) 46%, rgba(237,236,234,0) 82%),
+          radial-gradient(100% 20% at 48% 42%, #ff7f3c 0%, #ff5a0f 52%, rgba(255,77,0,0) 88%),
+          radial-gradient(145% 32% at 46% 36%, rgba(255,105,25,0.88) 0%, rgba(200,60,0,0.38) 56%, rgba(150,40,0,0) 90%),
+          linear-gradient(180deg, #0d0400 0%, #240a00 8%, #431500 15.4%, #7d2a00 22.4%, #c24000 29.4%, #ff5a12 36.4%, #ff8b57 44.1%, #ffbb95 51.1%, #ffe0cc 57.4%, #EDECEA 64.4%, #EDECEA 70%, #EDECEA 100%);
       }
       /* Animated embed ends with the headline. The mask fades its bottom edge
          into the CSS gradient — cutting it dead would leave a hard colour seam. */
