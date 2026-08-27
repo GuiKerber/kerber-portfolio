@@ -274,7 +274,9 @@
     .hero-bg {
       position: absolute;
       inset: 0;
-      background:
+      /* Fallback stack, held in a custom property so the conditional
+         rules below can layer the exact scene render on top of it. */
+      --hero-fallback:
         /* Layered to approximate the animated ColorFlow scene so the static
            fallback stays close to the real hero instead of collapsing to flat
            bands. Shown when the embed cannot render: reduced motion, no WebGL,
@@ -285,6 +287,9 @@
         radial-gradient(48% 40% at 38% 58%, #ff7a35 0%, #ff5a0f 48%, rgba(255,77,0,0) 85%),
         radial-gradient(78% 66% at 36% 50%, rgba(255,105,25,0.88) 0%, rgba(200,60,0,0.4) 52%, rgba(150,40,0,0) 86%),
         linear-gradient(180deg, #0d0400 0%, #240a00 11%, #431500 22%, #7d2a00 32%, #c24000 42%, #ff5a12 52%, #ff8b57 63%, #ffbb95 73%, #ffe0cc 82%, #EDECEA 92%, #EDECEA 100%);
+      background-image: var(--hero-fallback);
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
       z-index: 0;
     }
 
@@ -304,6 +309,16 @@
     /* Fall back to the static CSS gradient when motion is not wanted */
     @media (prefers-reduced-motion: reduce) {
       .hero-bg-embed { display: none; }
+    }
+
+    /* Exact render of the ColorFlow scene, generated from its own scene
+       data. Layered over the CSS stack only when the animated embed cannot
+       run, so visitors who do get the animation never download it. */
+    @media (prefers-reduced-motion: reduce) {
+      .hero-bg { background-image: url("assets/hero-gradient.png"), var(--hero-fallback); }
+    }
+    html.no-embed .hero-bg {
+      background-image: url("assets/hero-gradient.png"), var(--hero-fallback);
     }
 
     /* Subtle noise grain */
@@ -1028,6 +1043,17 @@
       .contact-body   { flex-direction: column; align-items: flex-start; gap: 28px; }
       .contact-links  { align-items: flex-start; }
     }
+  
+    /* Mobile counterpart of the scene render: portrait crop, gradient ending
+       at 70% like the mobile rule above. */
+    /* html prefix is load-bearing: the mobile .hero-bg rule lives in a later
+       <style> block, so an equal-specificity selector here would lose to it. */
+    @media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+      html .hero-bg { background-image: url("assets/hero-gradient-mobile.png"), var(--hero-fallback); }
+    }
+    @media (max-width: 767px) {
+      html.no-embed .hero-bg { background-image: url("assets/hero-gradient-mobile.png"), var(--hero-fallback); }
+    }
   </style>
 
   <!-- ── OTHER COOL PROJECTS section styles ── -->
@@ -1163,6 +1189,30 @@
       .mp-categories { padding: 0 32px; }
     }
   </style>
+
+  <script>
+    /* The hero layers a WebGL gradient embed over a CSS fallback. When the embed
+       cannot run, swap in an exact PNG render of the same scene.
+       Testing WebGL in the parent is a valid proxy - the iframe shares this
+       browser. The timeout covers a blocked CDN, where a cross-origin frame
+       gives us no usable error event. Reduced motion is handled in CSS. */
+    (function () {
+      var doc = document.documentElement;
+      var ok = false;
+      try {
+        var cv = document.createElement('canvas');
+        ok = !!(cv.getContext('webgl2') || cv.getContext('webgl'));
+      } catch (e) { ok = false; }
+      if (!ok) { doc.classList.add('no-embed'); return; }
+      document.addEventListener('DOMContentLoaded', function () {
+        var fr = document.querySelector('.hero-bg-embed');
+        if (!fr) return;
+        var loaded = false;
+        fr.addEventListener('load', function () { loaded = true; });
+        setTimeout(function () { if (!loaded) doc.classList.add('no-embed'); }, 3000);
+      });
+    })();
+  </script>
 </head>
 <body>
 
@@ -2207,12 +2257,13 @@
       /* Gradient resolves to off-white by ~70% — about 100px below the
          headline, carrying the orange further down the screen. */
       .hero-bg {
-        background:
+        --hero-fallback:
           linear-gradient(180deg, #0d0400 0%, rgba(24,7,0,0.85) 6%, rgba(45,14,0,0.25) 14%, rgba(45,14,0,0) 24%),
           radial-gradient(140% 30% at 50% 80%, rgba(237,236,234,0.98) 0%, rgba(237,236,234,0.5) 46%, rgba(237,236,234,0) 82%),
           radial-gradient(100% 20% at 48% 42%, #ff7f3c 0%, #ff5a0f 52%, rgba(255,77,0,0) 88%),
           radial-gradient(145% 32% at 46% 36%, rgba(255,105,25,0.88) 0%, rgba(200,60,0,0.38) 56%, rgba(150,40,0,0) 90%),
           linear-gradient(180deg, #0d0400 0%, #240a00 8%, #431500 15.4%, #7d2a00 22.4%, #c24000 29.4%, #ff5a12 36.4%, #ff8b57 44.1%, #ffbb95 51.1%, #ffe0cc 57.4%, #EDECEA 64.4%, #EDECEA 70%, #EDECEA 100%);
+        background-image: var(--hero-fallback);
       }
       /* Animated embed ends with the headline. The mask fades its bottom edge
          into the CSS gradient — cutting it dead would leave a hard colour seam. */
