@@ -4,6 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Guilherme Kerber · Product Designer</title>
+  <meta name="description" content="Senior Product Designer with 15+ years crafting digital products that balance clarity, strategy, and visual quality. Based in Brazil, working worldwide.">
+  <link rel="canonical" href="https://guikerber.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://guikerber.com/">
+  <meta property="og:title" content="Guilherme Kerber · Product Designer">
+  <meta property="og:description" content="Senior Product Designer with 15+ years crafting digital products that balance clarity, strategy, and visual quality.">
+  <meta property="og:image" content="https://guikerber.com/assets/photo-guilherme.png">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
@@ -347,30 +355,56 @@
       background: linear-gradient(180deg, transparent 0%, rgba(255,77,0,0.08) 20%, rgba(255,77,0,0.18) 55%, rgba(0,0,0,0.06) 80%, transparent 100%);
     }
 
-    /* ── Crosshair cursor ── */
-    .cur-h, .cur-v {
-      position: fixed; pointer-events: none; z-index: 9999;
-    }
-    .cur-h {
-      left: 0; right: 0; height: 1px;
-      background: var(--black-18);
-      transform: translateY(-50%);
-    }
-    .cur-v {
-      top: 0; bottom: 0; width: 1px;
-      background: var(--black-18);
-      transform: translateX(-50%);
-    }
-    .cur-plus {
-      position: fixed; pointer-events: none; z-index: 10000;
-      width: 16px; height: 16px;
+    /* ── Follow cursor ──
+       A white disc using mix-blend-mode:difference, so it inverts whatever is
+       under it and stays visible on both the dark hero and the off-white body.
+       Over anything clickable it grows into an orange arrow puck, matching the
+       circle-arrow buttons. Pointer devices only. */
+    .cursor {
+      position: fixed; top: 0; left: 0;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: #fff;
+      mix-blend-mode: difference;
+      pointer-events: none;
+      z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
       transform: translate(-50%, -50%);
+      opacity: 0;
+      transition: width .3s ease, height .3s ease, background .3s ease, opacity .25s ease;
     }
-    .cur-plus::before, .cur-plus::after {
+    .cursor.is-visible { opacity: 1; }
+
+    .cursor-ico {
+      position: absolute;
+      color: #fff;
+      opacity: 0;
+      transform: scale(.4);
+      transition: opacity .2s ease, transform .3s cubic-bezier(.16,1,.3,1);
+      display: flex;
+    }
+
+    /* Expanded states — solid orange puck, blend off. is-copy sits over the
+       email (which no longer needs its own button), is-copied is the
+       confirmation flash after the address is on the clipboard. */
+    .cursor.is-link,
+    .cursor.is-copy,
+    .cursor.is-copied {
+      width: 56px; height: 56px;
+      background: var(--orange);
+      mix-blend-mode: normal;
+    }
+    .cursor.is-link   .cursor-arrow { opacity: 1; transform: scale(1); }
+    .cursor.is-copy   .cursor-copy  { opacity: 1; transform: scale(1); }
+    .cursor.is-copied .cursor-check { opacity: 1; transform: scale(1); }
+    .cursor.is-copied .cursor-copy  { opacity: 0; }
+
+    /* Native cursor hidden only where a pointer exists */
+    @media (pointer: fine) {
+      body, a, button, .project-card { cursor: none; }
+    }
       content: ''; position: absolute; background: #FF4D00;
     }
-    .cur-plus::before { left: 50%; top: 0; bottom: 0; width: 1px; transform: translateX(-50%); }
-    .cur-plus::after  { top: 50%; left: 0; right: 0; height: 1px; transform: translateY(-50%); }
 
     /* ── Name hover photo ── */
     .name-hover {
@@ -903,7 +937,7 @@
 
     /* ── Hide cursor on touch devices ── */
     @media (hover: none) {
-      .cur-h, .cur-v, .cur-plus,
+      .cursor,
       .name-photo { display: none !important; }
       body  { cursor: auto !important; }
       .hero { cursor: default !important; }
@@ -985,16 +1019,6 @@
 
       /* Email copy: static tap button on mobile */
       .contact-email-wrap { display: flex; flex-direction: column; gap: 0; }
-      .email-copy-btn {
-        position: static !important;
-        transform: none !important;
-        opacity: 1 !important;
-        pointer-events: auto !important;
-        margin-top: 20px;
-        align-self: flex-start;
-        font-size: 13px;
-        padding: 12px 20px;
-      }
     }
 
     /* ── Tablet mid (768–1023) ── */
@@ -1150,9 +1174,17 @@
 <body>
 
   <!-- Custom cursor -->
-  <div class="cur-h"      id="curH"></div>
-  <div class="cur-v"      id="curV"></div>
-  <div class="cur-plus"   id="curPlus"></div>
+  <div class="cursor" id="cursor" aria-hidden="true">
+    <span class="cursor-ico cursor-arrow">
+      <svg width="18" height="18" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+    <span class="cursor-ico cursor-copy">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><rect x="5.6" y="5.6" width="7.8" height="7.8" rx="1.6" stroke="currentColor" stroke-width="1.3"/><path d="M10.4 5.6V4A1.5 1.5 0 0 0 8.9 2.5H4A1.5 1.5 0 0 0 2.5 4v4.9A1.5 1.5 0 0 0 4 10.4h1.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+    </span>
+    <span class="cursor-ico cursor-check">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M3.6 8.4l2.9 2.9L12.4 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+  </div>
   <div class="name-photo" id="namePhoto">
     <img src="assets/photo-guilherme.png" alt="Guilherme Kerber">
   </div>
@@ -1185,7 +1217,7 @@
   <div class="nav-panel-drawer" id="navPanelDrawer" role="dialog" aria-label="Projects" aria-modal="true">
     <div class="nav-panel-items">
       <div class="nav-panel-item">
-        <a class="nav-panel-link" href="project-5.html">
+        <a class="nav-panel-link" href="ai-front-desk/">
           <span class="nav-panel-title" data-pt="Projetando uma Recepção com IA para Fotógrafos">Designing an AI Front Desk for Photographers</span>
           <div class="nav-panel-arrow-icon">
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1193,7 +1225,7 @@
         </a>
       </div>
       <div class="nav-panel-item">
-        <a class="nav-panel-link" href="project-2.html">
+        <a class="nav-panel-link" href="staking-marketplace/">
           <span class="nav-panel-title" data-pt="Levando um Marketplace de Staking a uma Carteira Multi-Chain">Introducing a Staking Marketplace to a Multi-Chain Wallet</span>
           <div class="nav-panel-arrow-icon">
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1201,7 +1233,7 @@
         </a>
       </div>
       <div class="nav-panel-item">
-        <a class="nav-panel-link" href="project-1.html">
+        <a class="nav-panel-link" href="cross-platform-coaching/">
           <span class="nav-panel-title" data-pt="Projetando uma Experiência de Coaching Multiplataforma">Designing a Cross-Platform Coaching Experience</span>
           <div class="nav-panel-arrow-icon">
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1238,7 +1270,7 @@
         <span class="hl" data-pt="Sou o <span class=&quot;name-hover&quot;>Guilherme Kerber</span>,">I'm <span class="name-hover">Guilherme Kerber</span>,</span>
         <span class="hl" data-pt="um <span class=&quot;accent&quot;>Product Designer Sênior</span>">a <span class="accent">Senior Product Designer</span></span>
         <span class="hl" data-pt="criando experiências digitais">crafting digital experiences</span>
-        <span class="hl" data-pt="do Brasil para o mundo.">from Brazil for the world.</span>
+        <span class="hl" data-pt="do Brasil para o mundo.">from Brazil to the world.</span>
       </h1>
 
       <div class="hero-rule">
@@ -1318,7 +1350,7 @@
               <!-- Secondary "View Prototype" button removed per updated design — primary orange button only.
               <a class="project-btn project-btn-secondary" href="AI/aperture/dist/index.html" target="_blank" rel="noopener" data-pt="Ver Protótipo">View Prototype</a>
               -->
-              <a class="project-btn project-btn-primary" href="project-5.html" data-pt="Ver Projeto">View Project</a>
+              <a class="project-btn project-btn-primary" href="ai-front-desk/" data-pt="Ver Projeto">View Project</a>
             </div>
           </div>
         </div>
@@ -1352,7 +1384,7 @@
             <div class="project-meta-bottom">
               <span class="project-duration">[ 2025 ]</span>
             </div>
-            <a class="project-btn project-btn-primary" href="project-2.html" data-pt="Ver Projeto">View Project</a>
+            <a class="project-btn project-btn-primary" href="staking-marketplace/" data-pt="Ver Projeto">View Project</a>
           </div>
         </div>
       </div>
@@ -1377,7 +1409,7 @@
               <span class="project-duration">[ 2020–2021 ]</span>
               <span class="project-duration" data-pt="[ PARA KONCEPTED ]">[ FOR KONCEPTED ]</span>
             </div>
-            <a class="project-btn project-btn-primary" href="project-1.html" data-pt="Ver Projeto">View Project</a>
+            <a class="project-btn project-btn-primary" href="cross-platform-coaching/" data-pt="Ver Projeto">View Project</a>
           </div>
         </div>
         <div class="project-visual">
@@ -1627,9 +1659,6 @@
           <span class="ct-line-wrap"><span class="ct-line" data-pt="Fale comigo em">Say hello at</span></span>
           <span class="ct-email-line"><span class="contact-email-wrap" id="contactEmailWrap">
             <span class="contact-email-text">contact@guikerber.com</span>
-            <button class="email-copy-btn" id="emailCopyBtn" aria-label="Copy email address" data-pt-aria="Copiar endereço de email" data-pt="Copiar Email">
-              Copy Email
-            </button>
           </span></span>
         </h2>
       </div>
@@ -1641,6 +1670,11 @@
 
         <div class="contact-links">
           <div class="contact-social">
+            <!-- Not a link yet — a span so it is neither clickable nor picked up
+                 by the follow-cursor as an arrow target. -->
+            <span class="social-link is-soon" aria-disabled="true" data-pt="AI Lab (em breve) ↗">AI Lab (soon) ↗</span>
+            <a class="social-link" href="assets/docs/recommendation-letter.pdf" download data-pt="Carta de recomendação ↗">Recommendation letter ↗</a>
+            <a class="social-link" href="assets/docs/resume.pdf" download data-pt="Currículo ↗">Resume ↗</a>
             <a class="social-link" href="https://www.linkedin.com/in/guilherme-kerber-6854b6289/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
             <a class="social-link" href="https://dribbble.com/kerber" target="_blank" rel="noopener noreferrer">Dribbble ↗</a>
           </div>
@@ -1833,36 +1867,24 @@
       color: var(--white-32);
     }
 
-    /* Copy button — follows cursor, fades in on email hover */
-    .email-copy-btn {
-      position: absolute;
-      top: 0;
-      left: 0;
-      transform: translate(-50%, -50%) scale(0.9);
-      background: var(--orange);
-      color: #ffffff;
-      border: none;
-      border-radius: 4px;
-      padding: 16px 24px;
-      font-family: 'Syne', sans-serif;
-      font-size: 14px;
+    /* Touch has no follow-cursor to show the tick, so confirm on the element */
+    .contact-email-wrap[data-copied]::after {
+      content: attr(data-copied);
+      display: none;
+      margin-left: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
       font-weight: 500;
-      letter-spacing: -0.03em;
-      line-height: 1.4;
-      white-space: nowrap;
-      cursor: pointer;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease, transform 0.25s cubic-bezier(.16,1,.3,1);
-      min-width: 120px;
-      text-align: center;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--orange);
+      vertical-align: middle;
+    }
+    @media (hover: none) {
+      .contact-email-wrap[data-copied]::after { display: inline; }
     }
 
-    .contact-email-wrap:hover .email-copy-btn {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1);
-      pointer-events: auto;
-    }
+
 
     .contact-body {
       display: flex;
@@ -1887,20 +1909,31 @@
 
     .contact-social {
       display: flex;
+      flex-wrap: wrap;
       gap: 24px;
     }
 
+    /* Footer links — Syne Medium 13px (Figma 190:3108) */
     .social-link {
-      font-size: 10px;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
       font-weight: 500;
-      letter-spacing: 0.13em;
-      text-transform: uppercase;
-      color: var(--white-48);
+      letter-spacing: -0.03em;
+      line-height: 1.4;
+      color: #ffffff;
       text-decoration: none;
+      white-space: nowrap;
       transition: color 0.2s;
     }
 
-    .social-link:hover { color: #ffffff; }
+    /* AI Lab is not built yet: dimmed, not clickable, no pointer affordance */
+    .social-link.is-soon {
+      color: rgba(255,255,255,0.5);
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .social-link:hover { color: var(--orange); }
 
     /* Footer strip */
     .contact-footer {
@@ -2008,19 +2041,36 @@
     // ── Pointer detection: coarse = touch, fine = mouse
     const isPointer = window.matchMedia('(pointer: fine)').matches;
 
-    // ── Crosshair cursor (pointer only)
+    // ── Follow cursor (pointer only)
     if (isPointer) {
-      const curH      = document.getElementById('curH');
-      const curV      = document.getElementById('curV');
-      const curPlus   = document.getElementById('curPlus');
+      const cursorEl = document.getElementById('cursor');
+      const CLICKABLE = 'a, button, [role="button"], .project-card';
+      const COPYABLE  = '#contactEmailWrap';
 
       document.addEventListener('mousemove', e => {
-        const mx = e.clientX, my = e.clientY;
-        curH.style.top        = my + 'px';
-        curV.style.left       = mx + 'px';
-        curPlus.style.left    = mx + 'px';
-        curPlus.style.top     = my + 'px';
+        // transform (not left/top) so the follow stays on the compositor
+        cursorEl.style.transform =
+          `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
+        if (!cursorEl.classList.contains('is-visible')) cursorEl.classList.add('is-visible');
       });
+
+      document.addEventListener('mouseover', e => {
+        if (e.target.closest(COPYABLE))       cursorEl.classList.add('is-copy');
+        else if (e.target.closest(CLICKABLE)) cursorEl.classList.add('is-link');
+      });
+      document.addEventListener('mouseout', e => {
+        const rel = e.relatedTarget && e.relatedTarget.closest ? e.relatedTarget : null;
+        if (e.target.closest(COPYABLE) && !(rel && rel.closest(COPYABLE))) {
+          cursorEl.classList.remove('is-copy', 'is-copied');
+        }
+        const from = e.target.closest(CLICKABLE);
+        const to   = rel ? rel.closest(CLICKABLE) : null;
+        if (from && from !== to) cursorEl.classList.remove('is-link');
+      });
+
+      // hide when the pointer leaves the window entirely
+      document.addEventListener('mouseleave', () => cursorEl.classList.remove('is-visible'));
+      document.addEventListener('mouseenter', () => cursorEl.classList.add('is-visible'));
     }
 
     // ── Nav: toggle .scrolled class based on scroll position
@@ -2100,39 +2150,39 @@
     });
 
     // ── Email copy button ─────────────────────────────────────────────
-    const emailCopyBtn  = document.getElementById('emailCopyBtn');
-    const emailWrap     = document.getElementById('contactEmailWrap');
-    if (emailCopyBtn && emailWrap) {
-      // Follow cursor inside the email wrap (pointer only)
-      if (isPointer) {
-        emailWrap.addEventListener('mousemove', e => {
-          const rect = emailWrap.getBoundingClientRect();
-          emailCopyBtn.style.left = (e.clientX - rect.left)  + 'px';
-          emailCopyBtn.style.top  = (e.clientY - rect.top)   + 'px';
-        });
-      }
-
+    // ── Copy email ──
+    // The old orange button is gone; the email itself is the target and the
+    // follow-cursor shows the copy / confirmation icon.
+    const emailWrap = document.getElementById('contactEmailWrap');
+    if (emailWrap) {
+      const EMAIL = 'contact@guikerber.com';
       let resetTimer = null;
-      emailCopyBtn.addEventListener('click', e => {
-        e.preventDefault();
-        navigator.clipboard.writeText('contact@guikerber.com').catch(() => {
+
+      emailWrap.addEventListener('click', () => {
+        const fallback = () => {
           const ta = document.createElement('textarea');
-          ta.value = 'contact@guikerber.com';
+          ta.value = EMAIL;
           ta.style.cssText = 'position:fixed;opacity:0';
           document.body.appendChild(ta);
           ta.select();
-          document.execCommand('copy');
+          try { document.execCommand('copy'); } catch (e) {}
           document.body.removeChild(ta);
-        });
-        // Lock width, swap text
-        emailCopyBtn.style.minWidth = emailCopyBtn.offsetWidth + 'px';
-        const isPt = window.__siteLang === 'pt';
-        emailCopyBtn.textContent = isPt ? 'Copiado' : 'Copied';
-        clearTimeout(resetTimer);
-        resetTimer = setTimeout(() => {
-          emailCopyBtn.textContent = isPt ? 'Copiar Email' : 'Copy Email';
-          emailCopyBtn.style.minWidth = '';
-        }, 2500);
+        };
+        if (navigator.clipboard) navigator.clipboard.writeText(EMAIL).catch(fallback);
+        else fallback();
+
+        // desktop: flash the tick inside the cursor
+        const cur = document.getElementById('cursor');
+        if (cur) {
+          cur.classList.add('is-copied');
+          clearTimeout(resetTimer);
+          resetTimer = setTimeout(() => cur.classList.remove('is-copied'), 1600);
+        }
+
+        // touch: no cursor to speak through, so say it on the element
+        emailWrap.setAttribute('data-copied', window.__siteLang === 'pt' ? 'Copiado' : 'Copied');
+        clearTimeout(emailWrap._t);
+        emailWrap._t = setTimeout(() => emailWrap.removeAttribute('data-copied'), 1600);
       });
     }
 
@@ -2161,32 +2211,32 @@
       .hero-rule   { gap: 10px; margin-top: 32px; }
       .hero-sub    { font-size: 14px; }
 
-      /* Gradient resolves to off-white by ~58%, just past the headline, so the
-         dark sub-copy below it sits on a light ground. */
+      /* Gradient resolves to off-white by ~70% — about 100px below the
+         headline, carrying the orange further down the screen. */
       .hero-bg {
         background: linear-gradient(
           180deg,
           #0d0400  0%,
-          #250b00  5.91%,
-          #3d1200  11.84%,
-          #6d2100  15.53%,
-          #9e3000  19.21%,
-          #ce3e00  22.9%,
-          #FF4D00  26.58%,
-          #ff580d  28.22%,
-          #ff621a  29.88%,
-          #ff7733  33.18%,
-          #ff9155  37.18%,
-          #ffaa77  41.18%,
-          #ffd4b8  47.57%,
-          #f0ecea  53.37%,
-          #EDECEA  58%
+          #250b00  7.13%,
+          #3d1200  14.29%,
+          #6d2100  18.74%,
+          #9e3000  23.18%,
+          #ce3e00  27.64%,
+          #FF4D00  32.08%,
+          #ff580d  34.06%,
+          #ff621a  36.06%,
+          #ff7733  40.04%,
+          #ff9155  44.87%,
+          #ffaa77  49.7%,
+          #ffd4b8  57.41%,
+          #f0ecea  64.41%,
+          #EDECEA  70%
         );
       }
       /* Animated embed ends with the headline. The mask fades its bottom edge
          into the CSS gradient — cutting it dead would leave a hard colour seam. */
       .hero-bg-embed {
-        height: 58%;
+        height: 70%;
         -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
                 mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
       }
@@ -2265,16 +2315,6 @@
 
       /* Email copy: static tap button ── */
       .contact-email-wrap { display: flex !important; flex-direction: column !important; }
-      .email-copy-btn {
-        position: static !important;
-        transform: none !important;
-        opacity: 1 !important;
-        pointer-events: auto !important;
-        margin-top: 20px;
-        align-self: flex-start;
-        font-size: 13px;
-        padding: 12px 20px;
-      }
     }
 
     @media (min-width: 768px) and (max-width: 1023px) {

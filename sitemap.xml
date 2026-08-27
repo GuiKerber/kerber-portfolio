@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- checkout-conversion-engine and analytics-dashboard are intentionally omitted:
+     they are noindex placeholders, not finished case studies. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://guikerber.com/</loc>
+    <lastmod>2026-08-27</lastmod>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://guikerber.com/ai-front-desk/</loc>
+    <lastmod>2026-08-27</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://guikerber.com/staking-marketplace/</loc>
+    <lastmod>2026-08-27</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://guikerber.com/cross-platform-coaching/</loc>
+    <lastmod>2026-08-27</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://guikerber.com/design-system.html</loc>
+    <lastmod>2026-08-27</lastmod>
+    <priority>0.3</priority>
+  </url>
+</urlset>

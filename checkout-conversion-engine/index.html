@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout Conversion Engine — Guilherme Kerber</title>
+  <!-- Placeholder case study (gallery and metrics are examples, not final
+       content). Kept out of search until the real content lands — remove this
+       robots tag and add the URL back to sitemap.xml at that point. -->
+  <meta name="robots" content="noindex, follow">
+  <meta name="description" content="Checkout flow redesign for a major retail brand — hypothesis-driven CRO work using A/B experiments and behavioral analysis.">
+  <link rel="canonical" href="https://guikerber.com/checkout-conversion-engine/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --orange:#FF4D00; --black:#080808; --off-white:#EDECEA; --ink:#111110;
+
+      /* ── White scale (dark surfaces) ── */
+      --white-4:  rgba(255,255,255,0.04);
+      --white-8:  rgba(255,255,255,0.08);
+      --white-16: rgba(255,255,255,0.16);
+      --white-32: rgba(255,255,255,0.32);
+      --white-48: rgba(255,255,255,0.48);
+      --white-56: rgba(255,255,255,0.56);
+
+      /* ── Black scale (light surfaces) ── */
+      --black-4:  rgba(0,0,0,0.04);
+      --black-10: rgba(0,0,0,0.10);
+      --black-18: rgba(0,0,0,0.18);
+      --black-28: rgba(0,0,0,0.28);
+      --black-38: rgba(0,0,0,0.38);
+      --black-52: rgba(0,0,0,0.52);
+      --black-64: rgba(0,0,0,0.64);
+
+      /* ── Orange scale ── */
+      --orange-8:  rgba(255,77,0,0.08);
+      --orange-20: rgba(255,77,0,0.20);
+      --orange-36: rgba(255,77,0,0.36);
+      --orange-52: rgba(255,77,0,0.52);
+    }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { font-family:'Inter',system-ui,sans-serif; background:var(--off-white); color:var(--ink); overflow-x:hidden; -webkit-font-smoothing:antialiased; cursor:none; }
+
+    /* ── Noise overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.12;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 256px 256px;
+    }
+
+
+
+    /* ── Follow cursor ── white disc, mix-blend-mode:difference so it stays
+       visible on dark and light; expands to an orange arrow puck over links. */
+    .cursor { position:fixed; top:0; left:0; width:24px; height:24px; border-radius:50%;
+      background:#fff; mix-blend-mode:difference; pointer-events:none; z-index:9999;
+      display:flex; align-items:center; justify-content:center; transform:translate(-50%,-50%);
+      opacity:0; transition:width .3s ease, height .3s ease, background .3s ease, opacity .25s ease; }
+    .cursor.is-visible { opacity:1; }
+    .cursor-arrow { color:#fff; opacity:0; transform:scale(.4); display:flex;
+      transition:opacity .2s ease, transform .3s cubic-bezier(.16,1,.3,1); }
+    .cursor.is-link { width:56px; height:56px; background:var(--orange); mix-blend-mode:normal; }
+    .cursor.is-link .cursor-arrow { opacity:1; transform:scale(1); }
+    @media (pointer: fine) { body, a, button { cursor:none; } }
+    /* ─── TEXT REVEAL ANIMATIONS ─── */
+    .reveal-line { display:block; overflow:hidden; padding-bottom:.1em; }
+    .reveal-line-inner { display:block; transform:translateY(108%); }
+    [data-split-lines].is-visible .reveal-line-inner {
+      transform:translateY(0);
+      transition:transform .95s cubic-bezier(.16,1,.3,1);
+      transition-delay:calc(var(--li,0) * .08s);
+    }
+    .reveal-word { display:inline-block; overflow:hidden; vertical-align:bottom; }
+    .reveal-word-inner { display:inline-block; transform:translateY(105%); }
+    [data-split-words].is-visible .reveal-word-inner {
+      transform:translateY(0);
+      transition:transform .7s cubic-bezier(.16,1,.3,1);
+      transition-delay:calc(var(--wi,0) * .05s);
+    }
+    [data-fade] { opacity:0; transform:translateY(16px); }
+    [data-fade].is-visible {
+      opacity:1; transform:translateY(0);
+      transition:opacity .8s ease, transform .8s cubic-bezier(.16,1,.3,1);
+      transition-delay:var(--fd,0s);
+    }
+    .gal-block[data-fade] { transform: translateY(28px); }
+    @media (prefers-reduced-motion: reduce) {
+      .gal-img img { transition: none !important; }
+    }
+    .gal-img img {
+      transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1),
+                  filter  600ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @media (hover: hover) {
+      .gal-img:hover img { transform: scale(1.02); filter: brightness(1.04); }
+    }
+
+    html { scrollbar-gutter: stable; }
+    nav { position:fixed; top:0; left:0; right:0; z-index:200; display:flex; justify-content:space-between; align-items:center; padding:20px 64px; background:rgba(8,8,8,0.88); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border-bottom:1px solid var(--white-8); }
+    .nav-logo { display:flex; align-items:center; color:#fff; text-decoration:none; flex-shrink:0; }
+    .nav-logo img { width:28px; height:28px; display:block; filter:brightness(0) invert(1); }
+    .nav-actions { display:flex; align-items:center; gap:8px; }
+    .nav-btn { display:flex; align-items:center; gap:8px; padding:8px 20px; border-radius:4px; font-family:'Syne',sans-serif; font-size:13px; font-weight:500; letter-spacing:-0.03em; cursor:pointer; border:none; text-decoration:none; white-space:nowrap; transition:opacity .2s ease, transform .15s ease; line-height:1.4; }
+    .nav-btn:hover { opacity:.88; transform:translateY(-1px); }
+    .nav-btn-projects { background:#fff; color:#080808; }
+    .nav-btn-contact  { background:var(--orange); color:#fff; }
+    .nav-panel-overlay { position:fixed; inset:0; z-index:300; opacity:0; pointer-events:none; transition:opacity .25s ease; }
+    .nav-panel-overlay.is-open { opacity:1; pointer-events:all; }
+    .nav-panel-drawer { position:fixed; top:68px; right:64px; width:360px; background:#fff; border-radius:6px; box-shadow:0 4px 6px rgba(0,0,0,0.04),0 12px 40px rgba(0,0,0,0.10),0 1px 2px rgba(0,0,0,0.06); z-index:301; transform:translateY(-10px) scale(0.97); transform-origin:top right; opacity:0; pointer-events:none; transition:transform .35s cubic-bezier(.16,1,.3,1), opacity .25s ease; overflow:hidden; }
+    .nav-panel-drawer.is-open { transform:translateY(0) scale(1); opacity:1; pointer-events:all; }
+    .nav-panel-items { padding-top:6px; padding-bottom:6px; }
+    .nav-panel-item { border-top:1px solid var(--black-10); }
+    .nav-panel-item:first-child { border-top:none; }
+    .nav-panel-link { display:flex; align-items:center; justify-content:space-between; padding:18px 24px; text-decoration:none; gap:16px; transition:background .18s ease; }
+    .nav-panel-link:hover { background:rgba(0,0,0,0.025); }
+    .nav-panel-link:hover .nav-panel-title { color:var(--orange); }
+    .nav-panel-link:hover .nav-panel-arrow-icon { background:var(--orange); border-color:var(--orange); transform:translateX(3px); }
+    .nav-panel-link:hover .nav-panel-arrow-icon svg path { stroke:#fff; }
+    .nav-panel-title { font-family:'Syne',sans-serif; font-size:16px; font-weight:700; color:var(--ink); letter-spacing:-0.02em; line-height:1.2; transition:color .18s; }
+    .nav-panel-arrow-icon { display:flex; align-items:center; justify-content:center; width:26px; height:26px; border:1px solid var(--black-18); border-radius:50%; flex-shrink:0; transition:background .22s, border-color .22s, transform .22s; color:var(--ink); }
+
+    .proj-hero { display:grid; grid-template-columns:1fr 1fr; align-items:stretch; background:var(--black); padding-top:68px; min-height: clamp(480px, 56vw * 0.75, 800px); }
+    .proj-hero-left { padding:72px 56px 72px 64px; display:flex; flex-direction:column; justify-content:flex-end; gap:28px; }
+    .proj-h1 { font-family:'Syne',sans-serif; font-size:clamp(40px,5vw,68px); font-weight:700; color:#fff; line-height:1.02; letter-spacing:-0.03em; }
+    .proj-hero-desc { font-size:16px; font-weight:300; line-height:1.7; color:var(--white-56); max-width:400px; }
+    .proj-meta-strip { display:flex; align-items:center; gap:10px; flex-wrap:wrap; width:100%; }
+    .proj-tag-hero { font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--white-48); padding:5px 10px; border:1px solid var(--white-8); border-radius:40px; }
+    .proj-dur { margin-left:auto; font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--white-32); }
+    .proj-hero-right { position:relative; overflow:hidden; background:#0c0b08; min-height: clamp(400px, 40vw, 700px); }
+    .proj-hero-bg { position:absolute; inset:0; background:radial-gradient(ellipse 60% 50% at 65% 40%, rgba(255,160,0,0.06) 0%, transparent 70%),repeating-linear-gradient(0deg,transparent 0px,transparent 39px,rgba(255,255,255,0.02) 39px,rgba(255,255,255,0.02) 40px),repeating-linear-gradient(90deg,transparent 0px,transparent 39px,rgba(255,255,255,0.02) 39px,rgba(255,255,255,0.02) 40px); }
+
+    .case-wrap { display:grid; grid-template-columns:380px 1fr; align-items:start; }
+    .case-left { position:sticky; top:68px; height:calc(100vh - 68px); overflow-y:auto; scrollbar-width:none; border-right:1px solid var(--black-10); background:var(--off-white); }
+    .case-left::-webkit-scrollbar { display:none; }
+    .acc-wrap { padding:48px 64px 100px; }
+    .acc-section-label { font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--black-38); margin-bottom:28px; }
+    .acc-item { border-top:1px solid var(--black-10); }
+    .acc-item:last-child { border-bottom:1px solid var(--black-10); }
+    .acc-head { width:100%; display:flex; align-items:center; gap:12px; padding:18px 0; background:none; border:none; cursor:pointer; text-align:left; }
+    .acc-num { font-size:10px; font-weight:500; letter-spacing:0.13em; color:var(--black-38); min-width:22px; transition:color .2s ease; }
+    .acc-label { font-family:'Syne',sans-serif; font-size:14px; font-weight:600; color:var(--ink); flex:1; letter-spacing:0.01em; transition:color .2s ease; }
+    .acc-plus { font-size:18px; font-weight:300; color:var(--black-38); line-height:1; transition:transform .35s cubic-bezier(.25,0,0,1),color .2s ease; }
+    .acc-item.is-open .acc-plus { transform:rotate(45deg); color:var(--orange); }
+    .acc-item.is-open .acc-label { color:var(--orange); }
+    .acc-item.is-open .acc-num { color:var(--orange); }
+    .acc-body { overflow:hidden; max-height:0; transition:max-height .55s cubic-bezier(.25,0,0,1); }
+    .acc-item.is-open .acc-body { max-height:900px; }
+    .acc-inner { padding:0 0 28px 34px; display:flex; flex-direction:column; gap:18px; }
+    .acc-text { font-size:13px; font-weight:400; line-height:1.68; color:var(--black-64); }
+    .attr-grid { display:flex; flex-direction:column; gap:7px; }
+    .attr-row { display:grid; grid-template-columns:84px 1fr; gap:8px; align-items:baseline; }
+    .attr-dt { font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--black-38); }
+    .attr-dd { font-size:13px; font-weight:400; line-height:1.68; color:var(--ink); }
+    .insight-list { list-style:none; display:flex; flex-direction:column; gap:9px; }
+    .insight-list li { font-size:13px; font-weight:400; line-height:1.68; color:var(--black-64); padding-left:14px; position:relative; }
+    .insight-list li::before { content:''; position:absolute; left:0; top:9px; width:5px; height:1px; background:var(--orange); }
+    .metrics-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .metric-box { background:var(--black-4); border:1px solid var(--black-10); border-radius:6px; padding:14px 12px; }
+    .metric-val { font-family:'Syne',sans-serif; font-size:22px; font-weight:700; color:var(--ink); letter-spacing:-0.02em; line-height:1.1; }
+    .metric-lbl { font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--black-38); margin-top:4px; line-height:1.4; }
+
+    .case-right { padding:60px 80px 80px 60px; }
+    .gallery { display:flex; flex-direction:column; gap:20px; }
+    .gal-block { display:flex; flex-direction:column; gap:10px; }
+    .gal-img { width:100%; border-radius:8px; overflow:hidden; position:relative; display:flex; align-items:center; justify-content:center; }
+    .r-wide { aspect-ratio:16/9; }
+    .r-tall { aspect-ratio:4/5; }
+    .r-portrait { aspect-ratio:9/16; }
+    .r-ultra { aspect-ratio:21/9; }
+    .r-sq { aspect-ratio:1; }
+    .r-card { aspect-ratio:3/2; }
+    .ph-dark { background:#141412; }
+    .ph-warm { background:#E5E1DC; }
+    .ph-grid { background:#F0EEEB; background-image:linear-gradient(rgba(0,0,0,0.045) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.045) 1px,transparent 1px); background-size:40px 40px; }
+    .ph-dots { background:#EDECEA; background-image:radial-gradient(circle 1.5px at 1.5px 1.5px,rgba(0,0,0,0.1) 1.5px,transparent 0); background-size:24px 24px; }
+    .ph-med { background:#D8D5D1; }
+    .ph-charcoal { background:#1E1E1C; }
+    .ph-amber { background:#1C1600; }
+    .ph-orange { background:linear-gradient(135deg,#FF4D00 0%,#FF7733 100%); }
+    .ph-label { position:absolute; bottom:16px; left:16px; font-size:9px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:var(--black-18); }
+    .ph-dark .ph-label,.ph-charcoal .ph-label,.ph-amber .ph-label { color:var(--white-16); }
+    .ph-orange .ph-label { color:var(--white-48); }
+    .phone-mock { width:42%; aspect-ratio:9/19; background:var(--white-4); border:1px solid var(--white-8); border-radius:24px; box-shadow:0 24px 64px rgba(0,0,0,0.5); }
+    .ph-warm .phone-mock { background:var(--black-10); border-color:var(--black-10); box-shadow:0 16px 48px var(--black-10); }
+    .desktop-mock { width:78%; aspect-ratio:16/10; background:var(--white-4); border:1px solid var(--white-8); border-radius:8px; box-shadow:0 20px 60px rgba(0,0,0,0.45); }
+
+    .next-proj { background:var(--black); padding:80px 64px 100px; }
+    .next-link { display:flex; flex-direction:column; gap:36px; text-decoration:none; max-width:960px; }
+    .next-eyebrow { font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--white-32); }
+    .next-body { display:flex; justify-content:space-between; align-items:flex-end; border-top:1px solid var(--white-8); padding-top:36px; gap:24px; }
+    .next-info { display:flex; flex-direction:column; gap:14px; }
+    .next-idx { font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--orange); }
+    .next-tags { display:flex; gap:8px; flex-wrap:wrap; }
+    .next-tag-item { font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--white-32); padding:4px 9px; border:1px solid var(--white-8); border-radius:20px; }
+    .next-h2 { font-family:'Syne',sans-serif; font-size:clamp(28px,4.5vw,54px); font-weight:700; color:#fff; letter-spacing:-0.03em; line-height:1.0; transition:color .3s ease; }
+    .next-link:hover .next-h2 { color:var(--orange); }
+    .next-arr { width:56px; height:56px; flex-shrink:0; border:1px solid var(--white-16); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; transition:background .25s ease,border-color .25s ease,transform .25s ease; }
+    .next-link:hover .next-arr { background:var(--orange); border-color:var(--orange); transform:rotate(45deg); }
+  </style>
+</head>
+<body>
+
+<div class="cursor" id="cursor" aria-hidden="true">
+  <span class="cursor-arrow">
+    <svg width="18" height="18" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </span>
+</div>
+
+<!-- PROJECTS SIDE PANEL -->
+<div class="nav-panel-overlay" id="navPanelOverlay" aria-hidden="true"></div>
+<div class="nav-panel-drawer" id="navPanelDrawer" role="dialog" aria-label="Projects" aria-modal="true">
+  <div class="nav-panel-items">
+    <div class="nav-panel-item">
+      <a class="nav-panel-link" href="../ai-front-desk/">
+        <span class="nav-panel-title" data-pt="Projetando uma Recepção com IA para Fotógrafos">Designing an AI Front Desk for Photographers</span>
+        <div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </a>
+    </div>
+    <div class="nav-panel-item">
+      <a class="nav-panel-link" href="../staking-marketplace/">
+        <span class="nav-panel-title" data-pt="Levando um Marketplace de Staking a uma Carteira Multi-Chain">Introducing a Staking Marketplace to a Multi-Chain Wallet</span>
+        <div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </a>
+    </div>
+    <div class="nav-panel-item">
+      <a class="nav-panel-link" href="../cross-platform-coaching/">
+        <span class="nav-panel-title" data-pt="Projetando uma Experiência de Coaching Multiplataforma">Designing a Cross-Platform Coaching Experience</span>
+        <div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <a class="nav-logo" href="../" aria-label="Guilherme Kerber — Home" data-pt-aria="Guilherme Kerber — Início">
+    <img src="../assets/logo.svg" alt="GK logo" width="28" height="28">
+  </a>
+  <div class="nav-actions">
+    <button class="nav-btn nav-btn-projects" id="navProjectsBtn" aria-expanded="false" aria-controls="navPanelDrawer">
+      <span data-pt="Meus Projetos">My Projects</span>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <line x1="2.5" y1="4.5" x2="13.5" y2="4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="2.5" y1="8" x2="13.5" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="2.5" y1="11.5" x2="13.5" y2="11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <a class="nav-btn nav-btn-contact" href="../#contact">
+      <span data-pt="Entre em contato">Get in touch</span>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M13.5 2.5L1.5 6.5L6.5 8.5M13.5 2.5L10 13.5L6.5 8.5M13.5 2.5L6.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+</nav>
+
+<header class="proj-hero">
+  <div class="proj-hero-left">
+    <div class="proj-meta-strip" data-fade>
+      <span class="proj-tag-hero">CRO</span>
+      <span class="proj-tag-hero">UX Design</span>
+      <span class="proj-tag-hero">A/B Testing</span>
+      <span class="proj-dur" data-pt="4 meses · 2023">4 months · 2023</span>
+    </div>
+    <h1 class="proj-h1" data-split-lines data-pt="Motor de<br>Conversão de<br>Checkout">Checkout<br>Conversion<br>Engine</h1>
+    <p class="proj-hero-desc" data-fade style="--fd:.2s" data-pt="Redesign do fluxo de checkout para um e-commerce de moda com R$480M em GMV anual — guiado por hipóteses, experimentos A/B e análise comportamental.">Checkout flow redesign for a fashion e-commerce with R$480M in annual GMV — driven by hypotheses, A/B experiments and behavioral analysis.</p>
+  </div>
+  <div class="proj-hero-right">
+    <div class="proj-hero-bg"></div>
+  </div>
+</header>
+
+<div class="case-wrap">
+  <aside class="case-left">
+    <div class="acc-wrap">
+      <p class="acc-section-label" data-pt="Estrutura do caso">Case structure</p>
+
+      <div class="acc-item is-open" data-section="0">
+        <button class="acc-head"><span class="acc-num">01</span><span class="acc-label" data-pt="Visão geral">Overview</span><span class="acc-plus">+</span></button>
+        <div class="acc-body"><div class="acc-inner">
+          <p class="acc-text" data-pt="Projeto de CRO para um dos maiores e-commerces de moda do Brasil. O briefing era claro: aumentar a conversão no checkout sem um redesign completo, usando dados como bússola e testes A/B como método.">CRO project for one of Brazil's largest fashion e-commerce sites. The brief was clear: increase checkout conversion without a full redesign, using data as a compass and A/B testing as the method.</p>
+          <div class="attr-grid">
+            <div class="attr-row"><span class="attr-dt" data-pt="Empresa">Company</span><span class="attr-dd" data-pt="Varejista de Moda (NDA)">Fashion Retailer (NDA)</span></div>
+            <div class="attr-row"><span class="attr-dt" data-pt="Duração">Duration</span><span class="attr-dd" data-pt="4 meses · 2023">4 months · 2023</span></div>
+            <div class="attr-row"><span class="attr-dt" data-pt="Função">Role</span><span class="attr-dd">Lead UX + CRO Strategist</span></div>
+            <div class="attr-row"><span class="attr-dt" data-pt="Equipe">Team</span><span class="attr-dd" data-pt="2 designers, 1 analista, 4 devs">2 designers, 1 analyst, 4 devs</span></div>
+            <div class="attr-row"><span class="attr-dt">GMV</span><span class="attr-dd" data-pt="R$480M ao ano">R$480M annually</span></div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="acc-item" data-section="1">
+        <button class="acc-head"><span class="acc-num">02</span><span class="acc-label" data-pt="Contexto &amp; Dados">Context &amp; Data</span><span class="acc-plus">+</span></button>
+        <div class="acc-body"><div class="acc-inner">
+          <p class="acc-text" data-pt="O checkout tinha uma taxa de abandono de 67% na etapa de pagamento. Análises de heatmap, gravações e dados do GA4 revelaram 3 padrões comportamentais distintos antes do abandono.">The checkout had a 67% drop-off rate at the payment step. Heatmap analysis, recordings and GA4 data revealed 3 distinct behavioral patterns before abandonment.</p>
+          <ul class="insight-list">
+            <li data-pt="67% de abandono na tela de pagamento — acima da média do setor (58%)">67% drop-off at the payment screen — above industry average (58%)</li>
+            <li data-pt="Usuários voltaram ao carrinho 2,3 vezes antes de abandonar">Users returned to the cart 2.3 times before abandoning</li>
+            <li data-pt="38% dos abandonos aconteciam ao visualizar o campo de CVV">38% of abandonments occurred when viewing the CVV field</li>
+            <li data-pt="O mobile teve 2× mais abandono que o desktop no mesmo fluxo">Mobile had 2× more abandonment than desktop in the same flow</li>
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="acc-item" data-section="2">
+        <button class="acc-head"><span class="acc-num">03</span><span class="acc-label" data-pt="Hipóteses">Hypotheses</span><span class="acc-plus">+</span></button>
+        <div class="acc-body"><div class="acc-inner">
+          <p class="acc-text" data-pt="Construímos um framework de hipóteses priorizado por impacto potencial × facilidade de implementação. 7 hipóteses foram selecionadas para teste simultâneo.">We built a hypothesis framework prioritized by potential impact × ease of implementation. 7 hypotheses were selected for simultaneous testing.</p>
+          <ul class="insight-list">
+            <li data-pt="&lt;strong&gt;H1:&lt;/strong&gt; Indicador de progresso reduz o abandono na etapa de pagamento"><strong>H1:</strong> Progress indicator reduces drop-off at the payment step</li>
+            <li data-pt="&lt;strong&gt;H2:&lt;/strong&gt; Resumo do pedido sempre visível aumenta a confiança"><strong>H2:</strong> Always-visible order summary increases trust</li>
+            <li data-pt="&lt;strong&gt;H3:&lt;/strong&gt; Preenchimento do cartão inline (sem modal) reduz a fricção do CVV"><strong>H3:</strong> Inline card entry (no modal) reduces CVV friction</li>
+            <li data-pt="&lt;strong&gt;H4:&lt;/strong&gt; Prova social na tela de pagamento aumenta a conversão"><strong>H4:</strong> Social proof on the payment screen increases conversion</li>
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="acc-item" data-section="3">
+        <button class="acc-head"><span class="acc-num">04</span><span class="acc-label" data-pt="Experimentos A/B">A/B Experiments</span><span class="acc-plus">+</span></button>
+        <div class="acc-body"><div class="acc-inner">
+          <p class="acc-text" data-pt="4 rodadas de testes com amostras estatisticamente relevantes. Cada experimento rodou por no mínimo 14 dias, com pelo menos 2.000 usuários por variante.">4 rounds of tests with statistically relevant samples. Each experiment ran for a minimum of 14 days with at least 2,000 users per variant.</p>
+          <ul class="insight-list">
+            <li data-pt="H1 confirmada: +9% de conversão com o stepper de progresso">H1 confirmed: +9% conversion with progress stepper</li>
+            <li data-pt="H2 confirmada: +7% com resumo fixo no painel lateral">H2 confirmed: +7% with fixed summary in side panel</li>
+            <li data-pt="H3 parcialmente confirmada: +12% no mobile, neutro no desktop">H3 partially confirmed: +12% on mobile, neutral on desktop</li>
+            <li data-pt="H4 não confirmada: prova social não teve efeito significativo">H4 not confirmed: social proof had no significant effect</li>
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="acc-item" data-section="4">
+        <button class="acc-head"><span class="acc-num">05</span><span class="acc-label" data-pt="Design Final">Final Design</span><span class="acc-plus">+</span></button>
+        <div class="acc-body"><div class="acc-inner">
+          <p class="acc-text" data-pt="Síntese das hipóteses confirmadas em um checkout redesenhado — mobile-first, com stepper, resumo persistente e preenchimento de cartão inline. O número de telas foi reduzido de 5 para 3.">Synthesis of confirmed hypotheses into a redesigned checkout — mobile-first, with stepper, persistent summary and inline card entry. The number of screens was reduced from 5 to 3.</p>
+          <ul class="insight-list">
+            <li data-pt="Checkout em 3 etapas: Entrega → Pagamento → Confirmação">Checkout in 3 steps: Delivery → Payment → Confirmation</li>
+            <li data-pt="Preenchimento de cartão inline com animação de flip ao inserir o CVV">Inline card entry with flip animation when entering CVV</li>
+            <li data-pt="Resumo do pedido persistente no topo (mobile) ou na lateral (desktop)">Persistent order summary at the top (mobile) or sidebar (desktop)</li>
+            <li data-pt="Pagamento em um clique para usuários cadastrados com cartão salvo">One-click pay for registered users with a saved card</li>
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="acc-item" data-section="5">
+        <button class="acc-head"><span class="acc-num">06</span><span class="acc-label" data-pt="Impacto">Impact</span><span class="acc-plus">+</span></button>
+        <div class="acc-body"><div class="acc-inner">
+          <p class="acc-text" data-pt="Resultados consolidados 60 dias após o lançamento para 100% do tráfego. O projeto pagou seu investimento em 11 dias de operação.">Consolidated results 60 days after launch to 100% of traffic. The project paid back its investment in 11 days of operation.</p>
+          <div class="metrics-grid">
+            <div class="metric-box"><div class="metric-val">+23%</div><div class="metric-lbl" data-pt="Taxa de conversão do checkout">Checkout conversion rate</div></div>
+            <div class="metric-box"><div class="metric-val">–34%</div><div class="metric-lbl" data-pt="Abandono na etapa de pagamento">Payment step drop-off</div></div>
+            <div class="metric-box"><div class="metric-val">R$14M</div><div class="metric-lbl" data-pt="Receita incremental em 60 dias">Incremental revenue in 60 days</div></div>
+            <div class="metric-box"><div class="metric-val" data-pt="11 dias">11 days</div><div class="metric-lbl" data-pt="Retorno do investimento">Investment payback</div></div>
+          </div>
+        </div></div>
+      </div>
+
+    </div>
+  </aside>
+
+  <div class="case-right">
+    <div class="gallery">
+
+      <div class="gal-block" data-fade data-trigger="0">
+        <div class="gal-img r-wide ph-charcoal">
+          <div class="desktop-mock"></div>
+          <span class="ph-label" data-pt="Checkout · Design final">Checkout · Final design</span>
+        </div>
+      </div>
+
+      <div class="gal-block" data-fade data-trigger="1">
+        <div class="gal-img r-wide ph-dark">
+          <span class="ph-label" data-pt="Analytics · Heatmap + abandono">Analytics · Heatmap + abandonment</span>
+        </div>
+      </div>
+
+      <div class="gal-block" data-fade data-trigger="1">
+        <div class="gal-img r-ultra ph-grid">
+          <span class="ph-label" data-pt="Gravações de sessão · Padrões de abandono">Session replay · Abandonment patterns</span>
+        </div>
+      </div>
+
+      <div class="gal-block" data-fade data-trigger="2">
+        <div class="gal-img r-card ph-dots">
+          <span class="ph-label" data-pt="Framework de hipóteses · 7 hipóteses">Hypothesis framework · 7 hypotheses</span>
+        </div>
+      </div>
+
+      <div class="gal-block" data-fade data-trigger="3">
+        <div class="gal-img r-tall ph-warm"><span class="ph-label" data-pt="Variante A · Controle">Variant A · Control</span></div>
+      </div>
+
+      <div class="gal-block" data-fade data-trigger="3">
+        <div class="gal-img r-tall ph-charcoal"><span class="ph-label" data-pt="Variante B · Stepper">Variant B · Stepper</span></div>
+      </div>
+
+      <div class="gal-block" data-fade data-trigger="3">
+        <div class="gal-img r-tall ph-warm"><span class="ph-label" data-pt="Variante A · Tela cheia">Variant A · Full screen</span></div>
+      </div>
+
+      <div class="gal-block" data-fade data-trigger="3">
+        <div class="gal-img r-tall ph-charcoal"><span class="ph-label" data-pt="Variante B · Painel lateral">Variant B · Side panel</span></div>
+      </div>
+
+      <div class="gal-block" data-fade data-trigger="4">
+        <div class="gal-img r-wide ph-charcoal">
+          <div class="desktop-mock"></div>
+          <span class="ph-label">Checkout · Desktop final</span>
+        </div>
+      </div>
+
+      <div class="gal-block" data-fade data-trigger="4">
+        <div class="gal-img r-portrait ph-dark" style="aspect-ratio:9/16;">
+          <div class="phone-mock"></div>
+          <span class="ph-label" data-pt="Mobile · Pagamento">Mobile · Payment</span>
+        </div>
+      </div>
+
+      <div class="gal-block" data-fade data-trigger="4">
+        <div class="gal-img r-portrait ph-dark" style="aspect-ratio:9/16;">
+          <div class="phone-mock"></div>
+          <span class="ph-label" data-pt="Mobile · Confirmação">Mobile · Confirmation</span>
+        </div>
+      </div>
+
+      <div class="gal-block" data-fade data-trigger="5">
+        <div class="gal-img r-wide ph-amber">
+          <span class="ph-label" data-pt="Impacto · R$14M em 60 dias">Impact · R$14M in 60 days</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<section class="next-proj">
+  <a class="next-link" href="../ai-front-desk/">
+    <p class="next-eyebrow" data-split-words data-pt="Próximo projeto">Next project</p>
+    <div class="next-body">
+      <div class="next-info">
+        <span class="next-idx" data-fade style="--fd:0.1s" data-pt="01 · Inteligência Artificial">01 · Artificial Intelligence</span>
+        <div class="next-tags" data-fade style="--fd:0.18s">
+          <span class="next-tag-item" data-pt="Agente de IA">AI Agent</span>
+          <span class="next-tag-item" data-pt="Automação">Automation</span>
+          <span class="next-tag-item">SaaS</span>
+        </div>
+        <h2 class="next-h2" data-split-lines data-pt="Projetando uma Recepção<br>com IA para Fotógrafos">Designing an AI Front Desk<br>for Photographers</h2>
+      </div>
+      <div class="next-arr" data-fade style="--fd:0.35s">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9H15M15 9L10 4M15 9L10 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+  </a>
+</section>
+
+  <!-- ── Responsive overrides ── -->
+  <style>
+    @media (hover: none) {
+      .cursor { display:none !important; }
+      body { cursor:auto !important; }
+    }
+    @media (max-width: 767px) {
+      nav { padding: 18px 24px !important; }
+      .nav-panel-drawer { right: 24px; left: 24px; width: auto; }
+      .proj-hero { grid-template-columns: 1fr !important; min-height: auto !important; padding-top: 62px !important; }
+      .proj-hero-left { padding: 40px 24px 36px !important; justify-content: flex-start !important; gap: 18px !important; }
+      .proj-h1 { font-size: clamp(30px, 9vw, 44px) !important; }
+      .proj-hero-desc { max-width: 100% !important; font-size: 15px !important; }
+      .proj-hero-right { height: auto !important; min-height: 0 !important; aspect-ratio: 4 / 3 !important; }
+      .case-wrap { display: flex !important; flex-direction: column !important; }
+      .case-left { position: static !important; height: auto !important; border-right: none !important; border-bottom: 1px solid var(--black-10) !important; }
+      .acc-wrap { padding: 36px 24px 48px !important; }
+      .case-right { padding: 36px 24px 56px !important; }
+      .next-proj { padding: 56px 24px 72px !important; }
+      .next-body { flex-direction: column !important; align-items: flex-start !important; gap: 28px !important; }
+      .next-h2 { font-size: clamp(28px, 9vw, 44px) !important; }
+      .next-arr { width: 44px !important; height: 44px !important; }
+    }
+    @media (min-width: 768px) and (max-width: 1023px) {
+      nav { padding: 20px 32px !important; }
+      .nav-panel-drawer { right: 32px; }
+      .proj-hero-left { padding: 56px 40px !important; }
+      .case-wrap { grid-template-columns: 300px 1fr !important; }
+      .acc-wrap { padding: 40px 32px 80px !important; }
+      .case-right { padding: 48px 40px 64px 40px !important; }
+      .next-proj { padding: 60px 32px 80px !important; }
+    }
+  </style>
+
+<!-- I18N — EN/PT-BR. Reads the choice made in index.html's footer switcher
+     (localStorage 'site-lang'); no switcher control on this page itself, but
+     the language still applies. Must run before the Text Reveal script below
+     so split-lines/split-words operate on the already-correct-language text.
+     Duplicated verbatim on every page — see rules.md (no shared JS file). -->
+<script>
+  (function () {
+    var lang = localStorage.getItem('site-lang') || 'en';
+    window.__siteLang = lang;
+    document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+    if (lang === 'pt') {
+      document.querySelectorAll('[data-pt]').forEach(function (el) {
+        el.innerHTML = el.getAttribute('data-pt');
+      });
+      document.querySelectorAll('[data-pt-aria]').forEach(function (el) {
+        el.setAttribute('aria-label', el.getAttribute('data-pt-aria'));
+      });
+    }
+  })();
+</script>
+
+<script>
+  /* ── Follow cursor ── */
+  const cursorEl = document.getElementById('cursor');
+  if (cursorEl && window.matchMedia('(pointer: fine)').matches) {
+    const CLICKABLE = 'a, button, [role="button"]';
+    document.addEventListener('mousemove', e => {
+      cursorEl.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
+      if (!cursorEl.classList.contains('is-visible')) cursorEl.classList.add('is-visible');
+    });
+    document.addEventListener('mouseover', e => {
+      if (e.target.closest(CLICKABLE)) cursorEl.classList.add('is-link');
+    });
+    document.addEventListener('mouseout', e => {
+      const from = e.target.closest(CLICKABLE);
+      const to = e.relatedTarget && e.relatedTarget.closest ? e.relatedTarget.closest(CLICKABLE) : null;
+      if (from && from !== to) cursorEl.classList.remove('is-link');
+    });
+    document.addEventListener('mouseleave', () => cursorEl.classList.remove('is-visible'));
+    document.addEventListener('mouseenter', () => cursorEl.classList.add('is-visible'));
+  }
+
+  /* ── Text Reveal ── */
+  document.querySelectorAll('[data-split-lines]').forEach(el=>{
+    const parts=el.innerHTML.split(/<br\s*\/?>/i);
+    el.innerHTML=parts.map((p,i)=>`<span class="reveal-line"><span class="reveal-line-inner" style="--li:${i}">${p.trim()}</span></span>`).join('');
+  });
+  document.querySelectorAll('[data-split-words]').forEach(el=>{
+    const words=el.innerText.trim().split(/\s+/);
+    el.innerHTML=words.map((w,i)=>`<span class="reveal-word"><span class="reveal-word-inner" style="--wi:${i}">${w}</span></span>`).join(' ');
+  });
+  const _io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('is-visible');_io.unobserve(e.target);}});},{threshold:.05,rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('[data-split-lines],[data-split-words],[data-fade]').forEach(el=>_io.observe(el));
+  window.addEventListener('load',()=>setTimeout(()=>{
+    document.querySelectorAll('.proj-hero [data-split-lines],.proj-hero [data-split-words],.proj-hero [data-fade]').forEach(el=>{el.classList.add('is-visible');_io.unobserve(el);});
+  },120));
+
+  const accItems=document.querySelectorAll('.acc-item'),caseLeft=document.querySelector('.case-left');
+  function openSection(id){accItems.forEach(i=>i.classList.toggle('is-open',i.dataset.section===id));const a=document.querySelector(`.acc-item[data-section="${id}"]`);if(a)caseLeft.scrollTo({top:a.offsetTop-80,behavior:'smooth'});}
+  const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)openSection(e.target.dataset.trigger);});},{threshold:0,rootMargin:'-20% 0px -50% 0px'});
+  document.querySelectorAll('[data-trigger]').forEach(el=>obs.observe(el));
+  document.querySelectorAll('.acc-head').forEach(btn=>{btn.addEventListener('click',()=>{const item=btn.closest('.acc-item'),isOpen=item.classList.contains('is-open');accItems.forEach(i=>i.classList.remove('is-open'));if(!isOpen)item.classList.add('is-open');});});
+
+  /* ── Projects side panel ── */
+  const panelBtn=document.getElementById('navProjectsBtn');
+  const panelDrawer=document.getElementById('navPanelDrawer');
+  const panelOverlay=document.getElementById('navPanelOverlay');
+  function openPanel(){panelDrawer.classList.add('is-open');panelOverlay.classList.add('is-open');panelBtn.setAttribute('aria-expanded','true');document.body.style.overflow='hidden';}
+  function closePanel(){panelDrawer.classList.remove('is-open');panelOverlay.classList.remove('is-open');panelBtn.setAttribute('aria-expanded','false');document.body.style.overflow='';}
+  if(panelBtn)panelBtn.addEventListener('click',()=>{panelDrawer.classList.contains('is-open')?closePanel():openPanel();});
+  if(panelOverlay)panelOverlay.addEventListener('click',closePanel);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&panelDrawer.classList.contains('is-open'))closePanel();});
+</script>
+</body>
+</html>
