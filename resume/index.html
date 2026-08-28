@@ -107,7 +107,7 @@
       box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 12px 40px rgba(0,0,0,0.09);
       display: flex;
       flex-direction: column;
-      gap: 32px;
+      gap: 24px;
     }
 
     /* -- masthead (Figma 236:278) -------------------------------- */
@@ -145,7 +145,7 @@
     /* -- sections (Figma 236:55) --------------------------------- */
     .row {
       border-top: 1px solid var(--hair);
-      padding: 8px 0;
+      padding: 16px 0;
       display: flex;
       align-items: flex-start;
     }
@@ -165,13 +165,14 @@
     .lede { margin: 0; font-size: 12px; line-height: 20px; }
 
     /* -- experience (Figma 236:400) ------------------------------ */
-    .entries { display: flex; flex-direction: column; gap: 16px; }
+    .entries { display: flex; flex-direction: column; gap: 24px; }
     .entry { display: flex; flex-direction: column; gap: 8px; }
+    /* Meta now sits under the title rather than opposite it (Figma 236:447) */
     .entry-head {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
     }
     .entry-title {
       margin: 0;
@@ -194,7 +195,8 @@
 
     /* -- skills + education grids (Figma 236:571 / 236:619) ------ */
     .pairs { display: flex; flex-direction: column; gap: 8px; }
-    .pair-row { display: flex; align-items: flex-start; gap: 16px; }
+    .pairs-lg { gap: 24px; }   /* skills block, Figma 236:571 */
+    .pair-row { display: flex; align-items: flex-start; gap: 24px; }
     .pair { flex: 1 1 0; min-width: 0; }
     .grp-title {
       font-size: 12.133px;
@@ -223,8 +225,11 @@
       white-space: nowrap;
     }
 
-    /* -- narrow screens: the sheet stops pretending to be paper --- */
-    @media (max-width: 860px) {
+    /* -- narrow screens: the sheet stops pretending to be paper ---
+       `screen and` is load-bearing: the print viewport is the paper itself,
+       210mm = 794px, which is under this breakpoint. Without the media type
+       these rules hijack the PDF and it exports in the mobile layout. */
+    @media screen and (max-width: 860px) {
       .chrome, .sheet { width: 100%; }
       .chrome { padding: 20px 20px 12px; }
       .sheet { min-height: 0; margin-bottom: 32px; padding: 24px 20px; gap: 24px; }
@@ -232,7 +237,6 @@
       .contact { align-items: flex-start; text-align: left; }
       .row { flex-direction: column; gap: 8px; }
       .label { width: auto; flex: none; }
-      .entry-head { flex-direction: column; align-items: flex-start; gap: 2px; }
       .entry-meta, .edu-meta { white-space: normal; }
       .pair-row { flex-direction: column; gap: 8px; }
       .edu-row { flex-direction: column; gap: 2px; }
@@ -336,7 +340,7 @@
 
     <section class="row">
       <div class="label">Skills</div>
-      <div class="col pairs">
+      <div class="col pairs pairs-lg">
         <div class="pair-row">
           <div class="pair">
             <div class="grp-title">Product</div>
