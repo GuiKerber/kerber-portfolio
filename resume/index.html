@@ -16,11 +16,11 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@500&display=swap" rel="stylesheet">
 
   <style>
-    /* Inter only. The display face used on the site is deliberately absent —
-       it reads as branding on a portfolio and as noise on a CV. */
+    /* The sheet is Inter only. Syne appears once, on the Download button, because
+       that button is page chrome reusing the site's component - not CV content. */
     :root {
       --orange: #FF4D00;
       --ink: #111110;
@@ -30,7 +30,8 @@
       --desk: #EDECEA;
       --sheet-w: 210mm;
       --sheet-h: 297mm;
-      --pad: 14mm;
+      --pad: 32px;          /* Figma 236:26 */
+      --label-w: 160px;     /* Figma 236:56 */
     }
 
     * { box-sizing: border-box; }
@@ -42,12 +43,11 @@
       color: var(--ink);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
     }
 
-    /* ── page chrome, above the sheet ───────────────────────────── */
+    /* -- chrome above the sheet (Figma 236:17) ------------------- */
     .chrome {
-      max-width: var(--sheet-w);
+      width: var(--sheet-w);
       margin: 0 auto;
       padding: 28px 4px 14px;
       display: flex;
@@ -56,34 +56,48 @@
       gap: 16px;
     }
     .chrome-meta {
-      font-size: 12px;
-      font-weight: 400;
-      letter-spacing: 0.01em;
-      color: var(--muted);
-    }
-    .btn-download {
-      appearance: none;
-      border: 0;
-      cursor: pointer;
-      background: var(--orange);
-      color: #fff;
-      font-family: inherit;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-      padding: 10px 18px;
-      border-radius: 999px;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      transition: opacity 0.18s ease, transform 0.18s ease;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--ink);
     }
-    .btn-download:hover { opacity: 0.88; }
-    .btn-download:active { transform: translateY(1px); }
-    .btn-download:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
-    .btn-download svg { display: block; }
+    .chrome-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--ink);
+      flex: 0 0 auto;
+    }
 
-    /* ── the A4 sheet ───────────────────────────────────────────── */
+    /* The site's primary button, carried over from the case pages
+       (.proj-btn / .proj-btn-primary) so the two stay in sync. */
+    .proj-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      border: 0;
+      border-radius: 4px;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      line-height: 1.4;
+      text-decoration: none;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: opacity .2s ease, transform .15s ease;
+    }
+    .proj-btn:hover { opacity: .88; transform: translateY(-1px); }
+    .proj-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+    .proj-btn-primary { background: var(--orange); color: #fff; }
+    .proj-btn svg { display: block; }
+
+    /* -- the A4 sheet (Figma 236:26) ----------------------------- */
     .sheet {
       width: var(--sheet-w);
       min-height: var(--sheet-h);
@@ -91,159 +105,141 @@
       background: var(--paper);
       padding: var(--pad);
       box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 12px 40px rgba(0,0,0,0.09);
-      font-size: 8.5pt;
-      line-height: 1.40;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
     }
 
-    /* ── masthead ───────────────────────────────────────────────── */
-    .masthead { padding-bottom: 4mm; }
+    /* -- masthead (Figma 236:278) -------------------------------- */
+    .masthead {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+    }
     .name {
       margin: 0;
-      font-size: 19pt;
+      font-size: 36px;
       font-weight: 600;
-      letter-spacing: -0.025em;
-      line-height: 1.1;
-    }
-    .role {
-      margin: 3px 0 0;
-      font-size: 10pt;
-      font-weight: 400;
-      color: var(--muted);
-      letter-spacing: -0.01em;
+      letter-spacing: -0.6333px;
+      line-height: 1;
+      color: var(--ink);
     }
     .contact {
-      margin: 9px 0 0;
-      padding: 0;
-      list-style: none;
       display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 5px 10px;
-      font-size: 8.4pt;
-      color: var(--muted);
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      font-size: 11.2px;
+      line-height: 15.68px;
+      text-align: right;
     }
-    .contact li { display: flex; align-items: center; gap: 10px; }
-    .contact li::after {
-      content: '';
-      width: 2px; height: 2px;
-      border-radius: 50%;
-      background: #c9c8c4;
+    .contact a {
+      color: var(--orange);
+      font-weight: 600;
+      text-decoration: none;
     }
-    .contact li:last-child::after { display: none; }
-    .contact a { color: var(--muted); text-decoration: none; border-bottom: 1px solid #d8d7d3; }
-    .contact a:hover { color: var(--orange); border-color: var(--orange); }
+    .contact a:hover { text-decoration: underline; }
+    .contact .phone { color: var(--muted); font-weight: 400; }
 
-    /* ── section rows: label left, content right ────────────────── */
+    /* -- sections (Figma 236:55) --------------------------------- */
     .row {
-      display: grid;
-      grid-template-columns: 27mm 1fr;
-      gap: 0 7mm;
-      padding: 2.8mm 0;
       border-top: 1px solid var(--hair);
+      padding: 8px 0;
+      display: flex;
+      align-items: flex-start;
     }
     .label {
-      font-size: 7.4pt;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.13em;
-      color: var(--ink);
+      width: var(--label-w);
+      flex: 0 0 var(--label-w);
       padding-top: 1px;
+      font-size: 9.867px;
+      font-weight: 600;
+      line-height: 13.813px;
+      letter-spacing: 1.2827px;
+      text-transform: uppercase;
+      color: var(--muted);
     }
-    .label::before {
-      content: '';
-      display: block;
-      width: 9px;
-      height: 2px;
-      background: var(--orange);
-      margin-bottom: 6px;
-    }
+    .col { flex: 1 1 0; min-width: 0; }
 
-    .lede { margin: 0; font-size: 8.9pt; line-height: 1.48; }
+    .lede { margin: 0; font-size: 12px; line-height: 20px; }
 
-    /* ── entries ────────────────────────────────────────────────── */
-    .entry + .entry { margin-top: 2.8mm; }
+    /* -- experience (Figma 236:400) ------------------------------ */
+    .entries { display: flex; flex-direction: column; gap: 16px; }
+    .entry { display: flex; flex-direction: column; gap: 8px; }
     .entry-head {
       display: flex;
-      flex-wrap: wrap;
-      align-items: baseline;
-      gap: 3px 8px;
-    }
-    .entry-title { font-size: 9.1pt; font-weight: 600; letter-spacing: -0.01em; }
-    .entry-org { font-size: 9.1pt; font-weight: 400; color: var(--muted); }
-    .entry-meta {
-      margin: 2px 0 0;
-      font-size: 8.2pt;
-      color: var(--muted);
-      letter-spacing: 0.005em;
-    }
-    .entry p { margin: 4px 0 0; }
-    .entry ul {
-      margin: 5px 0 0;
-      padding: 0;
-      list-style: none;
-    }
-    .entry ul li {
-      position: relative;
-      padding-left: 12px;
-      margin-top: 2px;
-    }
-    .entry ul li::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0.62em;
-      width: 4px; height: 1px;
-      background: #b9b8b4;
-    }
-
-    .work-note { color: var(--muted); }
-    .work-link { color: var(--ink); text-decoration: none; border-bottom: 1px solid #d8d7d3; }
-    .work-link:hover { color: var(--orange); border-color: var(--orange); }
-
-    /* ── skills / two-up grids ──────────────────────────────────── */
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2.6mm 8mm;
-    }
-    .grp-title { font-size: 8.6pt; font-weight: 600; margin-bottom: 2px; }
-    .grp-body { font-size: 8.8pt; color: var(--muted); }
-
-    .foot {
-      padding-top: 3mm;
-      border-top: 1px solid var(--hair);
-      display: flex;
+      align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      font-size: 7.6pt;
-      color: #9a9995;
-      letter-spacing: 0.02em;
+      gap: 16px;
+    }
+    .entry-title {
+      margin: 0;
+      font-size: 12.133px;
+      font-weight: 600;
+      line-height: 16.987px;
+      letter-spacing: -0.1213px;
+      color: var(--ink);
+    }
+    .entry-title span { color: var(--muted); }
+    .entry-meta {
+      margin: 0;
+      font-size: 11.2px;
+      line-height: 15.68px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .entry ul { margin: 0; padding-left: 17px; }
+    .entry li { font-size: 11.333px; line-height: 15.867px; }
+
+    /* -- skills + education grids (Figma 236:571 / 236:619) ------ */
+    .pairs { display: flex; flex-direction: column; gap: 8px; }
+    .pair-row { display: flex; align-items: flex-start; gap: 16px; }
+    .pair { flex: 1 1 0; min-width: 0; }
+    .grp-title {
+      font-size: 12.133px;
+      font-weight: 600;
+      line-height: 16.987px;
+      letter-spacing: -0.1213px;
+      color: var(--ink);
+    }
+    .grp-body {
+      padding-top: 2px;
+      font-size: 11.333px;
+      line-height: 15.867px;
+      color: var(--ink);
+    }
+    .edu-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .edu-meta {
+      font-size: 11.2px;
+      line-height: 15.68px;
+      color: var(--muted);
+      text-align: right;
+      white-space: nowrap;
     }
 
-    /* ── screens narrower than the sheet ────────────────────────── */
-    @media (max-width: 800px) {
-      :root { --pad: 22px; }
-      .chrome { max-width: none; padding: 20px 20px 12px; }
-      .btn-download { padding: 13px 20px; font-size: 13px; }
-      .sheet {
-        width: auto;
-        min-height: 0;
-        margin: 0 12px 40px;
-        font-size: 13px;
-        line-height: 1.55;
-      }
-      .name { font-size: 27px; }
-      .role { font-size: 15px; }
-      .contact { font-size: 12px; }
-      .row { grid-template-columns: 1fr; gap: 10px; padding: 22px 0; }
-      .label { font-size: 10px; }
-      .lede, .entry-title, .entry-org { font-size: 13.5px; }
-      .entry-meta, .grp-body { font-size: 12px; }
-      .grp-title { font-size: 12.5px; }
-      .grid-2 { grid-template-columns: 1fr; gap: 16px; }
-      .foot { flex-direction: column; gap: 4px; font-size: 10px; }
+    /* -- narrow screens: the sheet stops pretending to be paper --- */
+    @media (max-width: 860px) {
+      .chrome, .sheet { width: 100%; }
+      .chrome { padding: 20px 20px 12px; }
+      .sheet { min-height: 0; margin-bottom: 32px; padding: 24px 20px; gap: 24px; }
+      .masthead { flex-direction: column; gap: 12px; }
+      .contact { align-items: flex-start; text-align: left; }
+      .row { flex-direction: column; gap: 8px; }
+      .label { width: auto; flex: none; }
+      .entry-head { flex-direction: column; align-items: flex-start; gap: 2px; }
+      .entry-meta, .edu-meta { white-space: normal; }
+      .pair-row { flex-direction: column; gap: 8px; }
+      .edu-row { flex-direction: column; gap: 2px; }
+      .edu-meta { text-align: left; }
     }
 
-    /* ── print: the sheet is the page ───────────────────────────── */
+    /* -- print / save-as-PDF ------------------------------------- */
     @page { size: A4; margin: 0; }
     @media print {
       html, body { background: #fff; }
@@ -253,23 +249,23 @@
         min-height: 0;
         margin: 0;
         box-shadow: none;
-        padding: 14mm var(--pad);
-        font-size: 9.2pt;
+        padding: var(--pad);
       }
-      a { color: inherit !important; }
-      .row { break-inside: avoid; }
-      .entry { break-inside: avoid; }
+      a { color: var(--orange) !important; text-decoration: none !important; }
+      .row, .entry { break-inside: avoid; }
     }
   </style>
 </head>
 <body>
 
   <div class="chrome">
-    <span class="chrome-meta">Updated on 28/08/2026</span>
-    <button class="btn-download" id="downloadBtn" type="button">
+    <span class="chrome-meta"><i class="chrome-dot"></i>Updated on 08/28/2026</span>
+    <button class="proj-btn proj-btn-primary" id="downloadBtn" type="button">
       Download PDF
-      <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-        <path d="M6 1v8m0 0L2.5 5.5M6 9l3.5-3.5M1 11h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Icon exported from Figma node 236:24 (11x11); stroke mapped to currentColor -->
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true">
+        <path d="M5.5 0.916667V8.25M8.70833 5.04167L5.5 8.25L2.29167 5.04167M0.916667 10.0833H10.0833"
+              stroke="currentColor" stroke-width="1.28333" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
   </div>
@@ -278,139 +274,105 @@
 
     <header class="masthead">
       <h1 class="name">Guilherme Kerber</h1>
-      <p class="role">Senior Product Designer · Fintech, SaaS, AI &amp; Gaming</p>
-      <ul class="contact">
-        <li><a href="mailto:contact@guikerber.com">contact@guikerber.com</a></li>
-        <li><a href="https://guikerber.com" target="_blank" rel="noopener">guikerber.com</a></li>
-        <li><a href="https://www.linkedin.com/in/guilherme-kerber-6854b6289/" target="_blank" rel="noopener">LinkedIn</a></li>
-        <li>Porto Alegre, Brazil — open to remote</li>
-      </ul>
+      <div class="contact">
+        <a href="mailto:contact@guikerber.com">contact@guikerber.com</a>
+        <a href="https://guikerber.com" target="_blank" rel="noopener">www.guikerber.com</a>
+        <a href="https://www.linkedin.com/in/guilherme-kerber-6854b6289/" target="_blank" rel="noopener">LinkedIn</a>
+        <span class="phone">(55) 51 993431456</span>
+      </div>
     </header>
 
     <section class="row">
-      <div class="label">Profile</div>
-      <div>
+      <div class="label">About me</div>
+      <div class="col">
         <p class="lede">Senior Product Designer with 15+ years designing complex digital products across Fintech,
         SaaS, AI and Gaming. I work across product strategy, UX and visual design — from early exploration and
-        product definition through to high-fidelity interfaces, design systems and developer handoff, bringing AI in to
-        accelerate exploration while keeping product thinking at the centre.</p>
-      </div>
-    </section>
-
-    <section class="row">
-      <div class="label">Selected work</div>
-      <div>
-        <div class="entry">
-          <div class="entry-head">
-            <span class="entry-title">AI Front Desk for Photographers</span>
-            <span class="entry-org">AI product</span>
-          </div>
-          <p>An AI agent that reads inbound inquiries, negotiates in the photographer's own tone and rates, and books
-          confirmed sessions to the calendar. Shipped as an interactive prototype.</p>
-        </div>
-        <div class="entry">
-          <div class="entry-head">
-            <span class="entry-title">Staking Marketplace in a Multi-Chain Wallet</span>
-            <span class="entry-org">Fintech</span>
-          </div>
-          <p>A bid market for delegated stake built inside a crypto wallet: delegators post what they hold, node
-          operators bid commission terms. Ran discovery, then designed the delegator flow and operator metrics.</p>
-        </div>
-        <div class="entry">
-          <div class="entry-head">
-            <span class="entry-title">Cross-Platform Coaching Experience</span>
-            <span class="entry-org">SaaS</span>
-          </div>
-          <p>Desktop redesign and mobile MVP for a remote fitness coaching platform, shipped when in-person sessions
-          stopped.</p>
-        </div>
+        product definition through to high-fidelity interfaces, design systems and developer handoff, bringing AI
+        in to accelerate exploration while keeping product thinking at the centre.</p>
       </div>
     </section>
 
     <section class="row">
       <div class="label">Experience</div>
-      <div>
+      <div class="col entries">
+
         <div class="entry">
           <div class="entry-head">
-            <span class="entry-title">Senior Product Designer</span>
-            <span class="entry-org">Koncepted</span>
+            <p class="entry-title">Senior Product Designer<span> for Koncepted</span></p>
+            <p class="entry-meta">April 2019 — Aug 2026 · 7 yrs · Remote</p>
           </div>
-          <p class="entry-meta">Sep 2017 — Aug 2026 · 9 yrs · Remote · Began freelance while at 46graus</p>
           <ul>
-            <li>Led product design across complex products, from launching new experiences from the ground up to scaling established platforms.</li>
-            <li>Designed 20+ products and websites end to end across Fintech, Gaming, SaaS and creator tools.</li>
-            <li>Set art direction on new engagements and mentored designers through critique.</li>
+            <li>Designed and launched an AI agent tool for creators and an AI NPC builder for game studios.</li>
+            <li>Led design on a SaaS product (NDA) that increased user acquisition and retention by 30%, through improvements across onboarding and core product flows.</li>
+            <li>Launched credit market and order-book trading features for a leading crypto wallet, extending the platform into new financial products.</li>
+            <li>Partnered with 50+ companies to launch new products and websites, owning design from early definition through implementation.</li>
           </ul>
         </div>
+
         <div class="entry">
           <div class="entry-head">
-            <span class="entry-title">Product Designer</span>
-            <span class="entry-org">46graus</span>
+            <p class="entry-title">Mid Product Designer<span> for 46graus</span></p>
+            <p class="entry-meta">Oct 2016 — Apr 2019 · 2 yrs 7 mos · Porto Alegre, Brazil</p>
           </div>
-          <p class="entry-meta">Oct 2016 — Apr 2019 · 2 yrs 7 mos · Porto Alegre, Brazil</p>
           <ul>
-            <li>Sole Product Designer in a growing startup, owning the process alongside engineering and the founders.</li>
-            <li>Helped evolve the product from a website builder into a platform for creators and small businesses.</li>
-            <li>Built the company's first design system; redesigned the marketing site and brand identity.</li>
+            <li>Sole Product Designer at 46graus, growing the platform&rsquo;s userbase from 100K to 200K+ by launching new products and features as it evolved from a website builder into a multi-product platform for creators and small businesses.</li>
+            <li>Worked closely with development in an agile environment — from early definition and prototyping through implementation and iteration — and established and maintained the platform&rsquo;s design system as it scaled.</li>
           </ul>
         </div>
+
         <div class="entry">
           <div class="entry-head">
-            <span class="entry-title">UX/UI Designer</span>
-            <span class="entry-org">Reweb</span>
+            <p class="entry-title">Junior UI/UX Designer<span> for Reweb</span></p>
+            <p class="entry-meta">Aug 2014 — Oct 2016 · 2 yrs 3 mos · Porto Alegre, Brazil</p>
           </div>
-          <p class="entry-meta">Aug 2014 — Oct 2016 · 2 yrs 3 mos · Porto Alegre, Brazil</p>
           <ul>
-            <li>Designed conversion-focused landing pages and digital experiences, mainly for the automotive sector.</li>
+            <li>Designed conversion-focused landing pages and digital experiences primarily for the automotive industry.</li>
+            <li>Helped automate landing page designs by identifying best design patterns and building its own design-code library to ship faster, cutting turnaround time from weeks to days.</li>
           </ul>
         </div>
+
       </div>
     </section>
 
     <section class="row">
       <div class="label">Skills</div>
-      <div class="grid-2">
-        <div>
-          <div class="grp-title">Product</div>
-          <div class="grp-body">Strategy, discovery, user research, user flows, information architecture</div>
+      <div class="col pairs">
+        <div class="pair-row">
+          <div class="pair">
+            <div class="grp-title">Product</div>
+            <div class="grp-body">Strategy, user flows, information architecture</div>
+          </div>
+          <div class="pair">
+            <div class="grp-title">User experience &amp; interface</div>
+            <div class="grp-body">UX and visual design, design systems, prototyping, responsive, handoff</div>
+          </div>
         </div>
-        <div>
-          <div class="grp-title">Experience &amp; interface</div>
-          <div class="grp-body">UX and visual design, design systems, prototyping, responsive, handoff</div>
-        </div>
-        <div>
-          <div class="grp-title">AI</div>
-          <div class="grp-body">Designing AI product experiences; AI-assisted prototyping with Claude Code</div>
-        </div>
-        <div>
-          <div class="grp-title">Tools</div>
-          <div class="grp-body">Figma, Sketch, InVision, Adobe suite, HTML/CSS fundamentals</div>
+        <div class="pair-row">
+          <div class="pair">
+            <div class="grp-title">AI</div>
+            <div class="grp-body">AI-assisted prototyping with Claude Code, AI image generation with ChatGPT and MJ</div>
+          </div>
+          <div class="pair">
+            <div class="grp-title">Soft Skills</div>
+            <div class="grp-body">Cross-functional collaboration, Stakeholder communication, Autonomous decision-making</div>
+          </div>
         </div>
       </div>
     </section>
 
     <section class="row">
       <div class="label">Education</div>
-      <div class="grid-2">
-        <div>
+      <div class="col pairs">
+        <div class="edu-row">
           <div class="grp-title">AI/UX Design Masterclass</div>
-          <div class="grp-body">UX Unicórnio · Aug — Dec 2025</div>
+          <div class="edu-meta">UX Unicórnio · Aug — Dec 2025</div>
         </div>
-        <div>
+        <div class="edu-row">
           <div class="grp-title">Publicity and Advertising, BA</div>
-          <div class="grp-body">PUCRS, Porto Alegre, Brazil · 2009 — 2014</div>
-        </div>
-        <div>
-          <div class="grp-title">Languages</div>
-          <div class="grp-body">Portuguese — native · English — advanced</div>
+          <div class="edu-meta">PUCRS, Porto Alegre, Brazil · 2009 — 2014</div>
         </div>
       </div>
     </section>
-
-    <div class="foot">
-      <span>Guilherme Kerber · Senior Product Designer</span>
-      <span>guikerber.com</span>
-    </div>
 
   </main>
 
