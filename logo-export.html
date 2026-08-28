@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Glass logo — PNG export</title>
+  <link rel="icon" href="assets/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    /* Internal tool, not part of the site. Renders the WebGL logo at an
+       arbitrary size and exports a transparent PNG for Figma.
+
+       The renderer runs with preserveDrawingBuffer:false, so the buffer is
+       wiped once the frame composites. Capture therefore has to happen inside
+       the same frame as the render -- see capture() below. */
+    :root {
+      --orange: #FF4D00;
+      --ink: #111110;
+      --muted: #6f6f6b;
+      --hair: #e3e2df;
+      --desk: #EDECEA;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--desk);
+      color: var(--ink);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 22px; font-weight: 600; letter-spacing: -0.02em;
+      margin: 0 0 6px;
+    }
+    .sub { margin: 0 0 28px; font-size: 13px; line-height: 1.55; color: var(--muted); }
+    .sub code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+
+    .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 20px; }
+    .seg { display: inline-flex; border: 1px solid var(--hair); border-radius: 4px; overflow: hidden; background: #fff; }
+    .seg button {
+      appearance: none; border: 0; background: none; cursor: pointer;
+      font: inherit; font-size: 12px; padding: 8px 14px; color: var(--muted);
+    }
+    .seg button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 20px; border: 0; border-radius: 4px;
+      font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 500;
+      letter-spacing: -0.03em; line-height: 1.4; cursor: pointer;
+      background: var(--orange); color: #fff;
+      transition: opacity .2s ease, transform .15s ease;
+    }
+    .btn:hover { opacity: .88; transform: translateY(-1px); }
+    .btn.ghost { background: #fff; color: var(--ink); border: 1px solid var(--hair); }
+
+    /* Checkerboard makes the alpha channel visible, so you can confirm the
+       background is genuinely transparent before exporting. */
+    .stage-frame {
+      position: relative; width: 100%; aspect-ratio: 1 / 1; max-width: 520px;
+      border: 1px solid var(--hair); border-radius: 6px; overflow: hidden;
+      background-color: #fff;
+      background-image:
+        linear-gradient(45deg, #e9e8e5 25%, transparent 25%, transparent 75%, #e9e8e5 75%),
+        linear-gradient(45deg, #e9e8e5 25%, transparent 25%, transparent 75%, #e9e8e5 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 10px 10px;
+    }
+    /* The canvas keeps its full pixel size for clientWidth (which the renderer
+       reads); transform only scales what you see. */
+    #stage { position: absolute; top: 0; left: 0; transform-origin: top left; display: block; }
+
+    .status { margin-top: 14px; font-size: 12px; color: var(--muted); min-height: 18px; }
+    .status strong { color: var(--ink); font-weight: 600; }
+    .note { margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--hair); font-size: 12.5px; line-height: 1.6; color: var(--muted); }
+    .note b { color: var(--ink); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Glass logo — PNG export</h1>
+    <p class="sub">Renders the same WebGL logo used in the header, at export resolution, on a transparent
+    background. Pick a size, wait for it to spin to an angle you like, then download and drop the PNG into Figma.</p>
+
+    <div class="controls">
+      <div class="seg" id="sizes"></div>
+      <button class="btn" id="dl">
+        Download PNG
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true">
+          <path d="M5.5 0.916667V8.25M8.70833 5.04167L5.5 8.25L2.29167 5.04167M0.916667 10.0833H10.0833"
+                stroke="currentColor" stroke-width="1.28333" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="btn ghost" id="again">Re-render</button>
+    </div>
+
+    <div class="stage-frame" id="frame">
+      <canvas id="stage"></canvas>
+    </div>
+    <div class="status" id="status">Loading renderer…</div>
+
+    <p class="note">
+      <b>Getting it into Figma:</b> drag the downloaded PNG straight onto the canvas, or use Place image
+      (<code>Shift Ctrl K</code>). It arrives with its alpha intact, so it sits on any background.
+      <br><br>
+      <b>Why a PNG:</b> Figma has no 3D renderer, so the logo has to be rasterised. Export at 2048 or larger
+      if you plan to scale it up — Figma will downsample cleanly, but it cannot invent detail.
+    </p>
+  </div>
+
+  <script>
+    (function () {
+      var SIZES = [1024, 2048, 4096];
+      var size = 2048;
+      var canvas = document.getElementById('stage');
+      var frame  = document.getElementById('frame');
+      var status = document.getElementById('status');
+      var ready  = false;
+
+      function say(html) { status.innerHTML = html; }
+
+      function fit() {
+        canvas.style.width  = size + 'px';
+        canvas.style.height = size + 'px';
+        canvas.style.transform = 'scale(' + (frame.clientWidth / size) + ')';
+      }
+
+      function mount() {
+        ready = false;
+        say('Mounting at ' + size + '×' + size + '…');
+        fit();
+        if (!window.__mountGlassLogo) { say('Renderer failed to load.'); return; }
+        try {
+          window.__mountGlassLogo(canvas);
+          ready = true;
+          say('Ready — buffer <strong>' + canvas.width + '×' + canvas.height + '</strong>' +
+              (window.devicePixelRatio !== 1 ? ' (device pixel ratio ' + window.devicePixelRatio + ')' : ''));
+        } catch (e) {
+          say('Mount failed: ' + e.message);
+        }
+      }
+
+      /* preserveDrawingBuffer is false, so toDataURL only returns pixels if it
+         runs before the frame composites. Scheduling from a click puts this
+         callback after the renderer's own rAF for the same frame, so the buffer
+         still holds the render when we read it. */
+      function capture() {
+        if (!ready) { say('Not ready yet.'); return; }
+        requestAnimationFrame(function () {
+          var url;
+          try { url = canvas.toDataURL('image/png'); }
+          catch (e) { say('Capture failed: ' + e.message); return; }
+          if (url.length < 6000) {
+            say('Captured an empty frame — press Download again.');
+            return;
+          }
+          var a = document.createElement('a');
+          a.href = url;
+          a.download = 'guilherme-kerber-logo-' + canvas.width + 'px.png';
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          say('Saved <strong>' + a.download + '</strong> — ' + Math.round(url.length / 1365) + ' KB approx.');
+        });
+      }
+
+      var seg = document.getElementById('sizes');
+      SIZES.forEach(function (s) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = s + 'px';
+        b.setAttribute('aria-pressed', String(s === size));
+        b.addEventListener('click', function () {
+          size = s;
+          [].forEach.call(seg.children, function (c) {
+            c.setAttribute('aria-pressed', String(c === b));
+          });
+          mount();
+        });
+        seg.appendChild(b);
+      });
+
+      document.getElementById('dl').addEventListener('click', capture);
+      document.getElementById('again').addEventListener('click', mount);
+      window.addEventListener('resize', fit);
+
+      var s = document.createElement('script');
+      s.src = 'assets/vendor/glass-logo.js';
+      s.onload = mount;
+      s.onerror = function () { say('Could not load assets/vendor/glass-logo.js'); };
+      document.body.appendChild(s);
+    })();
+  </script>
+</body>
+</html>
