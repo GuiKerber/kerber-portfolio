@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- checkout-conversion-engine and analytics-dashboard are intentionally omitted:
-     they are noindex placeholders, not finished case studies. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://guikerber.com/</loc>
