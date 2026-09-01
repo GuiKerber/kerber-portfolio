@@ -170,7 +170,8 @@
     .acc-inner { padding:0 0 28px 34px; display:flex; flex-direction:column; gap:18px; }
     .acc-text { font-size:13px; font-weight:400; line-height:1.68; color:var(--black-64); }
     .attr-grid { display:flex; flex-direction:column; gap:7px; }
-    .attr-row { display:grid; grid-template-columns:84px 1fr; gap:8px; align-items:baseline; }
+    .attr-row { display:grid; grid-template-columns:92px 1fr; gap:8px; align-items:baseline; }
+    .attr-dt { hyphens:none; }
     .attr-dt { font-size:10px; font-weight:500; letter-spacing:0.13em; text-transform:uppercase; color:var(--black-38); }
     .attr-dd { font-size:13px; font-weight:400; line-height:1.68; color:var(--ink); }
     .insight-list { list-style:none; display:flex; flex-direction:column; gap:9px; }
@@ -182,6 +183,8 @@
     .kpi-item:last-child { border-bottom:none; }
     .kpi-name { font-family:'Syne',sans-serif; font-size:13px; font-weight:600; color:var(--ink); display:block; margin-bottom:4px; letter-spacing:-0.01em; }
     .kpi-desc { font-size:12px; font-weight:400; line-height:1.6; color:var(--black-52); }
+    /* Closing note: same weight as the note ending section 06 on the coaching case */
+    .acc-note { font-size:12px; font-weight:400; line-height:1.55; color:var(--black-38); margin-top:4px; }
 
     .case-right { padding:60px 80px 80px 60px; }
     .gallery { display:flex; flex-direction:column; gap:20px; }
@@ -290,12 +293,14 @@
       <div class="acc-item is-open" data-section="0">
         <button class="acc-head"><span class="acc-num">01</span><span class="acc-label" data-pt="Visão geral">Overview</span><span class="acc-plus">+</span></button>
         <div class="acc-body"><div class="acc-inner">
-          <p class="acc-text" data-pt="A nova funcionalidade da 46graus é um agente de IA que fica dentro do dashboard do fotógrafo e cuida do lado administrativo do trabalho: triando mensagens recebidas, respondendo e negociando, e agendando sessões confirmadas direto no calendário. O fotógrafo continua sendo quem aprova qualquer coisa que realmente importa; o agente elimina o trabalho burocrático em torno dessa decisão, não a decisão em si.">46graus's new feature is an AI agent that sits inside a photographer's dashboard and handles the business side of the job: triaging inbound inquiries, replying and negotiating, and booking confirmed sessions straight onto the calendar. The photographer stays the final approver on anything that matters; the agent removes the busywork around that decision, not the decision itself.</p>
+          <p class="acc-text" data-pt="Este case é baseado em um trabalho de cliente lançado sob NDA. O problema, as decisões de design e o comportamento do agente são exatamente os que eu desenhei; o que mudou foi o contexto em que ele é mostrado. Adaptei o produto para a 46graus — plataforma de fotografia em que trabalhei no início da carreira e que conheço bem — para poder mostrar o trabalho por inteiro mantendo o cliente confidencial.">This case is based on client work shipped under NDA. The problem, the design decisions and the agent&rsquo;s behaviour are exactly what I designed; what changed is the context it&rsquo;s shown in. I adapted the product onto 46graus — a photography platform I designed for earlier in my career and know well — so the work can be shown in full while the client stays confidential.</p>
+          <p class="acc-text" data-pt="O produto é um agente de IA que fica dentro do painel do fotógrafo e cuida do lado comercial do trabalho: triando as mensagens recebidas, respondendo e negociando, e agendando sessões confirmadas direto no calendário. O fotógrafo continua sendo quem aprova qualquer coisa que realmente importa; o agente elimina o trabalho burocrático em torno dessa decisão, não a decisão em si.">The product is an AI agent that sits inside a photographer's dashboard and handles the business side of the job: triaging inbound inquiries, replying and negotiating, and booking confirmed sessions straight onto the calendar. The photographer stays the final approver on anything that matters; the agent removes the busywork around that decision, not the decision itself.</p>
           <div class="attr-grid">
-            <div class="attr-row"><span class="attr-dt" data-pt="Empresa">Company</span><span class="attr-dd">46graus</span></div>
+            <div class="attr-row"><span class="attr-dt" data-pt="Tipo">Type</span><span class="attr-dd" data-pt="Projeto de cliente sob NDA — lançado">Client project under NDA — shipped</span></div>
+            <div class="attr-row"><span class="attr-dt" data-pt="Apresentado como">Presented as</span><span class="attr-dd" data-pt="Adaptado para a 46graus, plataforma em que já trabalhei">Adapted to 46graus, a platform I previously designed for</span></div>
             <div class="attr-row"><span class="attr-dt" data-pt="Duração">Duration</span><span class="attr-dd" data-pt="2 meses">2 months</span></div>
-            <div class="attr-row"><span class="attr-dt" data-pt="Função">Role</span><span class="attr-dd">Product design &amp; Vibe Code</span></div>
-            <div class="attr-row"><span class="attr-dt" data-pt="Equipe">Team</span><span class="attr-dd">Solo</span></div>
+            <div class="attr-row"><span class="attr-dt" data-pt="Papel">Role</span><span class="attr-dd" data-pt="Product design e protótipo em código">Product design &amp; coded prototype</span></div>
+            <div class="attr-row"><span class="attr-dt" data-pt="Time">Team</span><span class="attr-dd">Solo</span></div>
           </div>
         </div></div>
       </div>
@@ -318,7 +323,7 @@
         <button class="acc-head"><span class="acc-num">03</span><span class="acc-label" data-pt="Abordagem">Approach</span><span class="acc-plus">+</span></button>
         <div class="acc-body"><div class="acc-inner">
           <p class="acc-text" data-pt="Como construir um dashboard em que cada tela também seja algo sobre o qual o agente possa agir através de uma mensagem de chat? Dois núcleos respondem a isso. O dashboard acompanha o desempenho do agente e as conversas, enquanto um chat persistente é onde os fotógrafos perguntam ao agente o que importa agora — melhor lead, maior oportunidade, o que precisa de uma decisão — e recebem uma resposta com um caminho a seguir.">How do you build a dashboard where every screen is also something the agent can act on through a chat message? Two cores answer that. The dashboard tracks agent performance and conversations, while a persistent chat is where photographers ask their agents what matters right now — best lead, top opportunity, what needs a decision — and get an answer with a path to follow.</p>
-          <p class="acc-text" data-pt="A personalização é propositalmente simples: os fotógrafos ensinam seus agentes com seus próprios preços e serviços através de uma configuração simples, mas o treinamento vem dos dados da 46graus. A ideia é dar aos fotógrafos uma solução simples e eficaz, não um construtor complexo de agentes personalizados.">Customization stays simple by design: photographers teach their agents their own rates and services with a simple personalization, but the training comes from 46graus's data. The idea is to give photographers a simple and effective solution, not a complex custom agent builder.</p>
+          <p class="acc-text" data-pt="A personalização é propositalmente simples: os fotógrafos ensinam seus agentes com seus próprios preços e serviços através de uma configuração simples, mas o treinamento vem dos dados da plataforma. A ideia é dar aos fotógrafos uma solução simples e eficaz, não um construtor complexo de agentes personalizados.">Customization stays simple by design: photographers teach their agents their own rates and services with a simple personalization, but the training comes from the platform's data. The idea is to give photographers a simple and effective solution, not a complex custom agent builder.</p>
           <p class="acc-text" data-pt="Por fim, o agente também é sensível ao contexto: no dashboard, ele varre todas as conversas em busca de oportunidades e conflitos; dentro de uma conversa específica, ele foca nesse contexto e sugere o próximo passo, reduzindo o tempo gasto cruzando mensagens e calendários.">Lastly, the agent is also context-aware: on the dashboard it scans every conversation for opportunities and conflicts; inside one thread it narrows to that context and suggests the next step, cutting time spent cross-checking messages and calendars.</p>
         </div></div>
       </div>
@@ -334,7 +339,7 @@
         <button class="acc-head"><span class="acc-num">05</span><span class="acc-label" data-pt="Conectando o Hub">Connecting the Hub</span><span class="acc-plus">+</span></button>
         <div class="acc-body"><div class="acc-inner">
           <p class="acc-text" data-pt="A 46graus já dá aos fotógrafos um criador de sites, um CRM de clientes, uma loja online, um sistema de aprovação e um calendário de agendamentos. Cada um é uma funcionalidade madura e completa, e todos são conectados entre si.">46graus already gives photographers a website builder, a client CRM, an online store, an approval system, and a booking calendar. Each one is a mature and complete feature, and each is connected to the others.</p>
-          <p class="acc-text" data-pt="A nova funcionalidade do agente entra como uma funcionalidade própria. Ela não constrói um site nem controla produtos da loja, mas está conectada a todos os outros serviços que a 46graus oferece. Por isso, uma nova função principal foi adicionada à barra de navegação primária, onde todos esses produtos vivem.">The new agent feature enters as its own feature. It doesn't build a website or control store products, but it is connected to all the other services 46graus provides. So a new core function has been added to the primary navigation bar, where all these products live.</p>
+          <p class="acc-text" data-pt="O agente foi desenhado para ficar ao lado dessas ferramentas, como uma funcionalidade própria. Ele não constrói um site nem controla produtos da loja, mas se conecta aos outros serviços que a plataforma oferece, ocupando um novo espaço na navegação primária, onde esses produtos vivem.">The agent is designed to sit alongside those tools as its own feature. It doesn't build a website or control store products, but it connects to the other services the platform provides, so it takes a new core slot in the primary navigation, where those products live.</p>
           <p class="acc-text" data-pt="O agente pode se conectar a todo esse hub de ferramentas do fotógrafo ativando conexões, e interagir com outras funcionalidades principais, como adicionar agendamentos ao calendário, enviar produtos da loja para um cliente, adicionar novos leads ao CRM, entre outros.">The agent can connect to this full hub of photographer tools by enabling connections, and interact with other core features like adding bookings to the calendar, sending products from the store to a customer, adding new leads to the CRM, and more.</p>
         </div></div>
       </div>
@@ -342,7 +347,7 @@
       <div class="acc-item" data-section="5">
         <button class="acc-head"><span class="acc-num">06</span><span class="acc-label" data-pt="Medindo o Sucesso">Measuring Success</span><span class="acc-plus">+</span></button>
         <div class="acc-body"><div class="acc-inner">
-          <p class="acc-sub-label" data-pt="Controle de produto pós-lançamento">Post-launch product control</p>
+          <p class="acc-sub-label" data-pt="Definido para acompanhar após o lançamento">Defined to track after launch</p>
           <div class="kpi-list">
             <div class="kpi-item">
               <span class="kpi-name" data-pt="Taxa de adoção">Adoption rate</span>
@@ -361,6 +366,7 @@
               <p class="kpi-desc" data-pt="Onde os fotógrafos intervêm e agem por conta própria em vez de deixar o agente cuidar disso — revela novos casos de uso e lacunas no que o agente consegue fazer.">Where photographers step in and act themselves instead of letting the agent handle it — surfaces new use cases and gaps in what the agent can do.</p>
             </div>
           </div>
+            <p class="acc-note" data-pt="Desenhei o agente e defini o que deveria ser medido, mas não tive acesso aos dados de produto após o handoff.">I designed the agent and defined what should be measured, but did not have access to product analytics after handoff.</p>
         </div></div>
       </div>
 
