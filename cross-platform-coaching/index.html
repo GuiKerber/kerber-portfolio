@@ -332,6 +332,25 @@
       border-bottom: 1px solid var(--black-10);
     }
     .impact-list li:last-child { border-bottom: none; }
+    /* Outcome block: the figure stays the scannable element, so the
+       explanation sits under the label rather than beside the number. */
+    .impact-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+    .impact-label { color: var(--black-64); }
+    .impact-note { font-size: 12px; line-height: 1.55; color: var(--black-38); }
+    .impact-sub {
+      font-size: 10px; font-weight: 500; letter-spacing: 0.13em;
+      text-transform: uppercase; color: var(--black-38);
+      margin-top: 26px; margin-bottom: 2px;
+    }
+    .impact-method {
+      font-size: 12px; line-height: 1.55; color: var(--black-38); margin-top: 12px;
+    }
+    .defined-list {
+      list-style: none; display: flex; flex-direction: column;
+      gap: 8px; margin-top: 8px; padding: 0;
+    }
+    .defined-list li { font-size: 13px; line-height: 1.55; color: var(--black-38); }
+    .def-name { color: var(--ink); font-weight: 600; }
     .impact-val {
       font-family: 'Syne', sans-serif;
       font-size: 18px;
@@ -601,18 +620,38 @@
       <div class="acc-item" data-section="5">
         <button class="acc-head">
           <span class="acc-num">06</span>
-          <span class="acc-label" data-pt="Impacto Estimado">Estimated Impact</span>
+          <span class="acc-label" data-pt="Resultado">Outcome</span>
           <span class="acc-plus">+</span>
         </button>
         <div class="acc-body">
           <div class="acc-inner">
-            <p class="acc-text" data-pt="Juntos, a plataforma desktop e o app mobile criaram um ciclo de coaching conectado, permitindo que os treinadores criassem programas com mais eficiência enquanto os alunos os seguiam de forma independente.">Together, the desktop platform and mobile app created a connected coaching loop, enabling trainers to create programs more efficiently while students followed them independently.</p>
+            <p class="acc-text" data-pt="A plataforma vinha perdendo alunos conforme as sessões presenciais deixaram de acontecer. O redesenho deu aos treinadores uma forma de continuar atendendo remotamente e aos alunos uma forma de treinar por conta própria, fechando um ciclo que havia se rompido.">The platform had been losing students as in-person sessions stopped. The redesign gave trainers a way to keep delivering remotely and gave students a way to train on their own, closing a loop that had broken.</p>
+
+            <div class="impact-sub" data-pt="Medido em testes internos">Measured in internal testing</div>
             <ul class="impact-list">
-              <li data-pt="&lt;span class=&quot;impact-val&quot;&gt;–20%&lt;/span&gt; taxa de cancelamento de alunos"><span class="impact-val">–20%</span> student cancellation rate</li>
-              <li data-pt="&lt;span class=&quot;impact-val&quot;&gt;+12%&lt;/span&gt; adoção de novos treinadores"><span class="impact-val">+12%</span> new trainer adoption</li>
-              <li data-pt="&lt;span class=&quot;impact-val&quot;&gt;–40%&lt;/span&gt; tempo de criação de planos"><span class="impact-val">–40%</span> plan creation time</li>
-              <li data-pt="&lt;span class=&quot;impact-val&quot;&gt;–60%&lt;/span&gt; tempo de atribuição de treinos"><span class="impact-val">–60%</span> workout assignment time</li>
+              <li>
+                <span class="impact-val">–40%</span>
+                <span class="impact-body">
+                  <span class="impact-label" data-pt="tempo para montar um plano de treino">time to build a workout plan</span>
+                  <span class="impact-note" data-pt="Um fluxo de configuração dia a dia substituiu um formulário único e longo.">A day-by-day setup flow replaced a single long form.</span>
+                </span>
+              </li>
+              <li>
+                <span class="impact-val">–30%</span>
+                <span class="impact-body">
+                  <span class="impact-label" data-pt="tempo para atribuir um programa a um aluno">time to assign a program to a student</span>
+                  <span class="impact-note" data-pt="A atribuição passou para o quadro de programas, em vez de passar por uma lista de clientes separada.">Assignment moved onto the program board, instead of routing through a separate client list.</span>
+                </span>
+              </li>
             </ul>
+            <p class="impact-method" data-pt="Ambos medidos por comparação cronometrada de tarefas contra o fluxo desktop anterior, antes do lançamento.">Both measured as timed task comparisons against the previous desktop flow, before launch.</p>
+
+            <div class="impact-sub" data-pt="Definido para acompanhar após o lançamento">Defined to track after launch</div>
+            <ul class="defined-list">
+              <li><span class="def-name" data-pt="Retenção de treinadores">Trainer retention</span> <span class="def-desc" data-pt="&mdash; quantos treinadores seguiram usando a plataforma após o lançamento">&mdash; how many trainers kept using the platform after launch</span></li>
+              <li><span class="def-name" data-pt="Novos cadastros de treinadores">New trainer signups</span> <span class="def-desc" data-pt="&mdash; quantos entraram quando o atendimento remoto passou a ser possível">&mdash; how many joined once remote coaching became possible</span></li>
+            </ul>
+            <p class="impact-method" data-pt="Desenhei a plataforma e defini o que deveria ser medido, mas não tive acesso aos dados de produto após o handoff.">I designed the platform and defined what should be measured, but did not have access to product analytics after handoff.</p>
           </div>
         </div>
       </div>
