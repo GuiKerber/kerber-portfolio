@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Designing with AI — Guilherme Kerber</title>
+  <meta name="description" content="A living map of how I design with AI: research, discovery, UI, prototyping and testing, and the connections between them.">
+  <link rel="canonical" href="https://guikerber.com/ai-process/">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://guikerber.com/ai-process/">
+  <meta property="og:title" content="Designing with AI — Guilherme Kerber">
+  <meta property="og:description" content="A living map of how I design with AI: research, discovery, UI, prototyping and testing, and the connections between them.">
+  <meta property="og:image" content="https://guikerber.com/assets/og-cover.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="Guilherme Kerber">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://guikerber.com/assets/og-cover.jpg">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --orange:     #FF4D00;
+      --black:      #080808;
+      --off-white:  #EDECEA;
+
+      --white-4:  rgba(255,255,255,0.04);
+      --white-8:  rgba(255,255,255,0.08);
+      --white-16: rgba(255,255,255,0.16);
+      --white-32: rgba(255,255,255,0.32);
+      --white-48: rgba(255,255,255,0.48);
+      --white-56: rgba(255,255,255,0.56);
+
+      /* One hue per stage. Orange stays with UI design so the brand colour
+         keeps meaning something; the rest are spaced far enough apart in hue
+         to stay tellable at 8px on a dot. */
+      --c-research:  #4DA3FF;
+      --c-discovery: #A78BFA;
+      --c-ui:        #FF4D00;
+      --c-proto:     #FFB020;
+      --c-testing:   #34D399;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--black);
+      color: var(--off-white);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overscroll-behavior: none;
+    }
+
+    /* ── Dot field. Two layers at different scales so it reads as depth
+          rather than graph paper, and both sit far below the links. ── */
+    .dots {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,0.055) 1px, transparent 1px),
+        radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 26px 26px, 78px 78px;
+      background-position: 0 0, 13px 13px;
+      /* fades the field out at the edges so the map feels lit from the middle */
+      -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 35%, transparent 100%);
+              mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 35%, transparent 100%);
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 60;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 32px;
+      background: linear-gradient(180deg, rgba(8,8,8,0.9) 0%, rgba(8,8,8,0) 100%);
+      pointer-events: none;
+    }
+    nav > * { pointer-events: auto; }
+    .nav-logo { display: block; line-height: 0; opacity: .9; transition: opacity .2s; }
+    .nav-logo:hover { opacity: 1; }
+    .nav-back {
+      font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 500;
+      letter-spacing: -0.03em; color: var(--white-56); text-decoration: none;
+      transition: color .2s;
+    }
+    .nav-back:hover { color: var(--off-white); }
+
+    /* ── Page heading, sits above the map ── */
+    .intro {
+      position: fixed; top: 76px; left: 32px; z-index: 40; max-width: 320px;
+      pointer-events: none;
+    }
+    .intro h1 {
+      font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 600;
+      letter-spacing: -0.02em; margin: 0 0 8px; color: var(--off-white);
+    }
+    .intro p {
+      margin: 0; font-size: 12.5px; line-height: 1.6; color: var(--white-48);
+    }
+
+    /* ── The map ── */
+    .map {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .links {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 1;
+    }
+    .link {
+      stroke: var(--white-8);
+      stroke-width: 1;
+      fill: none;
+      transition: stroke .25s ease, stroke-width .25s ease;
+    }
+    .link.is-lit { stroke: var(--white-32); stroke-width: 1.4; }
+
+    /* ── Centre: 3D mark + search trigger ── */
+    .core {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+      display: flex; flex-direction: column; align-items: center; gap: 18px;
+    }
+    .core-mark { width: 132px; height: 132px; position: relative; }
+    .core-mark canvas { width: 100%; height: 100%; display: block; }
+    /* Fallback mark when WebGL cannot run — the static logo, same footprint. */
+    .core-fallback {
+      position: absolute; inset: 0; display: none;
+      align-items: center; justify-content: center;
+    }
+    .core-fallback img { width: 56%; height: auto; opacity: .9; }
+    html.no-webgl .core-mark canvas { display: none; }
+    html.no-webgl .core-fallback { display: flex; }
+
+    .search-trigger {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 18px; border: 1px solid var(--white-16); border-radius: 999px;
+      background: rgba(255,255,255,0.03); color: var(--white-56);
+      font-family: 'Syne', sans-serif; font-size: 12.5px; font-weight: 500;
+      letter-spacing: -0.02em; cursor: pointer;
+      transition: color .2s, border-color .2s, background .2s;
+    }
+    .search-trigger:hover { color: var(--off-white); border-color: var(--white-32); background: rgba(255,255,255,0.06); }
+    .search-trigger:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+    .search-trigger kbd {
+      font-family: inherit; font-size: 10.5px; color: var(--white-32);
+      border: 1px solid var(--white-16); border-radius: 3px; padding: 1px 5px;
+    }
+
+    /* ── Nodes ── */
+    .nodes { position: absolute; inset: 0; z-index: 3; }
+    .node {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 7px 12px 7px 10px;
+      background: rgba(18,18,18,0.92);
+      border: 1px solid var(--white-8);
+      border-left: 2px solid var(--node-color, var(--white-16));
+      border-radius: 4px;
+      color: var(--off-white);
+      font-family: 'Inter', sans-serif; font-size: 11.5px; font-weight: 400;
+      letter-spacing: -0.01em; line-height: 1.3; white-space: nowrap;
+      cursor: pointer; text-align: left;
+      transition: border-color .2s ease, background .2s ease,
+                  opacity .25s ease, transform .25s ease;
+    }
+    .node:hover, .node:focus-visible {
+      border-color: var(--node-color, var(--white-32));
+      background: rgba(28,28,28,0.96);
+      outline: none;
+    }
+    .node-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--node-color); flex: 0 0 auto;
+    }
+    /* Placeholders: the map is meant to look partly unwritten. */
+    .node.is-empty { color: var(--white-32); border-style: dashed; cursor: default; }
+    .node.is-empty .node-dot { opacity: .45; }
+
+    .node.is-dim { opacity: .12; }
+    .node.is-match {
+      border-color: var(--node-color);
+      background: rgba(34,34,34,0.98);
+      transform: translate(-50%, -50%) scale(1.06);
+    }
+
+    /* ── Legend ── */
+    .legend {
+      position: fixed; left: 32px; bottom: 28px; z-index: 40;
+      display: flex; flex-direction: column; gap: 7px;
+    }
+    .legend-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 10px; font-weight: 500; letter-spacing: 0.11em;
+      text-transform: uppercase; color: var(--white-32);
+      background: none; border: 0; padding: 0; cursor: pointer;
+      transition: color .2s;
+    }
+    .legend-item:hover, .legend-item.is-on { color: var(--off-white); }
+    .legend-item i { width: 7px; height: 7px; border-radius: 50%; background: var(--node-color); }
+
+    /* ── Search panel ── */
+    .search {
+      position: fixed; inset: 0; z-index: 80;
+      display: none; align-items: flex-start; justify-content: center;
+      padding-top: 18vh;
+      background: rgba(8,8,8,0.72);
+      -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    }
+    .search.is-open { display: flex; }
+    .search-box {
+      width: min(520px, calc(100% - 48px));
+      background: #121212; border: 1px solid var(--white-16); border-radius: 8px;
+      overflow: hidden;
+    }
+    .search-box input {
+      width: 100%; padding: 16px 18px; border: 0; outline: none;
+      background: none; color: var(--off-white);
+      font-family: 'Inter', sans-serif; font-size: 15px;
+    }
+    .search-box input::placeholder { color: var(--white-32); }
+    .search-results { max-height: 46vh; overflow-y: auto; border-top: 1px solid var(--white-8); }
+    .search-hit {
+      display: flex; align-items: center; gap: 10px; width: 100%;
+      padding: 11px 18px; background: none; border: 0; cursor: pointer;
+      color: var(--off-white); font-family: 'Inter', sans-serif;
+      font-size: 12.5px; text-align: left;
+      transition: background .15s;
+    }
+    .search-hit:hover, .search-hit.is-active { background: rgba(255,255,255,0.05); }
+    .search-hit i { width: 7px; height: 7px; border-radius: 50%; background: var(--node-color); flex: 0 0 auto; }
+    .search-hit span { color: var(--white-32); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; margin-left: auto; }
+    .search-empty { padding: 14px 18px; font-size: 12.5px; color: var(--white-32); }
+
+    /* ── Article modal ── */
+    .modal {
+      position: fixed; inset: 0; z-index: 90;
+      display: none; align-items: center; justify-content: center; padding: 24px;
+      background: rgba(8,8,8,0.8);
+      -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    }
+    .modal.is-open { display: flex; }
+    .modal-card {
+      width: min(640px, 100%); max-height: 82vh; overflow-y: auto;
+      background: #121212; border: 1px solid var(--white-16);
+      border-top: 2px solid var(--node-color, var(--orange));
+      border-radius: 8px; padding: 32px;
+    }
+    .modal-stage {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 10px; font-weight: 500; letter-spacing: 0.13em;
+      text-transform: uppercase; color: var(--white-48); margin-bottom: 14px;
+    }
+    .modal-stage i { width: 7px; height: 7px; border-radius: 50%; background: var(--node-color); }
+    .modal-card h2 {
+      font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 600;
+      letter-spacing: -0.02em; margin: 0 0 16px;
+    }
+    .modal-card p { margin: 0 0 14px; font-size: 13.5px; line-height: 1.7; color: var(--white-56); }
+    .modal-close {
+      position: absolute; top: 24px; right: 24px;
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--white-16); background: rgba(255,255,255,0.04);
+      color: var(--off-white); cursor: pointer; font-size: 16px; line-height: 1;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.1); }
+
+    /* ── Small screens: the map is not usable, so it becomes a list ── */
+    @media (max-width: 900px) {
+      .map { height: auto; min-height: 0; overflow: visible; padding: 120px 20px 80px; }
+      .links, .legend { display: none; }
+      .intro { position: static; max-width: none; padding: 0 20px; margin-bottom: 28px; }
+      .core { position: static; transform: none; margin: 0 auto 36px; }
+      .nodes {
+        position: static; display: flex; flex-direction: column; gap: 10px;
+        max-width: 420px; margin: 0 auto;
+      }
+      .node {
+        position: static !important; transform: none !important;
+        left: auto !important; top: auto !important;
+        white-space: normal; width: 100%;
+      }
+      .node.is-match { transform: none !important; }
+      .modal-card { padding: 24px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .node, .link { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dots" aria-hidden="true"></div>
+
+  <nav>
+    <a class="nav-logo" href="../" aria-label="Guilherme Kerber — Home" data-pt-aria="Guilherme Kerber — Início">
+      <img src="../assets/logo.svg" alt="" width="26" height="26">
+    </a>
+    <a class="nav-back" href="../" data-pt="← Voltar ao portfólio">← Back to portfolio</a>
+  </nav>
+
+  <div class="intro">
+    <h1 data-pt="Projetando com IA">Designing with AI</h1>
+    <p data-pt="Um mapa vivo do meu processo — pesquisa, descoberta, UI, prototipagem e teste — e das conexões entre essas etapas. Vou preenchendo os nós conforme escrevo.">A living map of my process — research, discovery, UI, prototyping and testing — and the connections between those stages. I fill the nodes in as I write them.</p>
+  </div>
+
+  <main class="map" id="map">
+    <svg class="links" id="links" aria-hidden="true"></svg>
+    <div class="nodes" id="nodes"></div>
+
+    <div class="core">
+      <div class="core-mark">
+        <canvas id="glassLogoCanvas"></canvas>
+        <div class="core-fallback"><img src="../assets/logo.svg" alt="" width="74" height="74"></div>
+      </div>
+      <button class="search-trigger" id="searchTrigger" type="button">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="4.6" stroke="currentColor" stroke-width="1.4"/>
+          <line x1="10.6" y1="10.6" x2="14" y2="14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        <span data-pt="Buscar no mapa">Search the map</span>
+        <kbd>/</kbd>
+      </button>
+    </div>
+  </main>
+
+  <div class="legend" id="legend"></div>
+
+  <!-- Search -->
+  <div class="search" id="search" role="dialog" aria-modal="true" aria-label="Search the map">
+    <div class="search-box">
+      <input id="searchInput" type="text" autocomplete="off" spellcheck="false"
+             placeholder="Search stages and notes…" data-pt-placeholder="Buscar etapas e notas…">
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+
+  <!-- Article -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card" id="modalCard">
+      <button class="modal-close" id="modalClose" type="button" aria-label="Close" data-pt-aria="Fechar">×</button>
+      <div class="modal-stage"><i></i><span id="modalStage"></span></div>
+      <h2 id="modalTitle"></h2>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <script>
+    /* ── I18N — reads the choice made in the homepage footer switcher.
+          Same contract as every other page: no switcher here. ── */
+    (function () {
+      var lang = localStorage.getItem('site-lang') || 'en';
+      window.__siteLang = lang;
+      document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+      if (lang === 'pt') {
+        document.title = 'Projetando com IA — Guilherme Kerber';
+        document.querySelectorAll('[data-pt]').forEach(function (el) { el.innerHTML = el.getAttribute('data-pt'); });
+        document.querySelectorAll('[data-pt-aria]').forEach(function (el) { el.setAttribute('aria-label', el.getAttribute('data-pt-aria')); });
+        document.querySelectorAll('[data-pt-placeholder]').forEach(function (el) { el.setAttribute('placeholder', el.getAttribute('data-pt-placeholder')); });
+      }
+    })();
+  </script>
+
+  <script>
+  (function () {
+    var PT = window.__siteLang === 'pt';
+    var T = function (en, pt) { return PT ? pt : en; };
+
+    /* ── Stages. `angle` is where the cluster sits around the centre; nodes
+          scatter around it, so same-stage nodes read as one group. ── */
+    var STAGES = {
+      research:  { color: 'var(--c-research)',  angle: -108, label: T('Research', 'Pesquisa') },
+      discovery: { color: 'var(--c-discovery)', angle:  -36, label: T('Discovery', 'Descoberta') },
+      ui:        { color: 'var(--c-ui)',        angle:   36, label: T('UI Design', 'UI Design') },
+      proto:     { color: 'var(--c-proto)',     angle:  108, label: T('Prototyping', 'Prototipagem') },
+      testing:   { color: 'var(--c-testing)',   angle:  180, label: T('Testing', 'Teste') }
+    };
+
+    /* `a` = angle offset from the cluster centre, `r` = distance out.
+       Hand-placed rather than random so the layout is the same every visit. */
+    var NODES = [
+      { s:'research',  a:-26, r:0.52, t:T('User interviews','Entrevistas com usuários'), body:true },
+      { s:'research',  a: 16, r:0.34, t:T('AI-assisted synthesis','Síntese assistida por IA'), body:true },
+      { s:'research',  a: 24, r:0.62, t:T('Survey design','Design de questionários') },
+      { s:'research',  a:-10, r:0.74, t:T('Competitive scan','Análise competitiva') },
+      { s:'research',  a: 34, r:0.86, t:T('Field notes','Notas de campo') },
+
+      { s:'discovery', a:-22, r:0.44, t:T('Problem framing','Enquadrar o problema'), body:true },
+      { s:'discovery', a: 12, r:0.58, t:T('Stakeholder interviews','Entrevistas com stakeholders'), body:true },
+      { s:'discovery', a:-4,  r:0.76, t:T('Opportunity mapping','Mapa de oportunidades') },
+      { s:'discovery', a: 28, r:0.88, t:T('Minimum requirements','Requisitos mínimos') },
+
+      { s:'ui',        a:-18, r:0.42, t:T('Design system','Design system'), body:true },
+      { s:'ui',        a: 10, r:0.56, t:T('AI-generated variants','Variações geradas por IA'), body:true },
+      { s:'ui',        a:-30, r:0.70, t:T('Visual direction','Direção visual') },
+      { s:'ui',        a: 22, r:0.78, t:T('Component states','Estados de componente') },
+      { s:'ui',        a:  0, r:0.92, t:T('Developer handoff','Handoff para dev') },
+
+      { s:'proto',     a:-20, r:0.46, t:T('Coded prototypes','Protótipos em código'), body:true },
+      { s:'proto',     a: 14, r:0.60, t:T('The Claude Code loop','O loop com Claude Code'), body:true },
+      { s:'proto',     a:-6,  r:0.80, t:T('Motion studies','Estudos de motion') },
+      { s:'proto',     a: 30, r:0.90, t:T('Figma to code','Do Figma ao código') },
+
+      { s:'testing',   a:-16, r:0.48, t:T('Usability testing','Teste de usabilidade'), body:true },
+      { s:'testing',   a: 18, r:0.64, t:T('Timed task comparison','Comparação cronometrada'), body:true },
+      { s:'testing',   a: -2, r:0.82, t:T('Post-launch metrics','Métricas pós-lançamento') },
+      { s:'testing',   a: 32, r:0.94, t:T('What I could not measure','O que não consegui medir') }
+    ];
+
+    /* Cross-stage links: the point of the map is that the process is not a
+       straight line. Indices into NODES. */
+    var CROSS = [[1,10],[1,15],[5,0],[9,14],[14,18],[19,5],[6,9],[19,1],[10,17]];
+
+    var mapEl = document.getElementById('map');
+    var nodesEl = document.getElementById('nodes');
+    var linksEl = document.getElementById('links');
+    var els = [];
+
+    /* ── Build nodes ── */
+    NODES.forEach(function (n, i) {
+      var b = document.createElement('button');
+      b.className = 'node' + (n.body ? '' : ' is-empty');
+      b.type = 'button';
+      b.style.setProperty('--node-color', STAGES[n.s].color);
+      b.dataset.stage = n.s;
+      b.dataset.index = i;
+      b.innerHTML = '<i class="node-dot"></i>' + n.t;
+      if (!n.body) { b.setAttribute('aria-disabled', 'true'); b.tabIndex = -1; }
+      else b.addEventListener('click', function () { openModal(i); });
+      nodesEl.appendChild(b);
+      els.push(b);
+    });
+
+    /* ── Layout: place each node from its stage angle + offset, then draw
+          the links underneath. Recomputed on resize so it stays centred. ── */
+    function layout() {
+      if (window.innerWidth <= 900) { linksEl.innerHTML = ''; return; }
+      var w = mapEl.clientWidth, h = mapEl.clientHeight;
+      var cx = w / 2, cy = h / 2;
+      var reach = Math.min(w, h) * 0.44;
+      var pos = [];
+
+      // 1. seed each node from its stage angle, so clusters form
+      NODES.forEach(function (n, i) {
+        var deg = STAGES[n.s].angle + n.a;
+        var rad = deg * Math.PI / 180;
+        // widen horizontally: screens are wider than tall, so a circle wastes space
+        pos.push([
+          cx + Math.cos(rad) * reach * n.r * (w / h) * 0.82,
+          cy + Math.sin(rad) * reach * n.r
+        ]);
+      });
+
+      // 2. push apart anything that collides. Hand-placed angles cannot hold at
+      //    every viewport size, so separation is solved rather than authored.
+      var box = els.map(function (el) { return [el.offsetWidth, el.offsetHeight]; });
+      var coreEl = document.querySelector('.core');
+      var core = { w: coreEl.offsetWidth + 40, h: coreEl.offsetHeight + 30 };
+      var PAD = 14;
+
+      for (var pass = 0; pass < 40; pass++) {
+        var moved = false;
+        for (var i = 0; i < pos.length; i++) {
+          for (var j = i + 1; j < pos.length; j++) {
+            var dx = pos[j][0] - pos[i][0], dy = pos[j][1] - pos[i][1];
+            var minX = (box[i][0] + box[j][0]) / 2 + PAD;
+            var minY = (box[i][1] + box[j][1]) / 2 + PAD;
+            if (Math.abs(dx) >= minX || Math.abs(dy) >= minY) continue;
+            // separate along whichever axis needs the smaller correction
+            var ox = minX - Math.abs(dx), oy = minY - Math.abs(dy);
+            if (ox < oy) {
+              var sx = (dx < 0 ? -1 : 1) * ox / 2;
+              pos[i][0] -= sx; pos[j][0] += sx;
+            } else {
+              var sy = (dy < 0 ? -1 : 1) * oy / 2;
+              pos[i][1] -= sy; pos[j][1] += sy;
+            }
+            moved = true;
+          }
+          // keep clear of the centre mark and its search button
+          var cdx = pos[i][0] - cx, cdy = pos[i][1] - cy;
+          var cminX = (box[i][0] + core.w) / 2, cminY = (box[i][1] + core.h) / 2;
+          if (Math.abs(cdx) < cminX && Math.abs(cdy) < cminY) {
+            if (cminX - Math.abs(cdx) < cminY - Math.abs(cdy)) pos[i][0] = cx + (cdx < 0 ? -cminX : cminX);
+            else pos[i][1] = cy + (cdy < 0 ? -cminY : cminY);
+            moved = true;
+          }
+        }
+        if (!moved) break;
+      }
+
+      // 3. clamp inside the viewport, then commit
+      NODES.forEach(function (n, i) {
+        pos[i][0] = Math.max(box[i][0] / 2 + 12, Math.min(w - box[i][0] / 2 - 12, pos[i][0]));
+        pos[i][1] = Math.max(box[i][1] / 2 + 96, Math.min(h - box[i][1] / 2 - 16, pos[i][1]));
+        els[i].style.left = pos[i][0] + 'px';
+        els[i].style.top = pos[i][1] + 'px';
+      });
+
+      var svg = '';
+      // spine: first node of each stage back to the centre
+      var seen = {};
+      NODES.forEach(function (n, i) {
+        if (seen[n.s]) return;
+        seen[n.s] = true;
+        svg += line(cx, cy, pos[i][0], pos[i][1], i);
+      });
+      // within-stage chains
+      var byStage = {};
+      NODES.forEach(function (n, i) { (byStage[n.s] = byStage[n.s] || []).push(i); });
+      Object.keys(byStage).forEach(function (s) {
+        var g = byStage[s];
+        for (var k = 0; k < g.length - 1; k++) svg += line(pos[g[k]][0], pos[g[k]][1], pos[g[k+1]][0], pos[g[k+1]][1], g[k], g[k+1]);
+      });
+      // cross-stage
+      CROSS.forEach(function (p) {
+        svg += line(pos[p[0]][0], pos[p[0]][1], pos[p[1]][0], pos[p[1]][1], p[0], p[1]);
+      });
+      linksEl.innerHTML = svg;
+    }
+
+    function line(x1, y1, x2, y2, a, b) {
+      var mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+      // nudge the midpoint perpendicular so lines curve like synapses
+      var dx = x2 - x1, dy = y2 - y1;
+      var len = Math.sqrt(dx*dx + dy*dy) || 1;
+      var bend = Math.min(len * 0.12, 46);
+      var qx = mx + (-dy / len) * bend, qy = my + (dx / len) * bend;
+      return '<path class="link" data-a="' + a + '" data-b="' + (b === undefined ? '' : b) + '" d="M' +
+             x1.toFixed(1) + ' ' + y1.toFixed(1) + ' Q' + qx.toFixed(1) + ' ' + qy.toFixed(1) +
+             ' ' + x2.toFixed(1) + ' ' + y2.toFixed(1) + '"/>';
+    }
+
+    layout();
+    var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(layout, 120); });
+
+    /* ── Hover lights the node's own links ── */
+    nodesEl.addEventListener('mouseover', function (e) {
+      var n = e.target.closest('.node'); if (!n) return;
+      var i = n.dataset.index;
+      linksEl.querySelectorAll('.link').forEach(function (l) {
+        if (l.dataset.a === i || l.dataset.b === i) l.classList.add('is-lit');
+      });
+    });
+    nodesEl.addEventListener('mouseout', function () {
+      linksEl.querySelectorAll('.is-lit').forEach(function (l) { l.classList.remove('is-lit'); });
+    });
+
+    /* ── Legend doubles as a stage filter ── */
+    var legend = document.getElementById('legend');
+    Object.keys(STAGES).forEach(function (s) {
+      var b = document.createElement('button');
+      b.className = 'legend-item'; b.type = 'button';
+      b.style.setProperty('--node-color', STAGES[s].color);
+      b.innerHTML = '<i></i>' + STAGES[s].label;
+      b.addEventListener('click', function () {
+        var on = b.classList.toggle('is-on');
+        legend.querySelectorAll('.legend-item').forEach(function (o) { if (o !== b) o.classList.remove('is-on'); });
+        els.forEach(function (el) {
+          el.classList.remove('is-match');
+          el.classList.toggle('is-dim', on && el.dataset.stage !== s);
+        });
+      });
+      legend.appendChild(b);
+    });
+
+    /* ── Search ── */
+    var search = document.getElementById('search');
+    var input = document.getElementById('searchInput');
+    var results = document.getElementById('searchResults');
+    var lastFocus = null;
+
+    function openSearch() {
+      lastFocus = document.activeElement;
+      search.classList.add('is-open');
+      input.value = ''; render('');
+      input.focus();
+    }
+    function closeSearch() {
+      search.classList.remove('is-open');
+      els.forEach(function (el) { el.classList.remove('is-dim', 'is-match'); });
+      if (lastFocus) lastFocus.focus();
+    }
+    function render(q) {
+      var term = q.trim().toLowerCase();
+      var hits = [];
+      NODES.forEach(function (n, i) {
+        var hay = (n.t + ' ' + STAGES[n.s].label).toLowerCase();
+        if (term && hay.indexOf(term) !== -1) hits.push(i);
+      });
+      els.forEach(function (el, i) {
+        el.classList.toggle('is-dim', !!term && hits.indexOf(i) === -1);
+        el.classList.toggle('is-match', !!term && hits.indexOf(i) !== -1);
+      });
+      if (!term) { results.innerHTML = ''; return; }
+      if (!hits.length) {
+        results.innerHTML = '<p class="search-empty">' + T('Nothing here yet.', 'Nada por aqui ainda.') + '</p>';
+        return;
+      }
+      results.innerHTML = hits.map(function (i) {
+        var n = NODES[i];
+        return '<button class="search-hit" type="button" data-i="' + i + '" style="--node-color:' + STAGES[n.s].color + '">' +
+               '<i></i>' + n.t + '<span>' + STAGES[n.s].label + '</span></button>';
+      }).join('');
+    }
+    input.addEventListener('input', function () { render(input.value); });
+    results.addEventListener('click', function (e) {
+      var hit = e.target.closest('.search-hit'); if (!hit) return;
+      var i = +hit.dataset.i;
+      closeSearch();
+      if (NODES[i].body) openModal(i);
+      else { els[i].classList.add('is-match'); setTimeout(function () { els[i].classList.remove('is-match'); }, 2000); }
+    });
+    document.getElementById('searchTrigger').addEventListener('click', openSearch);
+    search.addEventListener('click', function (e) { if (e.target === search) closeSearch(); });
+
+    /* ── Modal ── */
+    var modal = document.getElementById('modal');
+    var card = document.getElementById('modalCard');
+    function openModal(i) {
+      var n = NODES[i], st = STAGES[n.s];
+      lastFocus = document.activeElement;
+      card.style.setProperty('--node-color', st.color);
+      document.getElementById('modalStage').textContent = st.label;
+      document.getElementById('modalTitle').textContent = n.t;
+      document.getElementById('modalBody').innerHTML =
+        '<p>' + T('This note is still a placeholder. It will hold how this step actually runs — what I ask the model, what I keep for myself, and where the two disagree.',
+                  'Esta nota ainda é um placeholder. Vai descrever como essa etapa funciona na prática — o que eu peço ao modelo, o que eu mantenho comigo, e onde os dois discordam.') + '</p>' +
+        '<p>' + T('Until then, the map is here to show the shape of the process rather than the detail of it.',
+                  'Até lá, o mapa serve para mostrar o formato do processo, não o detalhe dele.') + '</p>';
+      modal.classList.add('is-open');
+      document.getElementById('modalClose').focus();
+    }
+    function closeModal() {
+      modal.classList.remove('is-open');
+      if (lastFocus) lastFocus.focus();
+    }
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+    modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+
+    /* ── Keys: "/" opens search, Esc backs out of whatever is open ── */
+    document.addEventListener('keydown', function (e) {
+      if (e.key === '/' && !search.classList.contains('is-open') && !modal.classList.contains('is-open')
+          && document.activeElement.tagName !== 'INPUT') { e.preventDefault(); openSearch(); }
+      if (e.key === 'Escape') {
+        if (modal.classList.contains('is-open')) closeModal();
+        else if (search.classList.contains('is-open')) closeSearch();
+      }
+    });
+  })();
+  </script>
+
+  <script>
+    /* ── 3D mark, same bundle as the homepage but without the ring of text.
+          Falls back to the flat logo where WebGL is unavailable. ── */
+    (function () {
+      var canvas = document.getElementById('glassLogoCanvas');
+      var ok = false;
+      try { var c = document.createElement('canvas'); ok = !!(c.getContext('webgl2') || c.getContext('webgl')); }
+      catch (e) { ok = false; }
+      if (!ok || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('no-webgl');
+        return;
+      }
+      var s = document.createElement('script');
+      s.src = '../assets/vendor/glass-logo.js';
+      s.onload = function () {
+        if (window.__mountGlassLogo) window.__mountGlassLogo(canvas);
+        else document.documentElement.classList.add('no-webgl');
+      };
+      s.onerror = function () { document.documentElement.classList.add('no-webgl'); };
+      document.body.appendChild(s);
+    })();
+  </script>
+
+</body>
+</html>
