@@ -161,9 +161,21 @@
 
     /* ── Nodes ── */
     .nodes { position: absolute; inset: 0; z-index: 3; }
+
+    /* Uncategorised points. No stage, no label, not focusable: they exist to
+       give the shell density, the way most thoughts never become articles. */
+    .gnode {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.55);
+      pointer-events: none;
+      will-change: transform, opacity;
+    }
+    .map { cursor: grab; }
+    .map:active { cursor: grabbing; }
     .node {
       position: absolute;
-      transform: translate(-50%, -50%);
+      will-change: transform, opacity;
       display: inline-flex; align-items: center; gap: 8px;
       padding: 7px 12px 7px 10px;
       background: rgba(18,18,18,0.92);
@@ -194,7 +206,8 @@
     .node.is-match {
       border-color: var(--node-color);
       background: rgba(34,34,34,0.98);
-      transform: translate(-50%, -50%) scale(1.06);
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.06);
+      opacity: 1 !important;
     }
 
     /* ── Legend ── */
@@ -281,7 +294,7 @@
     /* ── Small screens: the map is not usable, so it becomes a list ── */
     @media (max-width: 900px) {
       .map { height: auto; min-height: 0; overflow: visible; padding: 120px 20px 80px; }
-      .links, .legend { display: none; }
+      .links, .legend, .gnode { display: none; }
       .intro { position: static; max-width: none; padding: 0 20px; margin-bottom: 28px; }
       .core { position: static; transform: none; margin: 0 auto 36px; }
       .nodes {
@@ -380,57 +393,78 @@
     var PT = window.__siteLang === 'pt';
     var T = function (en, pt) { return PT ? pt : en; };
 
-    /* ── Stages. `angle` is where the cluster sits around the centre; nodes
-          scatter around it, so same-stage nodes read as one group. ── */
+    /* ── Stages live on a sphere: theta swings around, phi tilts up or down,
+          so the five clusters sit in genuinely different directions rather
+          than on one flat ring. ── */
+    var DEG = Math.PI / 180;
     var STAGES = {
-      research:  { color: 'var(--c-research)',  angle: -108, label: T('Research', 'Pesquisa') },
-      discovery: { color: 'var(--c-discovery)', angle:  -36, label: T('Discovery', 'Descoberta') },
-      ui:        { color: 'var(--c-ui)',        angle:   36, label: T('UI Design', 'UI Design') },
-      proto:     { color: 'var(--c-proto)',     angle:  108, label: T('Prototyping', 'Prototipagem') },
-      testing:   { color: 'var(--c-testing)',   angle:  180, label: T('Testing', 'Teste') }
+      research:  { color: 'var(--c-research)',  th: -108, ph:  20, label: T('Research', 'Pesquisa') },
+      discovery: { color: 'var(--c-discovery)', th:  -36, ph: -24, label: T('Discovery', 'Descoberta') },
+      ui:        { color: 'var(--c-ui)',        th:   36, ph:  16, label: T('UI Design', 'UI Design') },
+      proto:     { color: 'var(--c-proto)',     th:  108, ph: -20, label: T('Prototyping', 'Prototipagem') },
+      testing:   { color: 'var(--c-testing)',   th:  180, ph:  12, label: T('Testing', 'Teste') }
     };
 
-    /* `a` = angle offset from the cluster centre, `r` = distance out.
-       Hand-placed rather than random so the layout is the same every visit. */
+    /* dt / dp = offset from the cluster centre, r = distance out along it. */
     var NODES = [
-      { s:'research',  a:-26, r:0.52, t:T('User interviews','Entrevistas com usuários'), body:true },
-      { s:'research',  a: 16, r:0.34, t:T('AI-assisted synthesis','Síntese assistida por IA'), body:true },
-      { s:'research',  a: 24, r:0.62, t:T('Survey design','Design de questionários') },
-      { s:'research',  a:-10, r:0.74, t:T('Competitive scan','Análise competitiva') },
-      { s:'research',  a: 34, r:0.86, t:T('Field notes','Notas de campo') },
+      { s:'research',  dt:-26, dp:  8, r:0.55, t:T('User interviews','Entrevistas com usuários'), body:true },
+      { s:'research',  dt: 18, dp:-12, r:0.42, t:T('AI-assisted synthesis','Síntese assistida por IA'), body:true },
+      { s:'research',  dt: 30, dp: 18, r:0.72, t:T('Survey design','Design de questionários') },
+      { s:'research',  dt:-14, dp:-22, r:0.80, t:T('Competitive scan','Análise competitiva') },
+      { s:'research',  dt: 40, dp: -4, r:0.95, t:T('Field notes','Notas de campo') },
 
-      { s:'discovery', a:-22, r:0.44, t:T('Problem framing','Enquadrar o problema'), body:true },
-      { s:'discovery', a: 12, r:0.58, t:T('Stakeholder interviews','Entrevistas com stakeholders'), body:true },
-      { s:'discovery', a:-4,  r:0.76, t:T('Opportunity mapping','Mapa de oportunidades') },
-      { s:'discovery', a: 28, r:0.88, t:T('Minimum requirements','Requisitos mínimos') },
+      { s:'discovery', dt:-20, dp: 10, r:0.48, t:T('Problem framing','Enquadrar o problema'), body:true },
+      { s:'discovery', dt: 16, dp:-14, r:0.62, t:T('Stakeholder interviews','Entrevistas com stakeholders'), body:true },
+      { s:'discovery', dt: -6, dp: 22, r:0.80, t:T('Opportunity mapping','Mapa de oportunidades') },
+      { s:'discovery', dt: 32, dp:  4, r:0.94, t:T('Minimum requirements','Requisitos mínimos') },
 
-      { s:'ui',        a:-18, r:0.42, t:T('Design system','Design system'), body:true },
-      { s:'ui',        a: 10, r:0.56, t:T('AI-generated variants','Variações geradas por IA'), body:true },
-      { s:'ui',        a:-30, r:0.70, t:T('Visual direction','Direção visual') },
-      { s:'ui',        a: 22, r:0.78, t:T('Component states','Estados de componente') },
-      { s:'ui',        a:  0, r:0.92, t:T('Developer handoff','Handoff para dev') },
+      { s:'ui',        dt:-18, dp:-10, r:0.46, t:T('Design system','Design system'), body:true },
+      { s:'ui',        dt: 14, dp: 14, r:0.60, t:T('AI-generated variants','Variações geradas por IA'), body:true },
+      { s:'ui',        dt:-32, dp: 18, r:0.76, t:T('Visual direction','Direção visual') },
+      { s:'ui',        dt: 26, dp:-18, r:0.84, t:T('Component states','Estados de componente') },
+      { s:'ui',        dt:  2, dp:  6, r:0.98, t:T('Developer handoff','Handoff para dev') },
 
-      { s:'proto',     a:-20, r:0.46, t:T('Coded prototypes','Protótipos em código'), body:true },
-      { s:'proto',     a: 14, r:0.60, t:T('The Claude Code loop','O loop com Claude Code'), body:true },
-      { s:'proto',     a:-6,  r:0.80, t:T('Motion studies','Estudos de motion') },
-      { s:'proto',     a: 30, r:0.90, t:T('Figma to code','Do Figma ao código') },
+      { s:'proto',     dt:-22, dp: 12, r:0.50, t:T('Coded prototypes','Protótipos em código'), body:true },
+      { s:'proto',     dt: 18, dp:-16, r:0.64, t:T('The Claude Code loop','O loop com Claude Code'), body:true },
+      { s:'proto',     dt: -8, dp: 24, r:0.84, t:T('Motion studies','Estudos de motion') },
+      { s:'proto',     dt: 34, dp:  0, r:0.96, t:T('Figma to code','Do Figma ao código') },
 
-      { s:'testing',   a:-16, r:0.48, t:T('Usability testing','Teste de usabilidade'), body:true },
-      { s:'testing',   a: 18, r:0.64, t:T('Timed task comparison','Comparação cronometrada'), body:true },
-      { s:'testing',   a: -2, r:0.82, t:T('Post-launch metrics','Métricas pós-lançamento') },
-      { s:'testing',   a: 32, r:0.94, t:T('What I could not measure','O que não consegui medir') }
+      { s:'testing',   dt:-16, dp:-12, r:0.52, t:T('Usability testing','Teste de usabilidade'), body:true },
+      { s:'testing',   dt: 20, dp: 14, r:0.66, t:T('Timed task comparison','Comparação cronometrada'), body:true },
+      { s:'testing',   dt: -4, dp:-22, r:0.86, t:T('Post-launch metrics','Métricas pós-lançamento') },
+      { s:'testing',   dt: 36, dp:  6, r:0.98, t:T('What I could not measure','O que não consegui medir') }
     ];
 
-    /* Cross-stage links: the point of the map is that the process is not a
-       straight line. Indices into NODES. */
     var CROSS = [[1,10],[1,15],[5,0],[9,14],[14,18],[19,5],[6,9],[19,1],[10,17]];
+
+    /* ── Uncategorised grey points. They carry no stage and no label: they are
+          the unwritten thoughts, and they give the shell enough density to read
+          as a network instead of five lonely clusters. Seeded so the shape is
+          the same on every visit. ── */
+    function mulberry32(seed) {
+      return function () {
+        seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+        var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      };
+    }
+    var rnd = mulberry32(20260902);
+    var GREY = [];
+    for (var g = 0; g < 34; g++) {
+      GREY.push({
+        th: rnd() * 360,
+        ph: (rnd() - 0.5) * 150,
+        r: 0.45 + rnd() * 0.62,
+        sz: rnd() < 0.22 ? 5 : 3
+      });
+    }
 
     var mapEl = document.getElementById('map');
     var nodesEl = document.getElementById('nodes');
     var linksEl = document.getElementById('links');
-    var els = [];
+    var els = [], greyEls = [];
 
-    /* ── Build nodes ── */
     NODES.forEach(function (n, i) {
       var b = document.createElement('button');
       b.className = 'node' + (n.body ? '' : ' is-empty');
@@ -445,108 +479,178 @@
       els.push(b);
     });
 
-    /* ── Layout: place each node from its stage angle + offset, then draw
-          the links underneath. Recomputed on resize so it stays centred. ── */
-    function layout() {
+    GREY.forEach(function (p) {
+      var d = document.createElement('i');
+      d.className = 'gnode';
+      d.style.width = p.sz + 'px';
+      d.style.height = p.sz + 'px';
+      d.setAttribute('aria-hidden', 'true');
+      nodesEl.appendChild(d);
+      greyEls.push(d);
+    });
+
+    /* ── 3D ── */
+    var rotY = -0.35, rotX = 0.22, spin = 0.00042;
+    var dragging = false, lastX = 0, lastY = 0, idle = true;
+    var FOV = 1150;
+
+    function unit(th, ph) {
+      var t = th * DEG, p = ph * DEG;
+      return [Math.cos(p) * Math.cos(t), Math.sin(p), Math.cos(p) * Math.sin(t)];
+    }
+    function pointOf(n) {
+      var st = STAGES[n.s];
+      return { u: unit(st.th + n.dt, st.ph + n.dp), r: n.r };
+    }
+
+    function project(u, r, R, cx, cy) {
+      var X = u[0] * R * r, Y = u[1] * R * r, Z = u[2] * R * r;
+      var cB = Math.cos(rotY), sB = Math.sin(rotY);
+      var x1 = X * cB - Z * sB, z1 = X * sB + Z * cB;
+      var cA = Math.cos(rotX), sA = Math.sin(rotX);
+      var y1 = Y * cA - z1 * sA, z2 = Y * sA + z1 * cA;
+      var k = FOV / (FOV + z2);
+      return { x: cx + x1 * k, y: cy + y1 * k, k: k, z: z2 };
+    }
+
+    function draw() {
       if (window.innerWidth <= 900) { linksEl.innerHTML = ''; return; }
       var w = mapEl.clientWidth, h = mapEl.clientHeight;
       var cx = w / 2, cy = h / 2;
-      var reach = Math.min(w, h) * 0.44;
-      var pos = [];
+      var R = Math.min(w * 0.30, h * 0.40);
 
-      // 1. seed each node from its stage angle, so clusters form
-      NODES.forEach(function (n, i) {
-        var deg = STAGES[n.s].angle + n.a;
-        var rad = deg * Math.PI / 180;
-        // widen horizontally: screens are wider than tall, so a circle wastes space
-        pos.push([
-          cx + Math.cos(rad) * reach * n.r * (w / h) * 0.82,
-          cy + Math.sin(rad) * reach * n.r
-        ]);
+      // 1. project every labelled node
+      var pos = NODES.map(function (n) {
+        var pt = pointOf(n);
+        return project(pt.u, pt.r, R, cx, cy);
       });
 
-      // 2. push apart anything that collides. Hand-placed angles cannot hold at
-      //    every viewport size, so separation is solved rather than authored.
+      // 2. screen-space correction. Overlap between cards is fine in a 3D scene
+      //    -- it reads as occlusion -- but stacked *text* is not, and nothing may
+      //    sit on the centre mark. Both fixes run on the same array the links are
+      //    drawn from, so the lines stay attached.
       var box = els.map(function (el) { return [el.offsetWidth, el.offsetHeight]; });
       var coreEl = document.querySelector('.core');
-      var core = { w: coreEl.offsetWidth + 40, h: coreEl.offsetHeight + 30 };
-      var PAD = 14;
+      var coreW = coreEl.offsetWidth + 34, coreH = coreEl.offsetHeight + 24;
+      var PAD = 8;
 
-      for (var pass = 0; pass < 40; pass++) {
+      for (var pass = 0; pass < 18; pass++) {
         var moved = false;
         for (var i = 0; i < pos.length; i++) {
+          // keep clear of the 3D mark and its search button
+          var dxc = pos[i].x - cx, dyc = pos[i].y - cy;
+          var needX = (box[i][0] + coreW) / 2, needY = (box[i][1] + coreH) / 2;
+          if (Math.abs(dxc) < needX && Math.abs(dyc) < needY) {
+            if (needX - Math.abs(dxc) < needY - Math.abs(dyc)) pos[i].x = cx + (dxc < 0 ? -needX : needX);
+            else pos[i].y = cy + (dyc < 0 ? -needY : needY);
+            moved = true;
+          }
           for (var j = i + 1; j < pos.length; j++) {
-            var dx = pos[j][0] - pos[i][0], dy = pos[j][1] - pos[i][1];
-            var minX = (box[i][0] + box[j][0]) / 2 + PAD;
-            var minY = (box[i][1] + box[j][1]) / 2 + PAD;
-            if (Math.abs(dx) >= minX || Math.abs(dy) >= minY) continue;
-            // separate along whichever axis needs the smaller correction
-            var ox = minX - Math.abs(dx), oy = minY - Math.abs(dy);
-            if (ox < oy) {
-              var sx = (dx < 0 ? -1 : 1) * ox / 2;
-              pos[i][0] -= sx; pos[j][0] += sx;
-            } else {
-              var sy = (dy < 0 ? -1 : 1) * oy / 2;
-              pos[i][1] -= sy; pos[j][1] += sy;
-            }
+            var dx = pos[j].x - pos[i].x, dy = pos[j].y - pos[i].y;
+            var mx = (box[i][0] + box[j][0]) / 2 + PAD;
+            var my = (box[i][1] + box[j][1]) / 2 + PAD;
+            if (Math.abs(dx) >= mx || Math.abs(dy) >= my) continue;
+            var ox = mx - Math.abs(dx), oy = my - Math.abs(dy);
+            if (ox < oy) { var s1 = (dx < 0 ? -1 : 1) * ox / 2; pos[i].x -= s1; pos[j].x += s1; }
+            else         { var s2 = (dy < 0 ? -1 : 1) * oy / 2; pos[i].y -= s2; pos[j].y += s2; }
             moved = true;
           }
-          // keep clear of the centre mark and its search button
-          var cdx = pos[i][0] - cx, cdy = pos[i][1] - cy;
-          var cminX = (box[i][0] + core.w) / 2, cminY = (box[i][1] + core.h) / 2;
-          if (Math.abs(cdx) < cminX && Math.abs(cdy) < cminY) {
-            if (cminX - Math.abs(cdx) < cminY - Math.abs(cdy)) pos[i][0] = cx + (cdx < 0 ? -cminX : cminX);
-            else pos[i][1] = cy + (cdy < 0 ? -cminY : cminY);
-            moved = true;
-          }
+          pos[i].x = Math.max(box[i][0] / 2 + 10, Math.min(w - box[i][0] / 2 - 10, pos[i].x));
+          pos[i].y = Math.max(box[i][1] / 2 + 92, Math.min(h - box[i][1] / 2 - 14, pos[i].y));
         }
         if (!moved) break;
       }
 
-      // 3. clamp inside the viewport, then commit
+      // 3. commit. Depth still comes from the projection, not the correction.
       NODES.forEach(function (n, i) {
-        pos[i][0] = Math.max(box[i][0] / 2 + 12, Math.min(w - box[i][0] / 2 - 12, pos[i][0]));
-        pos[i][1] = Math.max(box[i][1] / 2 + 96, Math.min(h - box[i][1] / 2 - 16, pos[i][1]));
-        els[i].style.left = pos[i][0] + 'px';
-        els[i].style.top = pos[i][1] + 'px';
+        var p = pos[i], el = els[i];
+        var depth = (p.z + R) / (2 * R);
+        el.style.left = p.x + 'px';
+        el.style.top = p.y + 'px';
+        el.style.transform = 'translate(-50%, -50%) scale(' + (0.80 + p.k * 0.28).toFixed(3) + ')';
+        el.style.opacity = (0.38 + depth * 0.62).toFixed(3);
+        el.style.zIndex = Math.round(500 - p.z);
+      });
+
+      GREY.forEach(function (p, i) {
+        var pr = project(unit(p.th, p.ph), p.r, R, cx, cy);
+        var depth = (pr.z + R) / (2 * R);
+        var el = greyEls[i];
+        el.style.left = pr.x + 'px';
+        el.style.top = pr.y + 'px';
+        el.style.transform = 'translate(-50%, -50%) scale(' + (0.7 + pr.k * 0.4).toFixed(3) + ')';
+        el.style.opacity = (0.10 + depth * 0.48).toFixed(3);
+        el.style.zIndex = Math.round(500 - pr.z);
       });
 
       var svg = '';
-      // spine: first node of each stage back to the centre
       var seen = {};
       NODES.forEach(function (n, i) {
         if (seen[n.s]) return;
         seen[n.s] = true;
-        svg += line(cx, cy, pos[i][0], pos[i][1], i);
+        svg += line(cx, cy, pos[i].x, pos[i].y, i, undefined, pos[i].k);
       });
-      // within-stage chains
       var byStage = {};
       NODES.forEach(function (n, i) { (byStage[n.s] = byStage[n.s] || []).push(i); });
-      Object.keys(byStage).forEach(function (s) {
-        var g = byStage[s];
-        for (var k = 0; k < g.length - 1; k++) svg += line(pos[g[k]][0], pos[g[k]][1], pos[g[k+1]][0], pos[g[k+1]][1], g[k], g[k+1]);
+      Object.keys(byStage).forEach(function (st) {
+        var gp = byStage[st];
+        for (var k = 0; k < gp.length - 1; k++)
+          svg += line(pos[gp[k]].x, pos[gp[k]].y, pos[gp[k+1]].x, pos[gp[k+1]].y, gp[k], gp[k+1],
+                      (pos[gp[k]].k + pos[gp[k+1]].k) / 2);
       });
-      // cross-stage
-      CROSS.forEach(function (p) {
-        svg += line(pos[p[0]][0], pos[p[0]][1], pos[p[1]][0], pos[p[1]][1], p[0], p[1]);
+      CROSS.forEach(function (pr) {
+        svg += line(pos[pr[0]].x, pos[pr[0]].y, pos[pr[1]].x, pos[pr[1]].y, pr[0], pr[1],
+                    (pos[pr[0]].k + pos[pr[1]].k) / 2);
       });
       linksEl.innerHTML = svg;
     }
 
-    function line(x1, y1, x2, y2, a, b) {
-      var mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
-      // nudge the midpoint perpendicular so lines curve like synapses
+    function line(x1, y1, x2, y2, a, b, k) {
       var dx = x2 - x1, dy = y2 - y1;
-      var len = Math.sqrt(dx*dx + dy*dy) || 1;
-      var bend = Math.min(len * 0.12, 46);
-      var qx = mx + (-dy / len) * bend, qy = my + (dx / len) * bend;
-      return '<path class="link" data-a="' + a + '" data-b="' + (b === undefined ? '' : b) + '" d="M' +
-             x1.toFixed(1) + ' ' + y1.toFixed(1) + ' Q' + qx.toFixed(1) + ' ' + qy.toFixed(1) +
-             ' ' + x2.toFixed(1) + ' ' + y2.toFixed(1) + '"/>';
+      var len = Math.sqrt(dx * dx + dy * dy) || 1;
+      var bend = Math.min(len * 0.11, 40);
+      var mx = (x1 + x2) / 2 + (-dy / len) * bend;
+      var my = (y1 + y2) / 2 + (dx / len) * bend;
+      // links behind the shell thin out, which is what sells the depth
+      var o = Math.max(0.25, Math.min(1, (k || 1) - 0.15)).toFixed(2);
+      return '<path class="link" style="opacity:' + o + '" data-a="' + a + '" data-b="' +
+             (b === undefined ? '' : b) + '" d="M' + x1.toFixed(1) + ' ' + y1.toFixed(1) +
+             ' Q' + mx.toFixed(1) + ' ' + my.toFixed(1) + ' ' + x2.toFixed(1) + ' ' + y2.toFixed(1) + '"/>';
     }
 
-    layout();
-    var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(layout, 120); });
+    draw();
+
+    /* Drift, unless the visitor is driving or has asked for less motion. */
+    var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!still) {
+      (function loop() {
+        if (!dragging && idle) { rotY += spin; draw(); }
+        requestAnimationFrame(loop);
+      })();
+    }
+
+    mapEl.addEventListener('pointerdown', function (e) {
+      if (e.target.closest('.node')) return;
+      dragging = true; idle = false; lastX = e.clientX; lastY = e.clientY;
+      mapEl.setPointerCapture(e.pointerId);
+      mapEl.style.cursor = 'grabbing';
+    });
+    mapEl.addEventListener('pointermove', function (e) {
+      if (!dragging) return;
+      rotY += (e.clientX - lastX) * 0.005;
+      rotX = Math.max(-0.9, Math.min(0.9, rotX + (e.clientY - lastY) * 0.004));
+      lastX = e.clientX; lastY = e.clientY;
+      draw();
+    });
+    ['pointerup', 'pointercancel'].forEach(function (ev) {
+      mapEl.addEventListener(ev, function () {
+        dragging = false; mapEl.style.cursor = '';
+        setTimeout(function () { idle = true; }, 2200);
+      });
+    });
+
+    var rt;
+    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(draw, 120); });
 
     /* ── Hover lights the node's own links ── */
     nodesEl.addEventListener('mouseover', function (e) {
