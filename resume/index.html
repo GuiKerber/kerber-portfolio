@@ -431,7 +431,10 @@
        the language still applies. Duplicated verbatim on every page. -->
   <script>
     (function () {
-      var lang = localStorage.getItem('site-lang') || 'en';
+      // ?lang= wins over the stored choice: it makes the language linkable, and
+      // it is how the downloadable PDFs get rendered in each language.
+      var qp = new URLSearchParams(location.search).get('lang');
+      var lang = (qp === 'pt' || qp === 'en') ? qp : (localStorage.getItem('site-lang') || 'en');
       document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
       if (lang === 'pt') {
         document.title = 'Guilherme Kerber — Currículo';
