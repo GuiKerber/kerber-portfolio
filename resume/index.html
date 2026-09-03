@@ -210,9 +210,10 @@
 
     /* -- skills + education grids (Figma 236:571 / 236:619) ------ */
     .pairs { display: flex; flex-direction: column; gap: 8px; }
-    .pairs-lg { gap: 24px; }   /* skills block, Figma 236:571 */
+    .pairs-lg { gap: 14px; }   /* skills block, Figma 236:571 */
     .pair-row { display: flex; align-items: flex-start; gap: 24px; }
     .pair { flex: 1 1 0; min-width: 0; }
+    .tools-row { width: 100%; }
     .grp-title {
       font-size: 12.133px;
       font-weight: 600;
@@ -304,9 +305,11 @@
     <section class="row">
       <div class="label" data-pt="Sobre mim">About me</div>
       <div class="col">
-        <p class="lede" data-pt="Product Designer Sênior com mais de 15 anos criando produtos digitais complexos em Fintech, SaaS, IA e Games. Atuo em estratégia de produto, UX e design visual — da exploração inicial às interfaces, design systems e handoff, trazendo IA sem perder o pensamento de produto.">Senior Product Designer with 15+ years designing complex digital products across Fintech,
-        SaaS, AI and Gaming. I work across product strategy, UX and visual design — from early exploration through
-        to interfaces, design systems and developer handoff, bringing AI in without losing product thinking.</p>
+        <p class="lede" data-pt="Product Designer sênior com mais de 15 anos de experiência em Fintech, SaaS, IA, Web3 e Games, a maior parte com startups e produtos em estágio inicial. Meus pontos fortes são craft visual, design systems, resolução de problemas complexos de produto, e o equilíbrio entre métricas de negócio e design centrado no usuário. Trago IA para dentro do processo — desenhando no Figma e entregando protótipos funcionais em código — sem perder o pensamento de produto.">Senior Product Designer with 15+ years across Fintech, SaaS, AI,
+        Web3 and Gaming, most of it with startups and early-stage products. My strengths are visual craft, design
+        systems, solving complex product problems, and balancing business metrics with user-centered design. I bring
+        AI into the process — designing in Figma and shipping working prototypes in code — without losing
+        product thinking.</p>
       </div>
     </section>
 
@@ -377,27 +380,32 @@
     </section>
 
     <section class="row">
-      <div class="label" data-pt="Habilidades">Skills</div>
+      <div class="label" data-pt="Processo">Process</div>
       <div class="col pairs pairs-lg">
         <div class="pair-row">
           <div class="pair">
-            <div class="grp-title" data-pt="Produto">Product</div>
-            <div class="grp-body" data-pt="Estratégia, fluxos de usuário, arquitetura da informação">Strategy, user flows, information architecture</div>
+            <div class="grp-title" data-pt="01 Descobrir">01 Discover</div>
+            <div class="grp-body" data-pt="Entrevistas com stakeholders, pesquisa com usuários, análise de benchmark e concorrência, requisitos de negócio e de produto">Stakeholder interviews, user research, benchmark and competitive analysis, business and product requirements</div>
           </div>
           <div class="pair">
-            <div class="grp-title" data-pt="Experiência e interface">User experience &amp; interface</div>
-            <div class="grp-body" data-pt="UX e design visual, design systems, prototipação, responsivo, handoff">UX and visual design, design systems, prototyping, responsive, handoff</div>
+            <div class="grp-title" data-pt="02 Definir">02 Define</div>
+            <div class="grp-body" data-pt="Síntese de pesquisa, estratégia de produto, arquitetura da informação, fluxos de usuário, definição de requisitos">Research synthesis, product strategy, information architecture, user flows, requirements definition</div>
           </div>
         </div>
         <div class="pair-row">
           <div class="pair">
-            <div class="grp-title" data-pt="IA">AI</div>
-            <div class="grp-body" data-pt="Prototipação assistida por IA com Claude Code, geração de imagens com ChatGPT e MJ">AI-assisted prototyping with Claude Code, AI image generation with ChatGPT and MJ</div>
+            <div class="grp-title" data-pt="03 Desenhar">03 Design</div>
+            <div class="grp-body" data-pt="UI e design visual, design systems, responsivo, mobile e web, prototipagem assistida por IA em código">UI and visual design, design systems, responsive, mobile and web, AI-assisted prototyping in code</div>
           </div>
           <div class="pair">
-            <div class="grp-title">Soft Skills</div>
-            <div class="grp-body" data-pt="Colaboração multidisciplinar, comunicação com stakeholders, autonomia na tomada de decisão">Cross-functional collaboration, Stakeholder communication, Autonomous decision-making</div>
+            <div class="grp-title" data-pt="04 Entregar">04 Deliver</div>
+            <div class="grp-body" data-pt="Protótipos funcionais, teste de usabilidade, colaboração entre equipes, design QA com engenharia, handoff para desenvolvimento, definição de métricas de sucesso">Working prototypes, usability testing, cross-functional collaboration, design QA with engineering, developer handoff, success metrics definition</div>
           </div>
+        </div>
+        <!-- Tools spans the full width: it is not a stage of the process. -->
+        <div class="tools-row">
+          <div class="grp-title" data-pt="Ferramentas">Tools</div>
+          <div class="grp-body">Figma, Claude Code, HTML/CSS</div>
         </div>
       </div>
     </section>
