@@ -280,14 +280,16 @@
 
   <div class="chrome">
     <span class="chrome-meta"><i class="chrome-dot"></i><span data-pt="Atualizado em 28/08/2026">Updated on 08/28/2026</span></span>
-    <button class="proj-btn proj-btn-primary" id="downloadBtn" type="button">
+    <a class="proj-btn proj-btn-primary" id="downloadBtn"
+       href="../assets/docs/guilherme-kerber-resume-en.pdf"
+       data-pt-href="../assets/docs/guilherme-kerber-resume-pt.pdf" download>
       <span data-pt="Baixar PDF">Download PDF</span>
       <!-- Icon exported from Figma node 236:24 (11x11); stroke mapped to currentColor -->
       <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true">
         <path d="M5.5 0.916667V8.25M8.70833 5.04167L5.5 8.25L2.29167 5.04167M0.916667 10.0833H10.0833"
               stroke="currentColor" stroke-width="1.28333" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-    </button>
+    </a>
   </div>
 
   <main class="sheet">
@@ -441,18 +443,13 @@
         document.querySelectorAll('[data-pt]').forEach(function (el) {
           el.innerHTML = el.getAttribute('data-pt');
         });
+        document.querySelectorAll('[data-pt-href]').forEach(function (el) {
+          el.setAttribute('href', el.getAttribute('data-pt-href'));
+        });
       }
     })();
   </script>
 
-  <script>
-    /* The button opens the browser's print dialog, where "Save as PDF" produces
-       the A4 sheet without the chrome. Cheaper and always current, versus
-       hosting a PDF file that has to be re-exported every time this changes. */
-    document.getElementById('downloadBtn').addEventListener('click', function () {
-      window.print();
-    });
-  </script>
 
 </body>
 </html>
