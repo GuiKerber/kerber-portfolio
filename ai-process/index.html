@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Designing with AI — Guilherme Kerber</title>
-  <meta name="description" content="A living map of how I design with AI: research, discovery, UI, prototyping and testing, and the connections between them.">
+  <meta name="description" content="A living map of how I design with AI: research, synthesis, prototyping, visual design and testing, and the connections between them.">
   <link rel="canonical" href="https://guikerber.com/ai-process/">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://guikerber.com/ai-process/">
   <meta property="og:title" content="Designing with AI — Guilherme Kerber">
-  <meta property="og:description" content="A living map of how I design with AI: research, discovery, UI, prototyping and testing, and the connections between them.">
+  <meta property="og:description" content="A living map of how I design with AI: research, synthesis, prototyping, visual design and testing, and the connections between them.">
   <meta property="og:image" content="https://guikerber.com/assets/og-cover.jpg">
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1200">
@@ -21,7 +21,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -29,28 +29,22 @@
       --black:      #080808;
       --off-white:  #EDECEA;
 
-      --white-4:  rgba(255,255,255,0.04);
       --white-8:  rgba(255,255,255,0.08);
       --white-16: rgba(255,255,255,0.16);
       --white-32: rgba(255,255,255,0.32);
       --white-48: rgba(255,255,255,0.48);
       --white-56: rgba(255,255,255,0.56);
 
-      /* One hue per stage. Orange stays with UI design so the brand colour
-         keeps meaning something; the rest are spaced far enough apart in hue
-         to stay tellable at 8px on a dot. */
-      --c-research:  #4DA3FF;
-      --c-discovery: #A78BFA;
-      --c-ui:        #FF4D00;
-      --c-proto:     #FFB020;
-      --c-testing:   #34D399;
+      /* HUD accent. Everything structural is this cyan; category hues only
+         ever appear on small marks, so the interface stays one system. */
+      --hud:      #6FE3E1;
+      --hud-dim:  rgba(111,227,225,0.22);
     }
 
     * { box-sizing: border-box; }
 
     html, body {
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       background: var(--black);
       color: var(--off-white);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -58,33 +52,26 @@
       overscroll-behavior: none;
     }
 
-    /* ── Dot field. Two layers at different scales so it reads as depth
-          rather than graph paper, and both sit far below the links. ── */
     .dots {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
       background-image:
-        radial-gradient(circle, rgba(255,255,255,0.055) 1px, transparent 1px),
-        radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+        radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px),
+        radial-gradient(circle, rgba(255,255,255,0.028) 1px, transparent 1px);
       background-size: 26px 26px, 78px 78px;
       background-position: 0 0, 13px 13px;
-      /* fades the field out at the edges so the map feels lit from the middle */
-      -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 35%, transparent 100%);
-              mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 35%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 72% at 50% 46%, #000 32%, transparent 100%);
+              mask-image: radial-gradient(ellipse 80% 72% at 50% 46%, #000 32%, transparent 100%);
     }
 
     /* ── Nav ── */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 60;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 20px 32px;
+      padding: 20px 32px; pointer-events: none;
       background: linear-gradient(180deg, rgba(8,8,8,0.9) 0%, rgba(8,8,8,0) 100%);
-      pointer-events: none;
     }
     nav > * { pointer-events: auto; }
-    .nav-logo { display: block; line-height: 0; opacity: .9; transition: opacity .2s; }
+    .nav-logo { display: block; line-height: 0; opacity: .9; }
     .nav-logo:hover { opacity: 1; }
     .nav-back {
       font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 500;
@@ -93,225 +80,205 @@
     }
     .nav-back:hover { color: var(--off-white); }
 
-    /* ── Page heading, sits above the map ── */
-    .intro {
-      position: fixed; top: 76px; left: 32px; z-index: 40; max-width: 320px;
-      pointer-events: none;
-    }
-    .intro h1 {
-      font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 600;
-      letter-spacing: -0.02em; margin: 0 0 8px; color: var(--off-white);
-    }
-    .intro p {
-      margin: 0; font-size: 12.5px; line-height: 1.6; color: var(--white-48);
-    }
+    /* ── Map surface ── */
+    .map { position: relative; width: 100%; height: 100vh; overflow: hidden; z-index: 1; cursor: grab; }
+    .map:active { cursor: grabbing; }
+    .links { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
 
-    /* ── The map ── */
-    .map {
-      position: relative;
-      width: 100%;
-      height: 100vh;
-      overflow: hidden;
-      z-index: 1;
+    .link { fill: none; stroke: var(--hud-dim); stroke-width: 1; }
+    /* Energy leaving the core. A short dash travelling the path, offset per
+       link so the field pulses unevenly instead of marching in step. */
+    .pulse {
+      fill: none; stroke: var(--hud); stroke-width: 1.4; stroke-linecap: round;
+      stroke-dasharray: 3 210;
+      animation: flow 3.2s linear infinite;
+      opacity: .85;
     }
-    .links {
-      position: absolute; inset: 0; width: 100%; height: 100%;
-      pointer-events: none; z-index: 1;
-    }
-    .link {
-      stroke: var(--white-8);
-      stroke-width: 1;
-      fill: none;
-      transition: stroke .25s ease, stroke-width .25s ease;
-    }
-    .link.is-lit { stroke: var(--white-32); stroke-width: 1.4; }
+    @keyframes flow { from { stroke-dashoffset: 213; } to { stroke-dashoffset: 0; } }
 
-    /* ── Centre: 3D mark + search trigger ── */
+    /* ── Core: HUD rings + 3D mark ── */
     .core {
-      position: absolute; top: 50%; left: 50%;
+      position: absolute; left: 50%; z-index: 5;
       transform: translate(-50%, -50%);
-      z-index: 5;
-      display: flex; flex-direction: column; align-items: center; gap: 18px;
+      width: 268px; height: 268px;
+      display: grid; place-items: center;
     }
-    .core-mark { width: 132px; height: 132px; position: relative; }
+    .hud { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .hud circle, .hud line, .hud path { fill: none; stroke: var(--hud); }
+    .hud .r-out   { stroke-opacity: .30; stroke-width: 1; }
+    .hud .r-mid   { stroke-opacity: .16; stroke-width: 1; stroke-dasharray: 2 6; }
+    .hud .r-in    { stroke-opacity: .42; stroke-width: 1; }
+    .hud .tick    { stroke-opacity: .34; stroke-width: 1; }
+    .hud .sweep   { stroke-opacity: .95; stroke-width: 1.6; stroke-linecap: round;
+                    transform-origin: 134px 134px; animation: sweep 14s linear infinite; }
+    @keyframes sweep { to { transform: rotate(360deg); } }
+    .hud .counter { transform-origin: 134px 134px; animation: sweep 34s linear infinite reverse; }
+
+    .core-mark { width: 124px; height: 124px; position: relative; z-index: 2; }
     .core-mark canvas { width: 100%; height: 100%; display: block; }
-    /* Fallback mark when WebGL cannot run — the static logo, same footprint. */
-    .core-fallback {
-      position: absolute; inset: 0; display: none;
-      align-items: center; justify-content: center;
-    }
-    .core-fallback img { width: 56%; height: auto; opacity: .9; }
+    .core-fallback { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; }
+    .core-fallback img { width: 54%; opacity: .9; }
     html.no-webgl .core-mark canvas { display: none; }
     html.no-webgl .core-fallback { display: flex; }
 
-    .search-trigger {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 8px 18px; border: 1px solid var(--white-16); border-radius: 999px;
-      background: rgba(255,255,255,0.03); color: var(--white-56);
-      font-family: 'Syne', sans-serif; font-size: 12.5px; font-weight: 500;
-      letter-spacing: -0.02em; cursor: pointer;
-      transition: color .2s, border-color .2s, background .2s;
-    }
-    .search-trigger:hover { color: var(--off-white); border-color: var(--white-32); background: rgba(255,255,255,0.06); }
-    .search-trigger:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
-    .search-trigger kbd {
-      font-family: inherit; font-size: 10.5px; color: var(--white-32);
-      border: 1px solid var(--white-16); border-radius: 3px; padding: 1px 5px;
+    .core-readout {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      bottom: -6px; z-index: 3;
+      font-size: 9px; font-weight: 600; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--hud); opacity: .7; white-space: nowrap;
     }
 
-    /* ── Nodes ── */
+    /* ── Artifact nodes ── */
     .nodes { position: absolute; inset: 0; z-index: 3; }
-
-    /* Uncategorised points. No stage, no label, not focusable: they exist to
-       give the shell density, the way most thoughts never become articles. */
     .gnode {
-      position: absolute;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.55);
+      position: absolute; border-radius: 50%;
+      background: rgba(111,227,225,0.5);
       pointer-events: none;
-      will-change: transform, opacity;
     }
-    .map { cursor: grab; }
-    .map:active { cursor: grabbing; }
+
     .node {
       position: absolute;
-      will-change: transform, opacity;
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 7px 12px 7px 10px;
-      background: rgba(18,18,18,0.92);
+      display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+      padding: 6px 11px 6px 9px;
+      background: rgba(10,16,17,0.92);
       border: 1px solid var(--white-8);
-      border-left: 2px solid var(--node-color, var(--white-16));
-      border-radius: 4px;
+      border-left: 2px solid var(--c, var(--hud));
       color: var(--off-white);
-      font-family: 'Inter', sans-serif; font-size: 11.5px; font-weight: 400;
-      letter-spacing: -0.01em; line-height: 1.3; white-space: nowrap;
-      cursor: pointer; text-align: left;
-      transition: border-color .2s ease, background .2s ease,
-                  opacity .25s ease, transform .25s ease;
+      font-family: 'Inter', sans-serif; text-align: left; white-space: nowrap;
+      cursor: pointer;
     }
-    .node:hover, .node:focus-visible {
-      border-color: var(--node-color, var(--white-32));
-      background: rgba(28,28,28,0.96);
-      outline: none;
+    .node:hover, .node:focus-visible { border-color: var(--c); background: rgba(16,26,28,0.97); outline: none; }
+    /* HUD corner ticks */
+    .node::before, .node::after {
+      content: ''; position: absolute; width: 5px; height: 5px; pointer-events: none;
+      border-color: var(--c); opacity: .8;
     }
-    .node-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--node-color); flex: 0 0 auto;
-    }
-    /* Placeholders: the map is meant to look partly unwritten. */
-    .node.is-empty { color: var(--white-32); border-style: dashed; cursor: default; }
-    .node.is-empty .node-dot { opacity: .45; }
+    .node::before { top: -1px; right: -1px; border-top: 1px solid; border-right: 1px solid; }
+    .node::after  { bottom: -1px; right: -1px; border-bottom: 1px solid; border-right: 1px solid; }
 
-    .node.is-dim { opacity: .12; }
-    .node.is-match {
-      border-color: var(--node-color);
-      background: rgba(34,34,34,0.98);
-      box-shadow: 0 0 0 3px rgba(255,255,255,0.06);
-      opacity: 1 !important;
+    .node-title { font-size: 11.5px; font-weight: 500; letter-spacing: -0.01em; line-height: 1.25; }
+    .node-meta {
+      font-size: 8.5px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase;
+      color: var(--white-32); line-height: 1.3;
     }
+    .node-meta b { color: var(--c); font-weight: 600; }
 
-    /* ── Legend ── */
-    .legend {
+    .node.is-empty { cursor: default; border-style: dashed; }
+    .node.is-empty .node-title { color: var(--white-32); font-weight: 400; }
+    .node.is-dim { opacity: .1; }
+    .node.is-match { border-color: var(--c); background: rgba(20,34,36,0.98); box-shadow: 0 0 0 3px rgba(111,227,225,0.10); }
+
+    /* ── Bottom-left: heading ── */
+    .panel-intro {
       position: fixed; left: 32px; bottom: 28px; z-index: 40;
-      display: flex; flex-direction: column; gap: 7px;
+      max-width: 340px; pointer-events: none;
     }
-    .legend-item {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 10px; font-weight: 500; letter-spacing: 0.11em;
-      text-transform: uppercase; color: var(--white-32);
-      background: none; border: 0; padding: 0; cursor: pointer;
-      transition: color .2s;
+    .panel-eyebrow {
+      display: flex; align-items: center; gap: 7px; margin-bottom: 10px;
+      font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--hud);
     }
-    .legend-item:hover, .legend-item.is-on { color: var(--off-white); }
-    .legend-item i { width: 7px; height: 7px; border-radius: 50%; background: var(--node-color); }
+    .panel-eyebrow i { width: 5px; height: 5px; border-radius: 50%; background: var(--hud); }
+    .panel-intro h1 {
+      font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 600;
+      letter-spacing: -0.025em; line-height: 1.12; margin: 0 0 9px;
+    }
+    .panel-intro p { margin: 0; font-size: 12px; line-height: 1.6; color: var(--white-48); }
 
-    /* ── Search panel ── */
-    .search {
-      position: fixed; inset: 0; z-index: 80;
-      display: none; align-items: flex-start; justify-content: center;
-      padding-top: 18vh;
-      background: rgba(8,8,8,0.72);
-      -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    /* ── Bottom-right: index + search ── */
+    .panel-index {
+      position: fixed; right: 32px; bottom: 28px; z-index: 40; width: 274px;
     }
-    .search.is-open { display: flex; }
-    .search-box {
-      width: min(520px, calc(100% - 48px));
-      background: #121212; border: 1px solid var(--white-16); border-radius: 8px;
-      overflow: hidden;
+    .index-search {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+      padding: 8px 11px;
+      border: 1px solid var(--white-16); background: rgba(10,16,17,0.8);
     }
-    .search-box input {
-      width: 100%; padding: 16px 18px; border: 0; outline: none;
-      background: none; color: var(--off-white);
-      font-family: 'Inter', sans-serif; font-size: 15px;
+    .index-search:focus-within { border-color: var(--hud); }
+    .index-search svg { flex: 0 0 auto; color: var(--hud); opacity: .8; }
+    .index-search input {
+      flex: 1; min-width: 0; border: 0; outline: none; background: none;
+      color: var(--off-white); font-family: 'Inter', sans-serif; font-size: 12px;
     }
-    .search-box input::placeholder { color: var(--white-32); }
-    .search-results { max-height: 46vh; overflow-y: auto; border-top: 1px solid var(--white-8); }
-    .search-hit {
-      display: flex; align-items: center; gap: 10px; width: 100%;
-      padding: 11px 18px; background: none; border: 0; cursor: pointer;
-      color: var(--off-white); font-family: 'Inter', sans-serif;
-      font-size: 12.5px; text-align: left;
-      transition: background .15s;
+    .index-search input::placeholder { color: var(--white-32); }
+    .index-search kbd {
+      font-family: inherit; font-size: 9px; color: var(--white-32);
+      border: 1px solid var(--white-16); padding: 1px 5px;
     }
-    .search-hit:hover, .search-hit.is-active { background: rgba(255,255,255,0.05); }
-    .search-hit i { width: 7px; height: 7px; border-radius: 50%; background: var(--node-color); flex: 0 0 auto; }
-    .search-hit span { color: var(--white-32); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; margin-left: auto; }
-    .search-empty { padding: 14px 18px; font-size: 12.5px; color: var(--white-32); }
 
-    /* ── Article modal ── */
+    .index-head {
+      display: flex; align-items: baseline; justify-content: space-between;
+      font-size: 9px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--white-32); padding-bottom: 7px; margin-bottom: 5px;
+      border-bottom: 1px solid var(--white-8);
+    }
+    .cat {
+      display: flex; align-items: center; gap: 8px; width: 100%;
+      padding: 3.5px 0; background: none; border: 0; cursor: pointer;
+      font-family: 'Inter', sans-serif; font-size: 11px; color: var(--white-48);
+      text-align: left; transition: color .18s;
+    }
+    .cat:hover, .cat.is-on { color: var(--off-white); }
+    .cat i { width: 6px; height: 6px; flex: 0 0 auto; background: var(--c); }
+    .cat span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+    .cat b {
+      font-size: 9.5px; font-weight: 600; letter-spacing: 0.08em;
+      color: var(--white-32); font-variant-numeric: tabular-nums;
+    }
+    .cat.is-on b { color: var(--hud); }
+
+    /* ── Modal ── */
     .modal {
-      position: fixed; inset: 0; z-index: 90;
-      display: none; align-items: center; justify-content: center; padding: 24px;
-      background: rgba(8,8,8,0.8);
+      position: fixed; inset: 0; z-index: 90; display: none;
+      align-items: center; justify-content: center; padding: 24px;
+      background: rgba(8,8,8,0.82);
       -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
     }
     .modal.is-open { display: flex; }
     .modal-card {
-      width: min(640px, 100%); max-height: 82vh; overflow-y: auto;
-      background: #121212; border: 1px solid var(--white-16);
-      border-top: 2px solid var(--node-color, var(--orange));
-      border-radius: 8px; padding: 32px;
+      position: relative; width: min(620px, 100%); max-height: 82vh; overflow-y: auto;
+      background: #0c1213; border: 1px solid var(--white-16);
+      border-top: 2px solid var(--c, var(--hud)); padding: 32px;
     }
-    .modal-stage {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-size: 10px; font-weight: 500; letter-spacing: 0.13em;
-      text-transform: uppercase; color: var(--white-48); margin-bottom: 14px;
+    .modal-kicker {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+      font-size: 9px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--white-48);
     }
-    .modal-stage i { width: 7px; height: 7px; border-radius: 50%; background: var(--node-color); }
-    .modal-card h2 {
-      font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 600;
-      letter-spacing: -0.02em; margin: 0 0 16px;
-    }
-    .modal-card p { margin: 0 0 14px; font-size: 13.5px; line-height: 1.7; color: var(--white-56); }
+    .modal-kicker i { width: 6px; height: 6px; background: var(--c); }
+    .modal-card h2 { font-family: 'Syne', sans-serif; font-size: 23px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 14px; }
+    .modal-card p { margin: 0 0 13px; font-size: 13.5px; line-height: 1.7; color: var(--white-56); }
     .modal-close {
-      position: absolute; top: 24px; right: 24px;
-      width: 36px; height: 36px; border-radius: 50%;
-      border: 1px solid var(--white-16); background: rgba(255,255,255,0.04);
-      color: var(--off-white); cursor: pointer; font-size: 16px; line-height: 1;
+      position: absolute; top: 22px; right: 22px; width: 34px; height: 34px;
+      border: 1px solid var(--white-16); background: none; color: var(--off-white);
+      cursor: pointer; font-size: 16px; line-height: 1;
     }
-    .modal-close:hover { background: rgba(255,255,255,0.1); }
+    .modal-close:hover { background: rgba(255,255,255,0.08); }
 
     /* ── Small screens: the map is not usable, so it becomes a list ── */
-    @media (max-width: 900px) {
-      .map { height: auto; min-height: 0; overflow: visible; padding: 120px 20px 80px; }
-      .links, .legend, .gnode { display: none; }
-      .intro { position: static; max-width: none; padding: 0 20px; margin-bottom: 28px; }
-      .core { position: static; transform: none; margin: 0 auto 36px; }
-      .nodes {
-        position: static; display: flex; flex-direction: column; gap: 10px;
-        max-width: 420px; margin: 0 auto;
-      }
-      .node {
-        position: static !important; transform: none !important;
-        left: auto !important; top: auto !important;
-        white-space: normal; width: 100%;
-      }
-      .node.is-match { transform: none !important; }
-      .modal-card { padding: 24px; }
+    @media (max-width: 1200px) {
+      /* The panels are siblings of <main>, so the reading order is set on the
+         body. nav and .dots are fixed, so they stay out of this flow. */
+      body { display: flex; flex-direction: column; }
+      .panel-intro { order: 1; }
+      main.map     { order: 2; }
+      .panel-index { order: 3; }
+
+      .map { height: auto; padding: 24px 20px 40px; overflow: visible; cursor: auto;
+             display: flex; flex-direction: column; }
+      .links, .gnode { display: none; }
+      /* relative, not static: the HUD rings are absolutely positioned and must
+         keep anchoring to the core instead of stretching over the whole page. */
+      .core { position: relative; left: auto; top: auto; transform: none; margin: 0 auto 28px; order: 1; }
+      .nodes { position: static; display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 440px; margin: 0 auto; order: 2; }
+      .node { position: static !important; left: auto !important; top: auto !important;
+              transform: none !important; opacity: 1 !important; white-space: normal; width: 100%; }
+      .panel-intro, .panel-index { position: static; width: auto; max-width: 440px; margin: 0 auto; padding: 0 20px; }
+      .panel-intro { padding-top: 104px; margin-bottom: 4px; }
+      .panel-index { margin: 26px auto 60px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .node, .link { transition: none !important; }
+      .pulse, .hud .sweep, .hud .counter { animation: none; }
+      .pulse { opacity: .35; }
     }
   </style>
 </head>
@@ -326,57 +293,77 @@
     <a class="nav-back" href="../" data-pt="← Voltar ao portfólio">← Back to portfolio</a>
   </nav>
 
-  <div class="intro">
-    <h1 data-pt="Projetando com IA">Designing with AI</h1>
-    <p data-pt="Um mapa vivo do meu processo — pesquisa, descoberta, UI, prototipagem e teste — e das conexões entre essas etapas. Vou preenchendo os nós conforme escrevo.">A living map of my process — research, discovery, UI, prototyping and testing — and the connections between those stages. I fill the nodes in as I write them.</p>
-  </div>
-
   <main class="map" id="map">
     <svg class="links" id="links" aria-hidden="true"></svg>
     <div class="nodes" id="nodes"></div>
 
-    <div class="core">
+    <div class="core" id="core">
+      <svg class="hud" viewBox="0 0 268 268" aria-hidden="true">
+        <circle class="r-out" cx="134" cy="134" r="130"/>
+        <circle class="r-mid" cx="134" cy="134" r="112"/>
+        <circle class="r-in"  cx="134" cy="134" r="82"/>
+        <g class="tick">
+          <line x1="134" y1="4"   x2="134" y2="16"/>
+          <line x1="134" y1="252" x2="134" y2="264"/>
+          <line x1="4"   y1="134" x2="16"  y2="134"/>
+          <line x1="252" y1="134" x2="264" y2="134"/>
+        </g>
+        <g class="counter tick">
+          <line x1="42" y1="42" x2="52" y2="52"/>
+          <line x1="226" y1="42" x2="216" y2="52"/>
+          <line x1="42" y1="226" x2="52" y2="216"/>
+          <line x1="226" y1="226" x2="216" y2="216"/>
+        </g>
+        <path class="sweep" d="M134 4 A130 130 0 0 1 226 42"/>
+      </svg>
+
       <div class="core-mark">
         <canvas id="glassLogoCanvas"></canvas>
-        <div class="core-fallback"><img src="../assets/logo.svg" alt="" width="74" height="74"></div>
+        <div class="core-fallback"><img src="../assets/logo.svg" alt="" width="70" height="70"></div>
       </div>
-      <button class="search-trigger" id="searchTrigger" type="button">
-        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <circle cx="7" cy="7" r="4.6" stroke="currentColor" stroke-width="1.4"/>
-          <line x1="10.6" y1="10.6" x2="14" y2="14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-        </svg>
-        <span data-pt="Buscar no mapa">Search the map</span>
-        <kbd>/</kbd>
-      </button>
+      <div class="core-readout" id="coreReadout">28 artifacts · 10 categories</div>
     </div>
   </main>
 
-  <div class="legend" id="legend"></div>
-
-  <!-- Search -->
-  <div class="search" id="search" role="dialog" aria-modal="true" aria-label="Search the map">
-    <div class="search-box">
-      <input id="searchInput" type="text" autocomplete="off" spellcheck="false"
-             placeholder="Search stages and notes…" data-pt-placeholder="Buscar etapas e notas…">
-      <div class="search-results" id="searchResults"></div>
-    </div>
+  <!-- bottom left -->
+  <div class="panel-intro">
+    <div class="panel-eyebrow"><i></i><span data-pt="Processo de design com IA">AI design process</span></div>
+    <h1 data-pt="Projetando com IA">Designing with AI</h1>
+    <p data-pt="Um mapa vivo do meu processo e das conexões entre as etapas. Vou preenchendo os nós conforme escrevo.">A living map of my process and the connections between its stages. I fill the nodes in as I write them.</p>
   </div>
 
-  <!-- Article -->
+  <!-- bottom right -->
+  <div class="panel-index">
+    <div class="index-search">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <circle cx="7" cy="7" r="4.6" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="10.6" y1="10.6" x2="14" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <input id="searchInput" type="text" autocomplete="off" spellcheck="false"
+             placeholder="Search the map" data-pt-placeholder="Buscar no mapa"
+             aria-label="Search the map" data-pt-aria="Buscar no mapa">
+      <kbd>/</kbd>
+    </div>
+    <div class="index-head">
+      <span data-pt="Categorias">Categories</span>
+      <span id="indexCount">28</span>
+    </div>
+    <div id="catList"></div>
+  </div>
+
   <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-card" id="modalCard">
       <button class="modal-close" id="modalClose" type="button" aria-label="Close" data-pt-aria="Fechar">×</button>
-      <div class="modal-stage"><i></i><span id="modalStage"></span></div>
+      <div class="modal-kicker"><i></i><span id="modalKicker"></span></div>
       <h2 id="modalTitle"></h2>
       <div id="modalBody"></div>
     </div>
   </div>
 
   <script>
-    /* ── I18N — reads the choice made in the homepage footer switcher.
-          Same contract as every other page: no switcher here. ── */
     (function () {
-      var lang = localStorage.getItem('site-lang') || 'en';
+      var qp = new URLSearchParams(location.search).get('lang');
+      var lang = (qp === 'pt' || qp === 'en') ? qp : (localStorage.getItem('site-lang') || 'en');
       window.__siteLang = lang;
       document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
       if (lang === 'pt') {
@@ -393,86 +380,87 @@
     var PT = window.__siteLang === 'pt';
     var T = function (en, pt) { return PT ? pt : en; };
 
-    /* ── Stages live on a sphere: theta swings around, phi tilts up or down,
-          so the five clusters sit in genuinely different directions rather
-          than on one flat ring. ── */
-    var DEG = Math.PI / 180;
-    var STAGES = {
-      research:  { color: 'var(--c-research)',  th: -108, ph:  20, label: T('Research', 'Pesquisa') },
-      discovery: { color: 'var(--c-discovery)', th:  -36, ph: -24, label: T('Discovery', 'Descoberta') },
-      ui:        { color: 'var(--c-ui)',        th:   36, ph:  16, label: T('UI Design', 'UI Design') },
-      proto:     { color: 'var(--c-proto)',     th:  108, ph: -20, label: T('Prototyping', 'Prototipagem') },
-      testing:   { color: 'var(--c-testing)',   th:  180, ph:  12, label: T('Testing', 'Teste') }
-    };
+    /* ── Categories. th = direction around the core, ph = tilt. ── */
+    var CATS = [
+      { id:'research',   c:'#4DA3FF', th:-140, ph: 16, en:'User research',        pt:'Pesquisa com usuários' },
+      { id:'benchmark',  c:'#5BC8FF', th:-104, ph:-18, en:'Benchmark research',   pt:'Pesquisa de benchmark' },
+      { id:'stakeholder',c:'#6FE3E1', th: -68, ph: 20, en:'Stakeholder interview',pt:'Entrevista com stakeholders' },
+      { id:'synthesis',  c:'#4ADE9B', th: -32, ph:-16, en:'Analytical synthesis of research results', pt:'Síntese analítica dos resultados' },
+      { id:'aiproto',    c:'#FF4D00', th:   4, ph: 18, en:'AI prototyping',       pt:'Prototipagem com IA' },
+      { id:'visual',     c:'#FF7A2F', th:  40, ph:-20, en:'Visual design',        pt:'Design visual' },
+      { id:'responsive', c:'#FFB020', th:  76, ph: 14, en:'Responsive design',    pt:'Design responsivo' },
+      { id:'mobileweb',  c:'#FFD84D', th: 112, ph:-18, en:'Mobile and web design',pt:'Design mobile e web' },
+      { id:'testing',    c:'#A78BFA', th: 148, ph: 18, en:'User testing',         pt:'Teste com usuários' },
+      { id:'systems',    c:'#C58BFA', th: 184, ph:-14, en:'Design systems',       pt:'Design systems' }
+    ];
+    var CAT = {}; CATS.forEach(function (k) { CAT[k.id] = k; });
 
-    /* dt / dp = offset from the cluster centre, r = distance out along it. */
+    var LV = { s: T('Strong','Forte'), m: T('Mid','Médio'), j: T('Junior','Júnior') };
+    var TAG = { a: T('Article','Artigo'), p: T('Prompt','Prompt'), n: T('Note','Nota'), c: T('Case','Case') };
+
+    /* dt/dp offset the node from its category direction, r pushes it out. */
     var NODES = [
-      { s:'research',  dt:-26, dp:  8, r:0.55, t:T('User interviews','Entrevistas com usuários'), body:true },
-      { s:'research',  dt: 18, dp:-12, r:0.42, t:T('AI-assisted synthesis','Síntese assistida por IA'), body:true },
-      { s:'research',  dt: 30, dp: 18, r:0.72, t:T('Survey design','Design de questionários') },
-      { s:'research',  dt:-14, dp:-22, r:0.80, t:T('Competitive scan','Análise competitiva') },
-      { s:'research',  dt: 40, dp: -4, r:0.95, t:T('Field notes','Notas de campo') },
+      { k:'research',   dt:-16, dp: 10, r:0.52, lv:'s', tg:'a', en:'Interview scripts',        pt:'Roteiros de entrevista', body:1 },
+      { k:'research',   dt: 14, dp:-14, r:0.70, lv:'s', tg:'n', en:'Recruiting without a panel', pt:'Recrutar sem painel' },
+      { k:'research',   dt: -4, dp: 22, r:0.88, lv:'m', tg:'p', en:'Screener prompts',         pt:'Prompts de triagem' },
 
-      { s:'discovery', dt:-20, dp: 10, r:0.48, t:T('Problem framing','Enquadrar o problema'), body:true },
-      { s:'discovery', dt: 16, dp:-14, r:0.62, t:T('Stakeholder interviews','Entrevistas com stakeholders'), body:true },
-      { s:'discovery', dt: -6, dp: 22, r:0.80, t:T('Opportunity mapping','Mapa de oportunidades') },
-      { s:'discovery', dt: 32, dp:  4, r:0.94, t:T('Minimum requirements','Requisitos mínimos') },
+      { k:'benchmark',  dt:-14, dp:-12, r:0.55, lv:'m', tg:'a', en:'Reading a competitor set', pt:'Lendo um conjunto de concorrentes', body:1 },
+      { k:'benchmark',  dt: 16, dp: 16, r:0.74, lv:'m', tg:'n', en:'What not to copy',         pt:'O que não copiar' },
+      { k:'benchmark',  dt: -2, dp:-22, r:0.92, lv:'j', tg:'p', en:'Teardown prompt',          pt:'Prompt de teardown' },
 
-      { s:'ui',        dt:-18, dp:-10, r:0.46, t:T('Design system','Design system'), body:true },
-      { s:'ui',        dt: 14, dp: 14, r:0.60, t:T('AI-generated variants','Variações geradas por IA'), body:true },
-      { s:'ui',        dt:-32, dp: 18, r:0.76, t:T('Visual direction','Direção visual') },
-      { s:'ui',        dt: 26, dp:-18, r:0.84, t:T('Component states','Estados de componente') },
-      { s:'ui',        dt:  2, dp:  6, r:0.98, t:T('Developer handoff','Handoff para dev') },
+      { k:'stakeholder',dt:-16, dp: 12, r:0.50, lv:'s', tg:'a', en:'Asking about the business',pt:'Perguntando sobre o negócio', body:1 },
+      { k:'stakeholder',dt: 18, dp:-16, r:0.72, lv:'s', tg:'c', en:'When they disagree',       pt:'Quando eles discordam' },
+      { k:'stakeholder',dt:  0, dp: 20, r:0.90, lv:'m', tg:'n', en:'Requirement capture',      pt:'Captura de requisitos' },
 
-      { s:'proto',     dt:-22, dp: 12, r:0.50, t:T('Coded prototypes','Protótipos em código'), body:true },
-      { s:'proto',     dt: 18, dp:-16, r:0.64, t:T('The Claude Code loop','O loop com Claude Code'), body:true },
-      { s:'proto',     dt: -8, dp: 24, r:0.84, t:T('Motion studies','Estudos de motion') },
-      { s:'proto',     dt: 34, dp:  0, r:0.96, t:T('Figma to code','Do Figma ao código') },
+      { k:'synthesis',  dt:-14, dp: 14, r:0.54, lv:'s', tg:'a', en:'Synthesis with a model',   pt:'Síntese com um modelo', body:1 },
+      { k:'synthesis',  dt: 16, dp:-14, r:0.74, lv:'m', tg:'p', en:'Affinity prompts',         pt:'Prompts de afinidade' },
+      { k:'synthesis',  dt: -2, dp: 22, r:0.92, lv:'m', tg:'n', en:'Where models over-cluster',pt:'Onde modelos agrupam demais' },
 
-      { s:'testing',   dt:-16, dp:-12, r:0.52, t:T('Usability testing','Teste de usabilidade'), body:true },
-      { s:'testing',   dt: 20, dp: 14, r:0.66, t:T('Timed task comparison','Comparação cronometrada'), body:true },
-      { s:'testing',   dt: -4, dp:-22, r:0.86, t:T('Post-launch metrics','Métricas pós-lançamento') },
-      { s:'testing',   dt: 36, dp:  6, r:0.98, t:T('What I could not measure','O que não consegui medir') }
+      { k:'aiproto',    dt:-16, dp:-12, r:0.50, lv:'s', tg:'a', en:'The Claude Code loop',     pt:'O loop com Claude Code', body:1 },
+      { k:'aiproto',    dt: 16, dp: 16, r:0.70, lv:'s', tg:'c', en:'Figma to working code',    pt:'Do Figma ao código', body:1 },
+      { k:'aiproto',    dt: -2, dp:-22, r:0.88, lv:'m', tg:'p', en:'Prototype scaffolding',    pt:'Scaffolding de protótipo' },
+
+      { k:'visual',     dt:-14, dp: 12, r:0.52, lv:'s', tg:'a', en:'Craft at small sizes',     pt:'Craft em tamanhos pequenos', body:1 },
+      { k:'visual',     dt: 18, dp:-16, r:0.72, lv:'s', tg:'n', en:'Type scale decisions',     pt:'Decisões de escala tipográfica' },
+      { k:'visual',     dt:  0, dp: 20, r:0.90, lv:'m', tg:'p', en:'Variant generation',       pt:'Geração de variações' },
+
+      { k:'responsive', dt:-14, dp:-14, r:0.54, lv:'s', tg:'a', en:'Breakpoints from content', pt:'Breakpoints a partir do conteúdo', body:1 },
+      { k:'responsive', dt: 16, dp: 14, r:0.74, lv:'m', tg:'n', en:'Fluid over fixed',         pt:'Fluido em vez de fixo' },
+
+      { k:'mobileweb',  dt:-16, dp: 12, r:0.52, lv:'s', tg:'a', en:'One product, two surfaces',pt:'Um produto, duas superfícies', body:1 },
+      { k:'mobileweb',  dt: 16, dp:-16, r:0.72, lv:'m', tg:'c', en:'Touch target audits',      pt:'Auditoria de alvos de toque' },
+      { k:'mobileweb',  dt: -2, dp: 20, r:0.90, lv:'j', tg:'n', en:'Native patterns',          pt:'Padrões nativos' },
+
+      { k:'testing',    dt:-14, dp:-12, r:0.52, lv:'m', tg:'a', en:'Timed task comparison',    pt:'Comparação cronometrada', body:1 },
+      { k:'testing',    dt: 18, dp: 16, r:0.72, lv:'m', tg:'n', en:'Testing without a lab',    pt:'Testar sem laboratório' },
+      { k:'testing',    dt:  0, dp:-22, r:0.90, lv:'j', tg:'p', en:'Session synthesis prompt', pt:'Prompt de síntese de sessão' },
+
+      { k:'systems',    dt:-14, dp: 14, r:0.52, lv:'s', tg:'a', en:'Tokens before components', pt:'Tokens antes de componentes', body:1 },
+      { k:'systems',    dt: 16, dp:-14, r:0.74, lv:'s', tg:'c', en:'Keeping Figma and code in sync', pt:'Figma e código em sincronia' }
     ];
 
-    var CROSS = [[1,10],[1,15],[5,0],[9,14],[14,18],[19,5],[6,9],[19,1],[10,17]];
-
-    /* ── Uncategorised grey points. They carry no stage and no label: they are
-          the unwritten thoughts, and they give the shell enough density to read
-          as a network instead of five lonely clusters. Seeded so the shape is
-          the same on every visit. ── */
-    function mulberry32(seed) {
-      return function () {
-        seed |= 0; seed = seed + 0x6D2B79F5 | 0;
-        var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
-        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-        return ((t ^ t >>> 14) >>> 0) / 4294967296;
-      };
-    }
-    var rnd = mulberry32(20260902);
-    var GREY = [];
-    for (var g = 0; g < 34; g++) {
-      GREY.push({
-        th: rnd() * 360,
-        ph: (rnd() - 0.5) * 150,
-        r: 0.45 + rnd() * 0.62,
-        sz: rnd() < 0.22 ? 5 : 3
-      });
-    }
+    /* Uncategorised points: density, no label, not focusable. Seeded. */
+    function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+    var rnd = mulberry32(20260903), GREY = [];
+    for (var g = 0; g < 30; g++) GREY.push({ th: rnd()*360, ph: (rnd()-0.5)*150, r: 0.45+rnd()*0.62, sz: rnd()<0.2?4:2.5 });
 
     var mapEl = document.getElementById('map');
     var nodesEl = document.getElementById('nodes');
     var linksEl = document.getElementById('links');
+    var coreEl = document.getElementById('core');
     var els = [], greyEls = [];
 
     NODES.forEach(function (n, i) {
+      var cat = CAT[n.k];
       var b = document.createElement('button');
       b.className = 'node' + (n.body ? '' : ' is-empty');
       b.type = 'button';
-      b.style.setProperty('--node-color', STAGES[n.s].color);
-      b.dataset.stage = n.s;
-      b.dataset.index = i;
-      b.innerHTML = '<i class="node-dot"></i>' + n.t;
+      b.style.setProperty('--c', cat.c);
+      b.dataset.cat = n.k;
+      b.dataset.i = i;
+      b.innerHTML =
+        '<span class="node-title">' + (PT ? n.pt : n.en) + '</span>' +
+        '<span class="node-meta"><b>' + LV[n.lv] + '</b> · ' + TAG[n.tg] + '</span>';
       if (!n.body) { b.setAttribute('aria-disabled', 'true'); b.tabIndex = -1; }
       else b.addEventListener('click', function () { openModal(i); });
       nodesEl.appendChild(b);
@@ -482,303 +470,252 @@
     GREY.forEach(function (p) {
       var d = document.createElement('i');
       d.className = 'gnode';
-      d.style.width = p.sz + 'px';
-      d.style.height = p.sz + 'px';
+      d.style.width = p.sz + 'px'; d.style.height = p.sz + 'px';
       d.setAttribute('aria-hidden', 'true');
-      nodesEl.appendChild(d);
-      greyEls.push(d);
+      nodesEl.appendChild(d); greyEls.push(d);
     });
 
-    /* ── 3D ── */
-    var rotY = -0.35, rotX = 0.22, spin = 0.00042;
-    var dragging = false, lastX = 0, lastY = 0, idle = true;
-    var FOV = 1150;
+    /* ── 3D, static: artifacts hold still. Drag still rotates the shell. ── */
+    var DEG = Math.PI / 180, FOV = 1150;
+    var rotY = -0.30, rotX = 0.20, dragging = false, lastX = 0, lastY = 0;
 
     function unit(th, ph) {
-      var t = th * DEG, p = ph * DEG;
-      return [Math.cos(p) * Math.cos(t), Math.sin(p), Math.cos(p) * Math.sin(t)];
+      var t = th*DEG, p = ph*DEG;
+      return [Math.cos(p)*Math.cos(t), Math.sin(p), Math.cos(p)*Math.sin(t)];
     }
-    function pointOf(n) {
-      var st = STAGES[n.s];
-      return { u: unit(st.th + n.dt, st.ph + n.dp), r: n.r };
-    }
-
     function project(u, r, R, cx, cy) {
-      var X = u[0] * R * r, Y = u[1] * R * r, Z = u[2] * R * r;
+      var X = u[0]*R*r, Y = u[1]*R*r, Z = u[2]*R*r;
       var cB = Math.cos(rotY), sB = Math.sin(rotY);
-      var x1 = X * cB - Z * sB, z1 = X * sB + Z * cB;
+      var x1 = X*cB - Z*sB, z1 = X*sB + Z*cB;
       var cA = Math.cos(rotX), sA = Math.sin(rotX);
-      var y1 = Y * cA - z1 * sA, z2 = Y * sA + z1 * cA;
-      var k = FOV / (FOV + z2);
-      return { x: cx + x1 * k, y: cy + y1 * k, k: k, z: z2 };
+      var y1 = Y*cA - z1*sA, z2 = Y*sA + z1*cA;
+      var k = FOV/(FOV+z2);
+      return { x: cx + x1*k, y: cy + y1*k, k: k, z: z2 };
     }
 
     function draw() {
-      if (window.innerWidth <= 900) { linksEl.innerHTML = ''; return; }
+      if (window.innerWidth <= 1200) { linksEl.innerHTML = ''; return; }
       var w = mapEl.clientWidth, h = mapEl.clientHeight;
-      var cx = w / 2, cy = h / 2;
-      var R = Math.min(w * 0.30, h * 0.40);
+      var cx = w/2, cy = h*0.46;
+      var R = Math.min(w*0.29, h*0.40);
+      coreEl.style.top = cy + 'px';
 
-      // 1. project every labelled node
       var pos = NODES.map(function (n) {
-        var pt = pointOf(n);
-        return project(pt.u, pt.r, R, cx, cy);
+        var cat = CAT[n.k];
+        return project(unit(cat.th + n.dt, cat.ph + n.dp), n.r, R, cx, cy);
       });
 
-      // 2. screen-space correction. Overlap between cards is fine in a 3D scene
-      //    -- it reads as occlusion -- but stacked *text* is not, and nothing may
-      //    sit on the centre mark. Both fixes run on the same array the links are
-      //    drawn from, so the lines stay attached.
+      /* Keep cards out of the core and out of the two corner panels, and stop
+         labels stacking. Same array the links read, so lines stay attached. */
       var box = els.map(function (el) { return [el.offsetWidth, el.offsetHeight]; });
-      var coreEl = document.querySelector('.core');
-      var coreW = coreEl.offsetWidth + 34, coreH = coreEl.offsetHeight + 24;
-      var PAD = 8;
+      var coreR = 152;   /* ring is r=130 inside a 268px box, plus breathing room */
+      var zones = [];
+      [document.querySelector('.panel-intro'), document.querySelector('.panel-index')].forEach(function (p) {
+        var r = p.getBoundingClientRect();
+        zones.push({ l: r.left - 16, t: r.top - 16, rt: r.right + 16, b: r.bottom + 16 });
+      });
 
-      for (var pass = 0; pass < 18; pass++) {
+      /* Two stages per pass, in this order: cards push each other apart first,
+         then the hard constraints (core, panels, viewport) are re-applied, so a
+         neighbour can never shove a card back into a panel or the HUD. */
+      function hard(i) {
+        var bw = box[i][0]/2, bh = box[i][1]/2;
+
+        /* Rect vs. the HUD ring: measure from the card edge nearest the core,
+           not from its centre, or a wide card clips the ring with one corner. */
+        var dx = pos[i].x - cx, dy = pos[i].y - cy;
+        var d = Math.hypot(dx, dy) || 1;
+        var ex = Math.max(Math.abs(dx) - bw, 0), ey = Math.max(Math.abs(dy) - bh, 0);
+        var edge = Math.hypot(ex, ey);
+        if (edge < coreR) { var p = coreR - edge + 2; pos[i].x += dx/d*p; pos[i].y += dy/d*p; }
+
+        zones.forEach(function (z) {
+          if (pos[i].x + bw > z.l && pos[i].x - bw < z.rt && pos[i].y + bh > z.t && pos[i].y - bh < z.b) {
+            /* Take the shortest escape that still lands inside the viewport.
+               A sideways push out of a corner panel gets undone by the clamp
+               below, which is how cards ended up sitting on the panels. */
+            var cands = [
+              { x: pos[i].x,             y: z.t - bh - 2,  cost: Math.abs(pos[i].y - (z.t - bh - 2)) },
+              { x: z.l - bw - 2,         y: pos[i].y,      cost: Math.abs(pos[i].x - (z.l - bw - 2)) },
+              { x: z.rt + bw + 2,        y: pos[i].y,      cost: Math.abs(pos[i].x - (z.rt + bw + 2)) }
+            ].filter(function (c) {
+              return c.x >= bw + 12 && c.x <= w - bw - 12 && c.y >= bh + 88 && c.y <= h - bh - 14;
+            }).sort(function (a, b) { return a.cost - b.cost; });
+            var pick = cands[0] || { x: pos[i].x, y: z.t - bh - 2 };
+            pos[i].x = pick.x; pos[i].y = pick.y;
+          }
+        });
+
+        pos[i].x = Math.max(bw+12, Math.min(w-bw-12, pos[i].x));
+        pos[i].y = Math.max(bh+88, Math.min(h-bh-14, pos[i].y));
+      }
+
+      /* Short or narrow viewports have less room than the card set needs at a
+         comfortable gap, and the solver then oscillates instead of settling.
+         Ask for less breathing room there so it can actually converge. */
+      var roomy = w * h > 1.15e6;
+      var gapX = roomy ? 10 : 5, gapY = roomy ? 8 : 4;
+
+      for (var pass = 0; pass < 90; pass++) {
         var moved = false;
         for (var i = 0; i < pos.length; i++) {
-          // keep clear of the 3D mark and its search button
-          var dxc = pos[i].x - cx, dyc = pos[i].y - cy;
-          var needX = (box[i][0] + coreW) / 2, needY = (box[i][1] + coreH) / 2;
-          if (Math.abs(dxc) < needX && Math.abs(dyc) < needY) {
-            if (needX - Math.abs(dxc) < needY - Math.abs(dyc)) pos[i].x = cx + (dxc < 0 ? -needX : needX);
-            else pos[i].y = cy + (dyc < 0 ? -needY : needY);
+          for (var j = i+1; j < pos.length; j++) {
+            var ddx = pos[j].x - pos[i].x, ddy = pos[j].y - pos[i].y;
+            var mx = box[i][0]/2 + box[j][0]/2 + gapX, my = box[i][1]/2 + box[j][1]/2 + gapY;
+            if (Math.abs(ddx) >= mx || Math.abs(ddy) >= my) continue;
+            var ox = mx - Math.abs(ddx), oy = my - Math.abs(ddy);
+            if (ox < oy) { var s1 = (ddx<0?-1:1)*ox/2; pos[i].x -= s1; pos[j].x += s1; }
+            else         { var s2 = (ddy<0?-1:1)*oy/2; pos[i].y -= s2; pos[j].y += s2; }
             moved = true;
           }
-          for (var j = i + 1; j < pos.length; j++) {
-            var dx = pos[j].x - pos[i].x, dy = pos[j].y - pos[i].y;
-            var mx = (box[i][0] + box[j][0]) / 2 + PAD;
-            var my = (box[i][1] + box[j][1]) / 2 + PAD;
-            if (Math.abs(dx) >= mx || Math.abs(dy) >= my) continue;
-            var ox = mx - Math.abs(dx), oy = my - Math.abs(dy);
-            if (ox < oy) { var s1 = (dx < 0 ? -1 : 1) * ox / 2; pos[i].x -= s1; pos[j].x += s1; }
-            else         { var s2 = (dy < 0 ? -1 : 1) * oy / 2; pos[i].y -= s2; pos[j].y += s2; }
-            moved = true;
-          }
-          pos[i].x = Math.max(box[i][0] / 2 + 10, Math.min(w - box[i][0] / 2 - 10, pos[i].x));
-          pos[i].y = Math.max(box[i][1] / 2 + 92, Math.min(h - box[i][1] / 2 - 14, pos[i].y));
         }
+        for (var k = 0; k < pos.length; k++) hard(k);
         if (!moved) break;
       }
 
-      // 3. commit. Depth still comes from the projection, not the correction.
       NODES.forEach(function (n, i) {
         var p = pos[i], el = els[i];
-        var depth = (p.z + R) / (2 * R);
-        el.style.left = p.x + 'px';
-        el.style.top = p.y + 'px';
-        el.style.transform = 'translate(-50%, -50%) scale(' + (0.80 + p.k * 0.28).toFixed(3) + ')';
-        el.style.opacity = (0.38 + depth * 0.62).toFixed(3);
+        var depth = (p.z + R) / (2*R);
+        el.style.left = (p.x - box[i][0]/2) + 'px';
+        el.style.top  = (p.y - box[i][1]/2) + 'px';
+        el.style.opacity = (0.44 + depth*0.56).toFixed(3);
         el.style.zIndex = Math.round(500 - p.z);
       });
 
       GREY.forEach(function (p, i) {
         var pr = project(unit(p.th, p.ph), p.r, R, cx, cy);
-        var depth = (pr.z + R) / (2 * R);
+        var depth = (pr.z + R) / (2*R);
         var el = greyEls[i];
-        el.style.left = pr.x + 'px';
-        el.style.top = pr.y + 'px';
-        el.style.transform = 'translate(-50%, -50%) scale(' + (0.7 + pr.k * 0.4).toFixed(3) + ')';
-        el.style.opacity = (0.10 + depth * 0.48).toFixed(3);
-        el.style.zIndex = Math.round(500 - pr.z);
+        el.style.left = pr.x + 'px'; el.style.top = pr.y + 'px';
+        el.style.transform = 'translate(-50%, -50%)';
+        el.style.opacity = (0.08 + depth*0.4).toFixed(3);
       });
 
+      /* Every line leaves the core; the pulse rides the same path outward. */
       var svg = '';
-      var seen = {};
-      NODES.forEach(function (n, i) {
-        if (seen[n.s]) return;
-        seen[n.s] = true;
-        svg += line(cx, cy, pos[i].x, pos[i].y, i, undefined, pos[i].k);
-      });
-      var byStage = {};
-      NODES.forEach(function (n, i) { (byStage[n.s] = byStage[n.s] || []).push(i); });
-      Object.keys(byStage).forEach(function (st) {
-        var gp = byStage[st];
-        for (var k = 0; k < gp.length - 1; k++)
-          svg += line(pos[gp[k]].x, pos[gp[k]].y, pos[gp[k+1]].x, pos[gp[k+1]].y, gp[k], gp[k+1],
-                      (pos[gp[k]].k + pos[gp[k+1]].k) / 2);
-      });
-      CROSS.forEach(function (pr) {
-        svg += line(pos[pr[0]].x, pos[pr[0]].y, pos[pr[1]].x, pos[pr[1]].y, pr[0], pr[1],
-                    (pos[pr[0]].k + pos[pr[1]].k) / 2);
+      pos.forEach(function (p, i) {
+        var dx = p.x - cx, dy = p.y - cy;
+        var len = Math.hypot(dx, dy) || 1;
+        var bend = Math.min(len*0.13, 46);
+        var qx = (cx + p.x)/2 + (-dy/len)*bend, qy = (cy + p.y)/2 + (dx/len)*bend;
+        var d = 'M' + cx.toFixed(1) + ' ' + cy.toFixed(1) + ' Q' + qx.toFixed(1) + ' ' + qy.toFixed(1) +
+                ' ' + p.x.toFixed(1) + ' ' + p.y.toFixed(1);
+        svg += '<path class="link" data-i="' + i + '" d="' + d + '"/>';
+        svg += '<path class="pulse" data-i="' + i + '" d="' + d + '" style="animation-delay:' +
+               (-(i * 0.31) % 3.2).toFixed(2) + 's;stroke:' + CAT[NODES[i].k].c + '"/>';
       });
       linksEl.innerHTML = svg;
     }
 
-    function line(x1, y1, x2, y2, a, b, k) {
-      var dx = x2 - x1, dy = y2 - y1;
-      var len = Math.sqrt(dx * dx + dy * dy) || 1;
-      var bend = Math.min(len * 0.11, 40);
-      var mx = (x1 + x2) / 2 + (-dy / len) * bend;
-      var my = (y1 + y2) / 2 + (dx / len) * bend;
-      // links behind the shell thin out, which is what sells the depth
-      var o = Math.max(0.25, Math.min(1, (k || 1) - 0.15)).toFixed(2);
-      return '<path class="link" style="opacity:' + o + '" data-a="' + a + '" data-b="' +
-             (b === undefined ? '' : b) + '" d="M' + x1.toFixed(1) + ' ' + y1.toFixed(1) +
-             ' Q' + mx.toFixed(1) + ' ' + my.toFixed(1) + ' ' + x2.toFixed(1) + ' ' + y2.toFixed(1) + '"/>';
-    }
-
     draw();
-
-    /* Drift, unless the visitor is driving or has asked for less motion. */
-    var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!still) {
-      (function loop() {
-        if (!dragging && idle) { rotY += spin; draw(); }
-        requestAnimationFrame(loop);
-      })();
-    }
+    var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(draw, 120); });
 
     mapEl.addEventListener('pointerdown', function (e) {
       if (e.target.closest('.node')) return;
-      dragging = true; idle = false; lastX = e.clientX; lastY = e.clientY;
+      dragging = true; lastX = e.clientX; lastY = e.clientY;
       mapEl.setPointerCapture(e.pointerId);
-      mapEl.style.cursor = 'grabbing';
     });
     mapEl.addEventListener('pointermove', function (e) {
       if (!dragging) return;
       rotY += (e.clientX - lastX) * 0.005;
-      rotX = Math.max(-0.9, Math.min(0.9, rotX + (e.clientY - lastY) * 0.004));
+      rotX = Math.max(-0.85, Math.min(0.85, rotX + (e.clientY - lastY) * 0.004));
       lastX = e.clientX; lastY = e.clientY;
       draw();
     });
-    ['pointerup', 'pointercancel'].forEach(function (ev) {
-      mapEl.addEventListener(ev, function () {
-        dragging = false; mapEl.style.cursor = '';
-        setTimeout(function () { idle = true; }, 2200);
-      });
+    ['pointerup','pointercancel'].forEach(function (ev) {
+      mapEl.addEventListener(ev, function () { dragging = false; });
     });
 
-    var rt;
-    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(draw, 120); });
+    /* ── Category index, with counts ── */
+    var catList = document.getElementById('catList');
+    var counts = {};
+    NODES.forEach(function (n) { counts[n.k] = (counts[n.k] || 0) + 1; });
+    document.getElementById('indexCount').textContent = NODES.length;
+    document.getElementById('coreReadout').textContent =
+      NODES.length + T(' artifacts · ', ' artefatos · ') + CATS.length + T(' categories', ' categorias');
 
-    /* ── Hover lights the node's own links ── */
-    nodesEl.addEventListener('mouseover', function (e) {
-      var n = e.target.closest('.node'); if (!n) return;
-      var i = n.dataset.index;
-      linksEl.querySelectorAll('.link').forEach(function (l) {
-        if (l.dataset.a === i || l.dataset.b === i) l.classList.add('is-lit');
-      });
-    });
-    nodesEl.addEventListener('mouseout', function () {
-      linksEl.querySelectorAll('.is-lit').forEach(function (l) { l.classList.remove('is-lit'); });
-    });
-
-    /* ── Legend doubles as a stage filter ── */
-    var legend = document.getElementById('legend');
-    Object.keys(STAGES).forEach(function (s) {
+    var active = null;
+    CATS.forEach(function (k) {
       var b = document.createElement('button');
-      b.className = 'legend-item'; b.type = 'button';
-      b.style.setProperty('--node-color', STAGES[s].color);
-      b.innerHTML = '<i></i>' + STAGES[s].label;
+      b.className = 'cat'; b.type = 'button';
+      b.style.setProperty('--c', k.c);
+      b.innerHTML = '<i></i><span>' + (PT ? k.pt : k.en) + '</span><b>' +
+                    String(counts[k.id] || 0).padStart(2, '0') + '</b>';
       b.addEventListener('click', function () {
-        var on = b.classList.toggle('is-on');
-        legend.querySelectorAll('.legend-item').forEach(function (o) { if (o !== b) o.classList.remove('is-on'); });
-        els.forEach(function (el) {
-          el.classList.remove('is-match');
-          el.classList.toggle('is-dim', on && el.dataset.stage !== s);
-        });
+        active = (active === k.id) ? null : k.id;
+        catList.querySelectorAll('.cat').forEach(function (o) { o.classList.remove('is-on'); });
+        if (active) b.classList.add('is-on');
+        apply();
       });
-      legend.appendChild(b);
+      catList.appendChild(b);
     });
 
     /* ── Search ── */
-    var search = document.getElementById('search');
     var input = document.getElementById('searchInput');
-    var results = document.getElementById('searchResults');
-    var lastFocus = null;
-
-    function openSearch() {
-      lastFocus = document.activeElement;
-      search.classList.add('is-open');
-      input.value = ''; render('');
-      input.focus();
-    }
-    function closeSearch() {
-      search.classList.remove('is-open');
-      els.forEach(function (el) { el.classList.remove('is-dim', 'is-match'); });
-      if (lastFocus) lastFocus.focus();
-    }
-    function render(q) {
-      var term = q.trim().toLowerCase();
-      var hits = [];
-      NODES.forEach(function (n, i) {
-        var hay = (n.t + ' ' + STAGES[n.s].label).toLowerCase();
-        if (term && hay.indexOf(term) !== -1) hits.push(i);
-      });
+    function apply() {
+      var term = input.value.trim().toLowerCase();
+      var hits = 0;
       els.forEach(function (el, i) {
-        el.classList.toggle('is-dim', !!term && hits.indexOf(i) === -1);
-        el.classList.toggle('is-match', !!term && hits.indexOf(i) !== -1);
+        var n = NODES[i], cat = CAT[n.k];
+        var hay = ((PT ? n.pt : n.en) + ' ' + (PT ? cat.pt : cat.en) + ' ' + LV[n.lv] + ' ' + TAG[n.tg]).toLowerCase();
+        var okTerm = !term || hay.indexOf(term) !== -1;
+        var okCat = !active || n.k === active;
+        var on = okTerm && okCat;
+        el.classList.toggle('is-dim', !on);
+        el.classList.toggle('is-match', on && (!!term || !!active));
+        if (on) hits++;
       });
-      if (!term) { results.innerHTML = ''; return; }
-      if (!hits.length) {
-        results.innerHTML = '<p class="search-empty">' + T('Nothing here yet.', 'Nada por aqui ainda.') + '</p>';
-        return;
-      }
-      results.innerHTML = hits.map(function (i) {
-        var n = NODES[i];
-        return '<button class="search-hit" type="button" data-i="' + i + '" style="--node-color:' + STAGES[n.s].color + '">' +
-               '<i></i>' + n.t + '<span>' + STAGES[n.s].label + '</span></button>';
-      }).join('');
+      linksEl.querySelectorAll('.pulse, .link').forEach(function (p) {
+        var n = NODES[+p.dataset.i], cat = CAT[n.k];
+        var hay = ((PT ? n.pt : n.en) + ' ' + (PT ? cat.pt : cat.en)).toLowerCase();
+        var on = (!term || hay.indexOf(term) !== -1) && (!active || n.k === active);
+        p.style.display = on ? '' : 'none';
+      });
+      document.getElementById('indexCount').textContent = hits;
     }
-    input.addEventListener('input', function () { render(input.value); });
-    results.addEventListener('click', function (e) {
-      var hit = e.target.closest('.search-hit'); if (!hit) return;
-      var i = +hit.dataset.i;
-      closeSearch();
-      if (NODES[i].body) openModal(i);
-      else { els[i].classList.add('is-match'); setTimeout(function () { els[i].classList.remove('is-match'); }, 2000); }
+    input.addEventListener('input', apply);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === '/' && document.activeElement !== input && !modal.classList.contains('is-open')) {
+        e.preventDefault(); input.focus();
+      }
+      if (e.key === 'Escape') {
+        if (modal.classList.contains('is-open')) closeModal();
+        else if (input.value || active) { input.value = ''; active = null;
+          catList.querySelectorAll('.cat').forEach(function (o) { o.classList.remove('is-on'); }); apply(); }
+      }
     });
-    document.getElementById('searchTrigger').addEventListener('click', openSearch);
-    search.addEventListener('click', function (e) { if (e.target === search) closeSearch(); });
 
     /* ── Modal ── */
     var modal = document.getElementById('modal');
     var card = document.getElementById('modalCard');
+    var lastFocus = null;
     function openModal(i) {
-      var n = NODES[i], st = STAGES[n.s];
+      var n = NODES[i], cat = CAT[n.k];
       lastFocus = document.activeElement;
-      card.style.setProperty('--node-color', st.color);
-      document.getElementById('modalStage').textContent = st.label;
-      document.getElementById('modalTitle').textContent = n.t;
+      card.style.setProperty('--c', cat.c);
+      document.getElementById('modalKicker').textContent =
+        (PT ? cat.pt : cat.en) + ' · ' + LV[n.lv] + ' · ' + TAG[n.tg];
+      document.getElementById('modalTitle').textContent = PT ? n.pt : n.en;
       document.getElementById('modalBody').innerHTML =
         '<p>' + T('This note is still a placeholder. It will hold how this step actually runs — what I ask the model, what I keep for myself, and where the two disagree.',
-                  'Esta nota ainda é um placeholder. Vai descrever como essa etapa funciona na prática — o que eu peço ao modelo, o que eu mantenho comigo, e onde os dois discordam.') + '</p>' +
-        '<p>' + T('Until then, the map is here to show the shape of the process rather than the detail of it.',
-                  'Até lá, o mapa serve para mostrar o formato do processo, não o detalhe dele.') + '</p>';
+                  'Esta nota ainda é um placeholder. Vai descrever como essa etapa funciona na prática — o que eu peço ao modelo, o que eu mantenho comigo, e onde os dois discordam.') + '</p>';
       modal.classList.add('is-open');
       document.getElementById('modalClose').focus();
     }
-    function closeModal() {
-      modal.classList.remove('is-open');
-      if (lastFocus) lastFocus.focus();
-    }
+    function closeModal() { modal.classList.remove('is-open'); if (lastFocus) lastFocus.focus(); }
     document.getElementById('modalClose').addEventListener('click', closeModal);
     modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
-
-    /* ── Keys: "/" opens search, Esc backs out of whatever is open ── */
-    document.addEventListener('keydown', function (e) {
-      if (e.key === '/' && !search.classList.contains('is-open') && !modal.classList.contains('is-open')
-          && document.activeElement.tagName !== 'INPUT') { e.preventDefault(); openSearch(); }
-      if (e.key === 'Escape') {
-        if (modal.classList.contains('is-open')) closeModal();
-        else if (search.classList.contains('is-open')) closeSearch();
-      }
-    });
   })();
   </script>
 
   <script>
-    /* ── 3D mark, same bundle as the homepage but without the ring of text.
-          Falls back to the flat logo where WebGL is unavailable. ── */
     (function () {
       var canvas = document.getElementById('glassLogoCanvas');
       var ok = false;
       try { var c = document.createElement('canvas'); ok = !!(c.getContext('webgl2') || c.getContext('webgl')); }
       catch (e) { ok = false; }
       if (!ok || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        document.documentElement.classList.add('no-webgl');
-        return;
+        document.documentElement.classList.add('no-webgl'); return;
       }
       var s = document.createElement('script');
       s.src = '../assets/vendor/glass-logo.js';
