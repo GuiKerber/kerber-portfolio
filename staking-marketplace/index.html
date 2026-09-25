@@ -29,24 +29,24 @@
   --orange:#FF4D00;--black:#080808;--off-white:#EDECEA;--ink:#111110;--white:#fff;
   --white-8:rgba(255,255,255,.08);--white-16:rgba(255,255,255,.16);--white-32:rgba(255,255,255,.32);
   --black-10:rgba(0,0,0,.10);--black-18:rgba(0,0,0,.18);--black-64:rgba(0,0,0,.64);
-  --orange-52:rgba(255,77,0,.52);--orange-8:rgba(255,77,0,.08);
+  --orange-36:rgba(255,77,0,.36);--orange-52:rgba(255,77,0,.52);--orange-8:rgba(255,77,0,.08);
 
   --col:692px;            /* text column, from the Figma frame */
   --px:64px;              /* container padding */
   --gap:32px;             /* block rhythm */
   --spring:cubic-bezier(.16,1,.3,1);
 }
-html{font-size:16px;scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:var(--black-18) transparent}
-::-webkit-scrollbar{width:10px}
+html{font-size:16px;scroll-behavior:smooth;scrollbar-gutter:stable}
+::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--black-18);border-radius:10px;border:3px solid var(--off-white)}
+::-webkit-scrollbar-thumb{background:var(--orange-36);border-radius:2px}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--off-white);color:var(--ink);overflow-x:hidden;-webkit-font-smoothing:antialiased}
 img{max-width:100%;display:block}
 a{color:inherit}
 :focus-visible{outline:2px solid var(--orange);outline-offset:3px}
 
 /* ─── Nav: the site's own component ─── */
-nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content:space-between;align-items:center;padding:20px var(--px);background:rgba(8,8,8,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--white-8)}
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content:space-between;align-items:center;padding:20px 64px;background:rgba(8,8,8,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--white-8)}
 .nav-logo{display:flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;margin-left:-8px}
 .nav-logo img{width:28px;height:28px;filter:brightness(0) invert(1)}
 .nav-actions{display:flex;align-items:center;gap:8px}
@@ -56,7 +56,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content
 .nav-btn-contact{background:var(--orange);color:var(--white)}
 .nav-panel-overlay{position:fixed;inset:0;z-index:300;opacity:0;pointer-events:none;transition:opacity .25s ease}
 .nav-panel-overlay.is-open{opacity:1;pointer-events:all}
-.nav-panel-drawer{position:fixed;top:72px;right:var(--px);width:360px;background:var(--white);border-radius:6px;box-shadow:0 4px 6px rgba(0,0,0,.04),0 12px 40px rgba(0,0,0,.10);z-index:301;transform:translateY(-10px) scale(.97);transform-origin:top right;opacity:0;pointer-events:none;transition:transform .35s var(--spring),opacity .25s ease;overflow:hidden}
+.nav-panel-drawer{position:fixed;top:72px;right:64px;width:360px;background:var(--white);border-radius:6px;box-shadow:0 4px 6px rgba(0,0,0,.04),0 12px 40px rgba(0,0,0,.10);z-index:301;transform:translateY(-10px) scale(.97);transform-origin:top right;opacity:0;pointer-events:none;transition:transform .35s var(--spring),opacity .25s ease;overflow:hidden}
 .nav-panel-drawer.is-open{transform:none;opacity:1;pointer-events:all}
 .nav-panel-item{border-top:1px solid var(--black-10)}
 .nav-panel-item:first-child{border-top:none}
@@ -190,8 +190,6 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
 @media (max-width:1080px){:root{--px:40px}}
 @media (max-width:767px){
   :root{--px:22px;--gap:26px}
-  nav{padding:12px var(--px)}
-  .nav-panel-drawer{left:var(--px);right:var(--px);width:auto}
   .container--top{padding-top:96px}
   .deck{font-size:20px;line-height:30px}
   h3{font-size:20px;line-height:30px}
@@ -204,6 +202,18 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
   .next-body{flex-direction:column;align-items:flex-start;gap:28px}
   .next-h2{font-size:clamp(28px,9vw,44px)}
   .next-arr{width:44px;height:44px}
+}
+@media (min-width:768px) and (max-width:1023px){
+  nav{padding:16px 32px}
+  .nav-panel-drawer{right:32px}
+}
+@media (max-width:767px){
+  nav{padding:16px 24px}
+  .nav-panel-drawer{left:24px;right:24px;width:auto}
+}
+@media (max-width:1023px){
+  .nav-btn{font-size:12px;padding:7px 14px;gap:6px}
+  .nav-btn svg{width:14px;height:14px}
 }
 @media (hover:none){
   .drag-cursor{display:none}
