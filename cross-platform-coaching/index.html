@@ -1,481 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Designing a Cross-Platform Coaching Experience — Guilherme Kerber</title>
-  <meta name="description" content="Desktop redesign and mobile MVP for a remote fitness coaching platform, connecting trainers and students when in-person sessions were no longer possible.">
-  <link rel="canonical" href="https://guikerber.com/cross-platform-coaching/">
-  <meta property="og:type" content="article">
-  <meta property="og:url" content="https://guikerber.com/cross-platform-coaching/">
-  <meta property="og:title" content="Designing a Cross-Platform Coaching Experience">
-  <meta property="og:description" content="Desktop redesign and mobile MVP for a remote fitness coaching platform, connecting trainers and students when in-person sessions were no longer possible.">
-  <meta property="og:image" content="https://guikerber.com/assets/og-cover.jpg">
-  <meta property="og:image:type" content="image/jpeg">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Guilherme Kerber Portfolio — product design across Fintech, SaaS, AI and Gaming">
-  <meta property="og:site_name" content="Guilherme Kerber">
-  <meta property="og:locale" content="en_US">
-  <meta name="twitter:image" content="https://guikerber.com/assets/og-cover.jpg">
-  <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Designing a Cross-Platform Coaching Experience — Guilherme Kerber</title>
+<meta name="description" content="Desktop redesign and mobile MVP for a remote fitness coaching platform, connecting trainers and students when in-person sessions were no longer possible.">
+<link rel="canonical" href="https://guikerber.com/cross-platform-coaching/">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://guikerber.com/cross-platform-coaching/">
+<meta property="og:title" content="Designing a Cross-Platform Coaching Experience">
+<meta property="og:description" content="Desktop redesign and mobile MVP for a remote fitness coaching platform, connecting trainers and students when in-person sessions were no longer possible.">
+<meta property="og:image" content="https://guikerber.com/assets/og-cover.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Guilherme Kerber Portfolio — product design across Fintech, SaaS, AI and Gaming">
+<meta property="og:site_name" content="Guilherme Kerber">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:image" content="https://guikerber.com/assets/og-cover.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --orange:#FF4D00;--black:#080808;--off-white:#EDECEA;--ink:#111110;--white:#fff;
+  --white-8:rgba(255,255,255,.08);--white-16:rgba(255,255,255,.16);--white-32:rgba(255,255,255,.32);
+  --black-10:rgba(0,0,0,.10);--black-18:rgba(0,0,0,.18);--black-64:rgba(0,0,0,.64);
+  --orange-52:rgba(255,77,0,.52);--orange-8:rgba(255,77,0,.08);
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
-  <style>
-    /* ─── RESET + TOKENS ─── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --orange:     #FF4D00;
-      --black:      #080808;
-      --off-white:  #EDECEA;
-      --ink:        #111110;
+  --col:692px;            /* text column, from the Figma frame */
+  --px:64px;              /* container padding */
+  --gap:32px;             /* block rhythm */
+  --spring:cubic-bezier(.16,1,.3,1);
+}
+html{font-size:16px;scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:var(--black-18) transparent}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--black-18);border-radius:10px;border:3px solid var(--off-white)}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--off-white);color:var(--ink);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
 
-      /* ── White scale (dark surfaces) ── */
-      --white-4:  rgba(255,255,255,0.04);
-      --white-8:  rgba(255,255,255,0.08);
-      --white-16: rgba(255,255,255,0.16);
-      --white-32: rgba(255,255,255,0.32);
-      --white-48: rgba(255,255,255,0.48);
-      --white-56: rgba(255,255,255,0.56);
+/* ─── Nav: the site's own component ─── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content:space-between;align-items:center;padding:20px var(--px);background:rgba(8,8,8,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--white-8)}
+.nav-logo{display:flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;margin-left:-8px}
+.nav-logo img{width:28px;height:28px;filter:brightness(0) invert(1)}
+.nav-actions{display:flex;align-items:center;gap:8px}
+.nav-btn{display:flex;align-items:center;gap:8px;padding:8px 20px;border-radius:4px;font-family:'Syne',sans-serif;font-size:13px;font-weight:500;letter-spacing:-.03em;line-height:1.4;cursor:pointer;border:none;text-decoration:none;white-space:nowrap;transition:opacity .2s ease,transform .15s ease}
+.nav-btn:hover{opacity:.88;transform:translateY(-1px)}
+.nav-btn-projects{background:var(--white);color:var(--black)}
+.nav-btn-contact{background:var(--orange);color:var(--white)}
+.nav-panel-overlay{position:fixed;inset:0;z-index:300;opacity:0;pointer-events:none;transition:opacity .25s ease}
+.nav-panel-overlay.is-open{opacity:1;pointer-events:all}
+.nav-panel-drawer{position:fixed;top:72px;right:var(--px);width:360px;background:var(--white);border-radius:6px;box-shadow:0 4px 6px rgba(0,0,0,.04),0 12px 40px rgba(0,0,0,.10);z-index:301;transform:translateY(-10px) scale(.97);transform-origin:top right;opacity:0;pointer-events:none;transition:transform .35s var(--spring),opacity .25s ease;overflow:hidden}
+.nav-panel-drawer.is-open{transform:none;opacity:1;pointer-events:all}
+.nav-panel-item{border-top:1px solid var(--black-10)}
+.nav-panel-item:first-child{border-top:none}
+.nav-panel-link{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;text-decoration:none;gap:16px;transition:background .18s ease}
+.nav-panel-link:hover{background:rgba(0,0,0,.025)}
+.nav-panel-link:hover .nav-panel-title{color:var(--orange)}
+.nav-panel-link:hover .nav-panel-arrow-icon{background:var(--orange);border-color:var(--orange)}
+.nav-panel-link:hover .nav-panel-arrow-icon svg path{stroke:var(--white)}
+.nav-panel-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--ink);letter-spacing:-.02em;line-height:1.2;transition:color .18s}
+.nav-panel-arrow-icon{display:flex;align-items:center;justify-content:center;width:26px;height:26px;border:1px solid var(--black-18);border-radius:50%;flex-shrink:0;transition:background .22s,border-color .22s;color:var(--ink)}
 
-      /* ── Black scale (light surfaces) ── */
-      --black-4:  rgba(0,0,0,0.04);
-      --black-10: rgba(0,0,0,0.10);
-      --black-18: rgba(0,0,0,0.18);
-      --black-28: rgba(0,0,0,0.28);
-      --black-38: rgba(0,0,0,0.38);
-      --black-52: rgba(0,0,0,0.52);
-      --black-64: rgba(0,0,0,0.64);
+/* ─── Button: the site's own component ─── */
+.proj-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border-radius:4px;font-family:'Syne',sans-serif;font-size:13px;font-weight:500;letter-spacing:-.03em;line-height:1.4;text-decoration:none;white-space:nowrap;cursor:pointer;transition:opacity .2s ease,transform .15s ease}
+.proj-btn:hover{opacity:.88;transform:translateY(-1px)}
+.proj-btn-primary{background:var(--orange);color:var(--white)}
+.proj-btn-secondary{background:var(--white);color:var(--black)}
 
-      /* ── Orange scale ── */
-      --orange-8:  rgba(255,77,0,0.08);
-      --orange-20: rgba(255,77,0,0.20);
-      --orange-36: rgba(255,77,0,0.36);
-      --orange-52: rgba(255,77,0,0.52);
-    }
-    html { scroll-behavior: smooth; font-size: 16px; }
-    body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background: var(--off-white);
-      color: var(--ink);
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-      cursor: none;
-    }
+/* ─── Layout: one centred column, matching the frame ─── */
+.container{max-width:calc(var(--col) + var(--px) * 2);margin:0 auto;padding:var(--px);display:flex;flex-direction:column;gap:var(--gap);align-items:flex-start}
+.container--top{padding-top:128px;padding-bottom:var(--px)}
 
-    /* ── Noise overlay ── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 9999;
-      opacity: 0.12;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23noise)'/%3E%3C/svg%3E");
-      background-repeat: repeat;
-      background-size: 256px 256px;
-    }
+/* ─── Type, taken from the frame ─── */
+.eyebrow{font-size:11px;font-weight:500;line-height:17.82px;letter-spacing:.14em;text-transform:uppercase;color:var(--black-64)}
+.title{font-family:'Syne',sans-serif;font-weight:400;font-size:clamp(52px,7.6vw,93.8px);line-height:.96;letter-spacing:-.03em;color:var(--black)}
+.deck{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:var(--ink)}
+h2{font-family:'Syne',sans-serif;font-weight:700;font-size:clamp(30px,4.2vw,40.4px);line-height:1.08;letter-spacing:-.02em;color:var(--ink)}
+h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:var(--ink)}
+.body{font-size:14px;line-height:20.3px;color:var(--ink)}
+.body p + p{margin-top:20.3px}
+.body ul{list-style:disc;padding-left:21px;margin-top:20.3px}
+.body li + li{margin-top:2px}
+.block{display:flex;flex-direction:column;gap:8px;width:100%}
 
-    /* ── Crosshair cursor ── */
+/* Facts */
+.facts{display:flex;flex-direction:column;gap:8px;width:100%;font-size:14px;line-height:20.3px}
+.facts div{display:flex;gap:14px}
+.facts dt{width:80px;flex:0 0 80px;color:var(--black-64)}
+.facts dd{color:var(--ink)}
 
+/* Stat row under the header */
+.stats{display:flex;gap:16px;padding:32px 0;border-top:.667px solid var(--black-18);border-bottom:.667px solid var(--black-18);width:100%}
+.stat{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:16px}
+.stat-name{font-family:'Syne',sans-serif;font-weight:600;font-size:15px;line-height:24px;color:var(--ink)}
+.stat-val{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:var(--ink)}
+.stat-desc{font-size:14px;line-height:20.3px;color:var(--black-64)}
+.stat-src{font-size:12px;line-height:19px;color:var(--black-64);margin-top:-16px}
 
-    /* ── Follow cursor ── white disc, mix-blend-mode:difference so it stays
-       visible on dark and light; expands to an orange arrow puck over links. */
-    .cursor { position:fixed; top:0; left:0; width:24px; height:24px; border-radius:50%;
-      background:#fff; mix-blend-mode:difference; pointer-events:none; z-index:9999;
-      display:flex; align-items:center; justify-content:center; transform:translate(-50%,-50%);
-      opacity:0; transition:width .3s ease, height .3s ease, background .3s ease, opacity .25s ease; }
-    .cursor.is-visible { opacity:1; }
-    .cursor-arrow { color:#fff; opacity:0; transform:scale(.4); display:flex;
-      transition:opacity .2s ease, transform .3s cubic-bezier(.16,1,.3,1); }
-    .cursor.is-link { width:56px; height:56px; background:var(--orange); mix-blend-mode:normal; }
-    .cursor.is-link .cursor-arrow { opacity:1; transform:scale(1); }
-    @media (pointer: fine) { body, a, button { cursor:none; } }
-    /* ─── TEXT REVEAL ANIMATIONS ─── */
-    .reveal-line { display:block; overflow:hidden; padding-bottom:.1em; }
-    .reveal-line-inner { display:block; transform:translateY(108%); }
-    [data-split-lines].is-visible .reveal-line-inner {
-      transform:translateY(0);
-      transition:transform .95s cubic-bezier(.16,1,.3,1);
-      transition-delay:calc(var(--li,0) * .08s);
-    }
-    .reveal-word { display:inline-block; overflow:hidden; vertical-align:bottom; }
-    .reveal-word-inner { display:inline-block; transform:translateY(105%); }
-    [data-split-words].is-visible .reveal-word-inner {
-      transform:translateY(0);
-      transition:transform .7s cubic-bezier(.16,1,.3,1);
-      transition-delay:calc(var(--wi,0) * .05s);
-    }
-    [data-fade] { opacity:0; transform:translateY(16px); }
-    [data-fade].is-visible {
-      opacity:1; transform:translateY(0);
-      transition:opacity .8s ease, transform .8s cubic-bezier(.16,1,.3,1);
-      transition-delay:var(--fd,0s);
-    }
+/* Results grid */
+.res-row{display:flex;gap:16px;padding:32px 0;border-bottom:.667px solid var(--black-18);width:100%}
+.res-row .stat{gap:16px}
 
-    /* ─── NAV + PANEL ─── */
-    html { scrollbar-gutter: stable; }
-    nav {
-      position:fixed; top:0; left:0; right:0; z-index:200;
-      display:flex; justify-content:space-between; align-items:center;
-      padding:20px 64px;
-      background:rgba(8,8,8,0.88); backdrop-filter:blur(16px);
-      -webkit-backdrop-filter:blur(16px);
-      border-bottom:1px solid var(--white-8);
-    }
-    .nav-logo { display:flex; align-items:center; color:#fff; text-decoration:none; flex-shrink:0; }
-    .nav-logo img { width:28px; height:28px; display:block; filter:brightness(0) invert(1); }
-    .nav-actions { display:flex; align-items:center; gap:8px; }
-    .nav-btn {
-      display:flex; align-items:center; gap:8px; padding:8px 20px; border-radius:4px;
-      font-family:'Syne',sans-serif; font-size:13px; font-weight:500; letter-spacing:-0.03em;
-      cursor:pointer; border:none; text-decoration:none; white-space:nowrap;
-      transition:opacity .2s ease, transform .15s ease; line-height:1.4;
-    }
-    .nav-btn:hover { opacity:.88; transform:translateY(-1px); }
-    .nav-btn-projects { background:#fff; color:#080808; }
-    .nav-btn-contact  { background:var(--orange); color:#fff; }
-    .nav-panel-overlay { position:fixed; inset:0; z-index:300; opacity:0; pointer-events:none; transition:opacity .25s ease; }
-    .nav-panel-overlay.is-open { opacity:1; pointer-events:all; }
-    .nav-panel-drawer {
-      position:fixed; top:68px; right:64px; width:360px;
-      background:#fff; border-radius:6px;
-      box-shadow:0 4px 6px rgba(0,0,0,0.04),0 12px 40px rgba(0,0,0,0.10),0 1px 2px rgba(0,0,0,0.06);
-      z-index:301; transform:translateY(-10px) scale(0.97); transform-origin:top right;
-      opacity:0; pointer-events:none;
-      transition:transform .35s cubic-bezier(.16,1,.3,1), opacity .25s ease; overflow:hidden;
-    }
-    .nav-panel-drawer.is-open { transform:translateY(0) scale(1); opacity:1; pointer-events:all; }
-    .nav-panel-items { padding-top:6px; padding-bottom:6px; }
-    .nav-panel-item { border-top:1px solid var(--black-10); }
-    .nav-panel-item:first-child { border-top:none; }
-    .nav-panel-link { display:flex; align-items:center; justify-content:space-between; padding:18px 24px; text-decoration:none; gap:16px; transition:background .18s ease; }
-    .nav-panel-link:hover { background:rgba(0,0,0,0.025); }
-    .nav-panel-link:hover .nav-panel-title { color:var(--orange); }
-    .nav-panel-link:hover .nav-panel-arrow-icon { background:var(--orange); border-color:var(--orange); transform:translateX(3px); }
-    .nav-panel-link:hover .nav-panel-arrow-icon svg path { stroke:#fff; }
-    .nav-panel-title { font-family:'Syne',sans-serif; font-size:16px; font-weight:700; color:var(--ink); letter-spacing:-0.02em; line-height:1.2; transition:color .18s; }
-    .nav-panel-arrow-icon { display:flex; align-items:center; justify-content:center; width:26px; height:26px; border:1px solid var(--black-18); border-radius:50%; flex-shrink:0; transition:background .22s, border-color .22s, transform .22s; color:var(--ink); }
+/* ─── Full-bleed image blocks ─── */
+.bleed{width:100%;aspect-ratio:1600/1200;background:var(--black-10);overflow:hidden}
+.bleed img{width:100%;height:100%;object-fit:cover}
 
-    /* ─── HERO ─── */
-    .proj-hero {
-      display: grid; grid-template-columns: 1fr 1fr;
-      align-items: stretch;
-      background: var(--black);
-      padding-top: 68px;
-      min-height: clamp(480px, 56vw * 0.75, 800px);
-    }
-    .proj-hero-right {
-      /* No aspect-ratio — stretches to match left col height, image fills via absolute */
-      min-height: clamp(400px, 40vw, 700px);
-    }
-    .proj-hero-left {
-      padding: 56px 48px 56px 64px;
-      display:flex; flex-direction:column; justify-content:flex-end; gap:24px;
-    }
-    .proj-h1 {
-      font-family:'Syne',sans-serif;
-      font-size: clamp(40px, 5vw, 68px);
-      font-weight:700; color:#fff;
-      line-height:1.02; letter-spacing:-0.03em;
-    }
-    .proj-hero-desc {
-      font-size:16px; font-weight:300; line-height:1.7;
-      color:var(--white-56); max-width:400px;
-    }
-    .proj-meta-strip {
-      display:flex; align-items:center; gap:10px; flex-wrap:wrap;
-      width:100%;
-    }
-    .proj-tag-hero {
-      font-size:10px; font-weight:500; letter-spacing:0.13em;
-      text-transform:uppercase; color:var(--white-48);
-      padding:5px 10px;
-      border:1px solid var(--white-8); border-radius:40px;
-    }
-    .proj-dur {
-      margin-left:auto; font-size:10px; font-weight:500;
-      letter-spacing:0.13em; text-transform:uppercase;
-      color:var(--white-32);
-    }
-    .proj-hero-right {
-      position:relative; overflow:hidden;
-      background:#0c0c0b;
-      /* aspect-ratio set above in hero block */
-    }
-    .proj-hero-bg {
-      position:absolute; inset:0;
-      background:
-        radial-gradient(ellipse 70% 60% at 65% 35%, rgba(255,77,0,0.07) 0%, transparent 70%),
-        repeating-linear-gradient(0deg, transparent 0px, transparent 39px, rgba(255,255,255,0.02) 39px, rgba(255,255,255,0.02) 40px),
-        repeating-linear-gradient(90deg, transparent 0px, transparent 39px, rgba(255,255,255,0.02) 39px, rgba(255,255,255,0.02) 40px);
-    }
-    .proj-hero-img {
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      object-fit:cover; object-position:center top;
-      display:block;
-    }
-    /* ─── CASE STUDY WRAPPER ─── */
-    .case-wrap {
-      display:grid; grid-template-columns:420px 1fr;
-      align-items: start;
-    }
+/* Placeholder until the design system shot arrives */
+.bleed--todo{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:var(--orange-8);border-block:1px dashed var(--orange-52);text-align:center;padding:0 24px}
+.bleed--todo b{font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center;gap:8px}
+.bleed--todo b::before{content:'';width:7px;height:7px;background:var(--orange)}
+.bleed--todo span{font-size:14px;line-height:20.3px;color:var(--black-64);max-width:380px}
 
-    /* ─── LEFT: STICKY ACCORDION ─── */
-    .case-left {
-      position:sticky; top:68px;
-      height:calc(100vh - 68px);
-      overflow-y:auto; scrollbar-width:none;
-     
-      background:var(--off-white);
-    }
-    .case-left::-webkit-scrollbar { display:none; }
+/* ─── Slider ─────────────────────────────────────────────
+   Scrollbar hidden on purpose; the cropped card at the edge
+   plus the fade are what say "there is more". ───────────── */
+.slider-wrap{position:relative;width:100%}
+.slider{
+  display:flex;gap:var(--gap);
+  padding:var(--px);
+  overflow-x:auto;overflow-y:hidden;
+  scrollbar-width:none;-ms-overflow-style:none;
+  overscroll-behavior-x:contain;
+  user-select:none;-webkit-user-select:none;
+  cursor:grab;                      /* .js swaps this for the arrow cursor */
+}
+.slider::-webkit-scrollbar{display:none}
+.slider:active{cursor:grabbing}
+/* Hide the real cursor only where the arrow replacement actually runs */
+@media (hover:hover) and (pointer:fine){
+  .js .slider,.js .slider:active{cursor:none}
+}
+.slider:focus-visible{outline:2px solid var(--orange);outline-offset:-2px}
+.slide{flex:0 0 var(--col);width:var(--col);aspect-ratio:1600/1200;border-radius:8px;overflow:hidden;background:var(--black-10)}
+.slide img{width:100%;height:100%;object-fit:cover;pointer-events:none;-webkit-user-drag:none;user-select:none}
+.slider.is-dragging{scroll-behavior:auto}
+.slider.is-dragging .slide{pointer-events:none}
+/* edge fade — the second signal that the row continues */
+.slider-wrap::after{
+  content:'';position:absolute;top:0;right:0;bottom:0;width:96px;pointer-events:none;
+  background:linear-gradient(to right,rgba(237,236,234,0),var(--off-white));
+  opacity:1;transition:opacity .25s ease;
+}
+.slider-wrap.at-end::after{opacity:0}
 
-    .acc-wrap { padding:48px 8px 100px 64px; }  /* 8px keeps the rotated + inside the rail */
+/* Arrow cursor, shown only while the pointer is over the slider */
+.drag-cursor{
+  position:fixed;top:0;left:0;z-index:150;pointer-events:none;
+  display:flex;align-items:center;gap:6px;
+  padding:10px 12px;border-radius:40px;background:var(--ink);color:var(--white);
+  transform:translate(-50%,-50%) scale(.8);opacity:0;
+  transition:opacity .18s ease,transform .18s var(--spring);
+}
+.drag-cursor.is-on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.drag-cursor.is-grabbing{transform:translate(-50%,-50%) scale(.9)}
 
-    .acc-section-label {
-      font-size:10px; font-weight:500; letter-spacing:0.13em;
-      text-transform:uppercase; color:var(--black-38);
-      margin-bottom:28px;
-    }
+/* Keyboard hint, only useful to sighted keyboard users */
+.slider-hint{
+  position:absolute;left:var(--px);bottom:calc(var(--px) - 26px);
+  font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--black-64);
+  opacity:0;transition:opacity .2s ease;pointer-events:none;
+}
+.slider:focus-visible ~ .slider-hint{opacity:1}
 
-    .acc-item { border-top:1px solid var(--black-10); }
-    .acc-item:last-child { border-bottom:1px solid var(--black-10); }
+/* ─── Next project: the same footer the live case pages use ─── */
+.next-proj{background:var(--black);padding:80px 0 100px}
+.next-link{display:flex;flex-direction:column;gap:36px;text-decoration:none;max-width:calc(var(--col) + var(--px) * 2);margin:0 auto;padding-inline:var(--px)}
+.next-eyebrow{font-size:10px;font-weight:500;letter-spacing:.13em;text-transform:uppercase;color:var(--white-32)}
+.next-body{display:flex;justify-content:space-between;align-items:flex-end;border-top:1px solid var(--white-8);padding-top:36px;gap:24px}
+.next-info{display:flex;flex-direction:column;gap:14px}
+.next-idx{font-size:10px;font-weight:500;letter-spacing:.13em;text-transform:uppercase;color:var(--orange)}
+.next-tags{display:flex;gap:8px;flex-wrap:wrap}
+.next-tag-item{font-size:10px;font-weight:500;letter-spacing:.13em;text-transform:uppercase;color:var(--white-32);padding:4px 9px;border:1px solid var(--white-8);border-radius:20px}
+.next-h2{font-family:'Syne',sans-serif;font-size:clamp(28px,4.5vw,54px);font-weight:700;color:var(--white);letter-spacing:-.03em;line-height:1;transition:color .3s ease}
+.next-link:hover .next-h2{color:var(--orange)}
+.next-arr{width:56px;height:56px;flex-shrink:0;border:1px solid var(--white-16);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--white);transition:background .25s ease,border-color .25s ease,transform .25s ease}
+.next-link:hover .next-arr{background:var(--orange);border-color:var(--orange);transform:rotate(45deg)}
 
-    .acc-head {
-      width:100%; display:flex; align-items:center; gap:12px;
-      padding:18px 0; background:none; border:none; cursor:pointer;
-      text-align:left;
-    }
-    .acc-num {
-      font-size:10px; font-weight:500; letter-spacing:0.13em;
-      color:var(--black-38); min-width:22px;
-      transition: color .2s ease;
-    }
-    .acc-label {
-      font-family:'Syne',sans-serif; font-size:14px; font-weight:600;
-      color:var(--ink); flex:1; letter-spacing:0.01em;
-      transition: color .2s ease;
-    }
-    .acc-plus {
-      font-size:18px; font-weight:300; color:var(--black-38);
-      line-height:1; transition: transform .35s cubic-bezier(.25,0,0,1), color .2s ease;
-    }
-    .acc-item.is-open .acc-plus  { transform:rotate(45deg); color:var(--orange); }
-    .acc-item.is-open .acc-label { color:var(--orange); }
-    .acc-item.is-open .acc-num   { color:var(--orange); }
+/* ─── Motion: one reveal. Hidden only while JS is alive. ─── */
+.js [data-r]{opacity:0;transform:translateY(12px)}
+.js [data-r].in{opacity:1;transform:none;transition:opacity .26s ease,transform .26s var(--spring);transition-delay:var(--d,0s)}
 
-    .acc-body {
-      overflow:hidden; max-height:0;
-      transition: max-height .55s cubic-bezier(.25,0,0,1);
-    }
-    .acc-item.is-open .acc-body { max-height:900px; }
-
-    .acc-inner {
-      padding:0 0 28px 34px;
-      display:flex; flex-direction:column; gap:18px;
-    }
-    .acc-text {
-      font-size:13px; font-weight:400; line-height:1.68;
-      color:var(--black-64);
-    }
-
-    /* attrs table */
-    .attr-grid {
-      display:flex; flex-direction:column; gap:7px;
-    }
-    .attr-row {
-      display:grid; grid-template-columns:84px 1fr; gap:8px;
-      align-items:baseline;
-    }
-    .attr-dt {
-      font-size:10px; font-weight:500; letter-spacing:0.13em;
-      text-transform:uppercase; color:var(--black-38);
-    }
-    .attr-dd {
-      font-size:13px; font-weight:400; line-height:1.68; color:var(--ink);
-    }
-
-    /* insight list */
-    .insight-list {
-      list-style:none; display:flex; flex-direction:column; gap:9px;
-    }
-    .insight-list li {
-      font-size:13px; font-weight:400; line-height:1.68;
-      color:var(--black-64); padding-left:14px; position:relative;
-    }
-    .insight-list li::before {
-      content:''; position:absolute; left:0; top:9px;
-      width:5px; height:1px; background:var(--orange);
-    }
-
-    /* impact bullet list */
-    .impact-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 4px;
-    }
-    .impact-list li {
-      font-size: 13px;
-      font-weight: 400;
-      color: var(--black-38);
-      display: flex;
-      align-items: baseline;
-      gap: 10px;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--black-10);
-    }
-    .impact-list li:last-child { border-bottom: none; }
-    /* Outcome block: the figure stays the scannable element, so the
-       explanation sits under the label rather than beside the number. */
-    .impact-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-    .impact-label { color: var(--black-64); }
-    .impact-note { font-size: 12px; line-height: 1.55; color: var(--black-38); }
-    .impact-sub {
-      font-size: 10px; font-weight: 500; letter-spacing: 0.13em;
-      text-transform: uppercase; color: var(--black-38);
-      margin-top: 26px; margin-bottom: 2px;
-    }
-    .impact-method {
-      font-size: 12px; line-height: 1.55; color: var(--black-38); margin-top: 12px;
-    }
-    .defined-list {
-      list-style: none; display: flex; flex-direction: column;
-      gap: 8px; margin-top: 8px; padding: 0;
-    }
-    .defined-list li { font-size: 13px; line-height: 1.55; color: var(--black-38); }
-    .def-name { color: var(--ink); font-weight: 600; }
-    .impact-val {
-      font-family: 'Syne', sans-serif;
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--ink);
-      letter-spacing: -0.02em;
-      flex-shrink: 0;
-      min-width: 48px;
-    }
-
-    /* ─── RIGHT: GALLERY ─── */
-    .case-right { padding:60px 80px 80px 60px; }
-
-    .gallery {
-      display:flex; flex-direction:column; gap:20px;
-    }
-
-    .gal-block { display:flex; flex-direction:column; gap:10px; }
-
-    /* Images display at their natural intrinsic ratio — no cropping */
-    .gal-img {
-      width:100%; border-radius:8px; overflow:hidden;
-    }
-    .gal-img img {
-      width:100%; height:auto; display:block;
-    }
-
-    /* ─── NEXT PROJECT ─── */
-    .next-proj {
-      background:var(--black);
-      padding:80px 64px 100px;
-    }
-    .next-link {
-      display:flex; flex-direction:column; gap:36px;
-      text-decoration:none; max-width:960px;
-    }
-    .next-eyebrow {
-      font-size:10px; font-weight:500; letter-spacing:0.13em;
-      text-transform:uppercase; color:var(--white-32);
-    }
-    .next-body {
-      display:flex; justify-content:space-between; align-items:flex-end;
-      border-top:1px solid var(--white-8);
-      padding-top:36px; gap:24px;
-    }
-    .next-info { display:flex; flex-direction:column; gap:14px; }
-    .next-idx {
-      font-size:10px; font-weight:500; letter-spacing:0.13em;
-      text-transform:uppercase; color:var(--orange);
-    }
-    .next-tags { display:flex; gap:8px; flex-wrap:wrap; }
-    .next-tag-item {
-      font-size:10px; font-weight:500; letter-spacing:0.13em;
-      text-transform:uppercase; color:var(--white-32);
-      padding:4px 9px; border:1px solid var(--white-8);
-      border-radius:20px;
-    }
-    .next-h2 {
-      font-family:'Syne',sans-serif;
-      font-size:clamp(28px,4.5vw,54px);
-      font-weight:700; color:#fff;
-      letter-spacing:-0.03em; line-height:1.0;
-      transition: color .3s ease;
-    }
-    .next-link:hover .next-h2 { color:var(--orange); }
-    .next-arr {
-      width:56px; height:56px; flex-shrink:0;
-      border:1px solid var(--white-16); border-radius:50%;
-      display:flex; align-items:center; justify-content:center;
-      color:#fff;
-      transition: background .25s ease, border-color .25s ease, transform .25s ease;
-    }
-    .next-link:hover .next-arr {
-      background:var(--orange); border-color:var(--orange);
-      transform:rotate(45deg);
-    }
-  </style>
+/* ─── Responsive ─── */
+@media (max-width:1080px){:root{--px:40px}}
+@media (max-width:767px){
+  :root{--px:22px;--gap:26px}
+  nav{padding:12px var(--px)}
+  .nav-panel-drawer{left:var(--px);right:var(--px);width:auto}
+  .container--top{padding-top:96px}
+  .deck{font-size:20px;line-height:30px}
+  h3{font-size:20px;line-height:30px}
+  .stats,.res-row{flex-direction:column;gap:26px}
+  .slide{flex-basis:min(84vw,var(--col));width:min(84vw,var(--col))}
+  .drag-cursor{display:none}
+  .slider{cursor:grab}
+  .slider:active{cursor:grabbing}
+  .next-proj{padding:56px 0 72px}
+  .next-body{flex-direction:column;align-items:flex-start;gap:28px}
+  .next-h2{font-size:clamp(28px,9vw,44px)}
+  .next-arr{width:44px;height:44px}
+}
+@media (hover:none){
+  .drag-cursor{display:none}
+  .slider{cursor:auto}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .js [data-r]{opacity:1;transform:none}
+  .js [data-r].in{transition:none}
+  .proj-btn,.nav-btn,.drag-cursor{transition:none}
+}
+</style>
 </head>
 <body>
 
-<div class="cursor" id="cursor" aria-hidden="true">
-  <span class="cursor-arrow">
-    <svg width="18" height="18" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-  </span>
+<div class="drag-cursor" id="dragCursor" aria-hidden="true">
+  <svg width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M7 2 3 6l4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <svg width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M5 2l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
 </div>
 
-<!-- PROJECTS SIDE PANEL -->
 <div class="nav-panel-overlay" id="navPanelOverlay" aria-hidden="true"></div>
 <div class="nav-panel-drawer" id="navPanelDrawer" role="dialog" aria-label="Projects" aria-modal="true">
   <div class="nav-panel-items">
-    <div class="nav-panel-item">
-      <a class="nav-panel-link" href="../ai-front-desk/">
-        <span class="nav-panel-title" data-pt="Projetando uma Recepção com IA para Fotógrafos">Designing an AI Front Desk for Photographers</span>
-        <div class="nav-panel-arrow-icon">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-      </a>
-    </div>
-    <div class="nav-panel-item">
-      <a class="nav-panel-link" href="../staking-marketplace/">
-        <span class="nav-panel-title" data-pt="Levando um Marketplace de Staking a uma Carteira Multi-Chain">Introducing a Staking Marketplace to a Multi-Chain Wallet</span>
-        <div class="nav-panel-arrow-icon">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-      </a>
-    </div>
-    <div class="nav-panel-item">
-      <a class="nav-panel-link" href="../cross-platform-coaching/">
-        <span class="nav-panel-title" data-pt="Projetando uma Experiência de Coaching Multiplataforma">Designing a Cross-Platform Coaching Experience</span>
-        <div class="nav-panel-arrow-icon">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-      </a>
-    </div>
+    <div class="nav-panel-item"><a class="nav-panel-link" href="../ai-front-desk/"><span class="nav-panel-title">Designing an AI Front Desk for Photographers</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
+    <div class="nav-panel-item"><a class="nav-panel-link" href="../staking-marketplace/"><span class="nav-panel-title">Introducing a Staking Marketplace to a Multi-Chain Wallet</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
+    <div class="nav-panel-item"><a class="nav-panel-link" href="../cross-platform-coaching/"><span class="nav-panel-title">Designing a Cross-Platform Coaching Experience</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
   </div>
 </div>
 
-<!-- NAV -->
-<nav id="mainNav">
-  <a class="nav-logo" href="../" aria-label="Guilherme Kerber — Home" data-pt-aria="Guilherme Kerber — Início">
-    <img src="../assets/logo.svg" alt="GK logo" width="28" height="28">
-  </a>
+<nav>
+  <a class="nav-logo" href="../" aria-label="Guilherme Kerber — Home"><img src="../assets/logo.svg" alt="GK logo" width="28" height="28"></a>
   <div class="nav-actions">
     <button class="nav-btn nav-btn-projects" id="navProjectsBtn" aria-expanded="false" aria-controls="navPanelDrawer">
-      <span data-pt="Meus Projetos">My Projects</span>
+      <span>My Projects</span>
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
         <line x1="2.5" y1="4.5" x2="13.5" y2="4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         <line x1="2.5" y1="8" x2="13.5" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -483,523 +246,330 @@
       </svg>
     </button>
     <a class="nav-btn nav-btn-contact" href="../#contact">
-      <span data-pt="Entre em contato">Get in touch</span>
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-        <path d="M13.5 2.5L1.5 6.5L6.5 8.5M13.5 2.5L10 13.5L6.5 8.5M13.5 2.5L6.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+      <span>Get in touch</span>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13.5 2.5L1.5 6.5L6.5 8.5M13.5 2.5L10 13.5L6.5 8.5M13.5 2.5L6.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </a>
   </div>
 </nav>
 
-<!-- HERO -->
-<header class="proj-hero">
-  <div class="proj-hero-left">
-    <div class="proj-meta-strip" data-fade>
-      <span class="proj-tag-hero">Product Design</span>
-      <span class="proj-tag-hero">Mobile</span>
-      <span class="proj-tag-hero">Desktop</span>
-      <span class="proj-dur">2020–2021</span>
+<main>
+
+  <!-- ═══ Header ═══ -->
+  <header class="container container--top">
+    <p class="eyebrow" data-r>Desktop &amp; Mobile app · Fitness · Product Design · 2020-2021</p>
+    <div class="block" style="gap:16px">
+      <h1 class="title" data-r style="--d:.05s">Trybe</h1>
+      <p class="deck" data-r style="--d:.1s">Designing a Cross-Platform Coaching Experience</p>
     </div>
-    <h1 class="proj-h1" data-split-lines data-pt="Projetando uma<br>Experiência de Coaching<br>Multiplataforma">Designing a<br>Cross-Platform<br>Coaching Experience</h1>
-    <p class="proj-hero-desc" data-fade style="--fd:.2s" data-pt="Redesign de desktop + MVP mobile para uma plataforma de coaching fitness remoto, conectando treinadores e alunos quando sessões presenciais deixaram de ser possíveis.">Desktop redesign + mobile MVP for a remote fitness coaching platform, connecting trainers and students when in-person sessions were no longer possible.</p>
-  </div>
-  <div class="proj-hero-right">
-    <div class="proj-hero-bg"></div>
-    <img class="proj-hero-img" src="../assets/project-1/project1-cover.png" alt="Fitness coaching platform cover" draggable="false">
-  </div>
-</header>
 
-<!-- CASE STUDY -->
-<div class="case-wrap">
+    <dl class="facts" data-r style="--d:.15s">
+      <div><dt>My role:</dt><dd>UI/UX Design, Branding</dd></div>
+      <div><dt>Scope:</dt><dd>Competitors analysis → UX &amp; Wireframes → User testing → UI Design</dd></div>
+      <div><dt>Duration:</dt><dd>3 months</dd></div>
+      <div><dt>Contract:</dt><dd>Koncepted contractor</dd></div>
+    </dl>
 
-  <!-- LEFT: ACCORDION -->
-  <aside class="case-left">
-    <div class="acc-wrap">
-      <p class="acc-section-label" data-pt="Estrutura do caso">Case structure</p>
-
-      <!-- 01 Overview -->
-      <div class="acc-item is-open" data-section="0">
-        <button class="acc-head">
-          <span class="acc-num">01</span>
-          <span class="acc-label" data-pt="Visão geral">Overview</span>
-          <span class="acc-plus">+</span>
-        </button>
-        <div class="acc-body">
-          <div class="acc-inner">
-            <p class="acc-text" data-pt="Durante a COVID, personal trainers perderam a possibilidade de dar aulas presenciais, colocando em risco tanto a retenção de clientes quanto a receita recorrente. Este projeto expandiu uma plataforma existente para treinadores em um ecossistema de produto conectado: uma experiência desktop redesenhada para os treinadores e um MVP mobile para os alunos.">During COVID, personal trainers lost the ability to coach in person, putting both client retention and recurring revenue at risk. This project expanded an existing trainer platform into a connected product ecosystem: a redesigned desktop experience for coaches and a mobile MVP for students.</p>
-            <div class="attr-grid">
-              <div class="attr-row"><span class="attr-dt" data-pt="Cliente">Client</span><span class="attr-dd">TRYBE</span></div>
-              <div class="attr-row"><span class="attr-dt" data-pt="Período">Period</span><span class="attr-dd">2020–2021</span></div>
-              <div class="attr-row"><span class="attr-dt" data-pt="Função">Role</span><span class="attr-dd">Lead Product Designer</span></div>
-              <div class="attr-row"><span class="attr-dt" data-pt="Plataforma">Platform</span><span class="attr-dd">Web · iOS · Android</span></div>
-            </div>
-          </div>
-        </div>
+    <div class="stats" data-r style="--d:.2s">
+      <div class="stat">
+        <p class="stat-name">Invite-to-active-student conversion</p>
+        <div><p class="stat-val">40%</p><p class="stat-desc">Out of every 100 students invited, 40 sign up and complete at least one workout</p></div>
       </div>
-
-      <!-- 02 Problem -->
-      <div class="acc-item" data-section="1">
-        <button class="acc-head">
-          <span class="acc-num">02</span>
-          <span class="acc-label" data-pt="Problema &amp; Objetivo">Problem &amp; Objective</span>
-          <span class="acc-plus">+</span>
-        </button>
-        <div class="acc-body">
-          <div class="acc-inner">
-            <p class="acc-text" data-pt="A plataforma existente dava suporte à gestão de treinos, mas não a uma experiência completa de coaching remoto. Com o fim das sessões presenciais, os treinadores começaram a perder alunos, renda e continuidade.">The existing platform supported workout management, but not a complete remote coaching experience. As in-person sessions stopped, trainers began losing students, income, and continuity.</p>
-            <ul class="insight-list">
-              <li data-pt="Ajudar treinadores a continuar oferecendo coaching personalizado remotamente">Help trainers continue delivering personalized coaching remotely</li>
-              <li data-pt="Dar aos alunos acesso fácil aos treinos criados pelos próprios treinadores">Give students easy access to workouts created by their own coaches</li>
-              <li data-pt="Modernizar a plataforma desktop e alinhá-la a uma experiência de produto mais forte">Modernize the desktop platform and align it with a stronger product experience</li>
-            </ul>
-          </div>
-        </div>
+      <div class="stat">
+        <p class="stat-name">Adoption among existing students</p>
+        <div><p class="stat-val">61%</p><p class="stat-desc">More than half of an instructor's pre-existing client base begins using remote training</p></div>
       </div>
-
-      <!-- 03 Approach -->
-      <div class="acc-item" data-section="2">
-        <button class="acc-head">
-          <span class="acc-num">03</span>
-          <span class="acc-label" data-pt="Abordagem">Approach</span>
-          <span class="acc-plus">+</span>
-        </button>
-        <div class="acc-body">
-          <div class="acc-inner">
-            <p class="acc-text" data-pt="O trabalho foi estruturado em duas partes. Primeiro, uma auditoria de design da plataforma desktop existente, mapeando pontos de fricção no planejamento de treinos, organização de conteúdo e gestão de clientes.">The work was structured in two parts. First, a design audit of the existing desktop platform, mapping friction points in workout planning, content organization, and client management.</p>
-            <ul class="insight-list">
-              <li data-pt="Melhoria na criação de planos de treino com organização semanal">Improved workout plan creation with a weekly organization</li>
-              <li data-pt="Criação de wireframes para definir fluxos, hierarquia e requisitos de conteúdo">Created wireframes to define flows, hierarchy, and content requirements</li>
-              <li data-pt="Redesign da plataforma desktop com um sistema de UI mais consistente">Redesigned the desktop platform with a more consistent UI system</li>
-              <li data-pt="Design de um MVP mobile focado em acesso a treinos e treino guiado">Designed a mobile MVP focused on workout access and guided training</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- 04 Desktop -->
-      <div class="acc-item" data-section="3">
-        <button class="acc-head">
-          <span class="acc-num">04</span>
-          <span class="acc-label" data-pt="Desktop para Treinadores">Desktop for Trainers</span>
-          <span class="acc-plus">+</span>
-        </button>
-        <div class="acc-body">
-          <div class="acc-inner">
-            <p class="acc-text" data-pt="A plataforma desktop redesenhada deu aos treinadores as ferramentas para criar e gerenciar programas com eficiência, com uma estrutura mais clara e uma UI alinhada à nova direção de marca.">The redesigned desktop platform gave coaches the tools to build and manage programs efficiently, with a clearer structure and a UI aligned with the new brand direction.</p>
-            <ul class="insight-list">
-              <li data-pt="Melhoria na criação de planos de treino e organização semanal">Improved workout plan creation and weekly organization</li>
-              <li data-pt="Biblioteca de exercícios mais clara, com busca, filtros e categorias">Clearer exercise library with search, filters, and categories</li>
-              <li data-pt="Fluxos mais eficientes de atribuição de programas e gestão de clientes">More efficient program assignment and client management flows</li>
-              <li data-pt="UI atualizada e alinhada à nova direção de marca">Updated UI aligned with the new brand direction</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- 05 Mobile -->
-      <div class="acc-item" data-section="4">
-        <button class="acc-head">
-          <span class="acc-num">05</span>
-          <span class="acc-label" data-pt="Mobile para Alunos">Mobile for Students</span>
-          <span class="acc-plus">+</span>
-        </button>
-        <div class="acc-body">
-          <div class="acc-inner">
-            <p class="acc-text" data-pt="O MVP mobile foi criado para os alunos, dando a eles uma forma prática e motivadora de seguir os treinos definidos pelo treinador de forma independente durante as sessões remotas.">The mobile MVP was built for students, giving them a practical and motivating way to follow trainer-assigned workouts independently during remote sessions.</p>
-            <ul class="insight-list">
-              <li data-pt="Onboarding e criação de conta">Onboarding and account creation</li>
-              <li data-pt="Acesso aos treinos definidos pelo treinador">Access to trainer-assigned workouts</li>
-              <li data-pt="Fluxo de exercício guiado durante as sessões de treino">Guided exercise flow during training sessions</li>
-              <li data-pt="Visibilidade do progresso dos treinos e resultados semanais">Visibility into workout progress and weekly results</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- 06 Impact -->
-      <div class="acc-item" data-section="5">
-        <button class="acc-head">
-          <span class="acc-num">06</span>
-          <span class="acc-label" data-pt="Resultado">Outcome</span>
-          <span class="acc-plus">+</span>
-        </button>
-        <div class="acc-body">
-          <div class="acc-inner">
-            <p class="acc-text" data-pt="A plataforma vinha perdendo alunos conforme as sessões presenciais deixaram de acontecer. O redesenho deu aos treinadores uma forma de continuar atendendo remotamente e aos alunos uma forma de treinar por conta própria, fechando um ciclo que havia se rompido.">The platform had been losing students as in-person sessions stopped. The redesign gave trainers a way to keep delivering remotely and gave students a way to train on their own, closing a loop that had broken.</p>
-
-            <div class="impact-sub" data-pt="Medido em testes internos">Measured in internal testing</div>
-            <ul class="impact-list">
-              <li>
-                <span class="impact-val">–40%</span>
-                <span class="impact-body">
-                  <span class="impact-label" data-pt="tempo para montar um plano de treino">time to build a workout plan</span>
-                  <span class="impact-note" data-pt="Um fluxo de configuração dia a dia substituiu um formulário único e longo.">A day-by-day setup flow replaced a single long form.</span>
-                </span>
-              </li>
-              <li>
-                <span class="impact-val">–30%</span>
-                <span class="impact-body">
-                  <span class="impact-label" data-pt="tempo para atribuir um programa a um aluno">time to assign a program to a student</span>
-                  <span class="impact-note" data-pt="A atribuição passou para o quadro de programas, em vez de passar por uma lista de clientes separada.">Assignment moved onto the program board, instead of routing through a separate client list.</span>
-                </span>
-              </li>
-            </ul>
-            <p class="impact-method" data-pt="Ambos medidos por comparação cronometrada de tarefas contra o fluxo desktop anterior, antes do lançamento.">Both measured as timed task comparisons against the previous desktop flow, before launch.</p>
-
-            <div class="impact-sub" data-pt="Definido para acompanhar após o lançamento">Defined to track after launch</div>
-            <ul class="defined-list">
-              <li><span class="def-name" data-pt="Retenção de treinadores">Trainer retention</span> <span class="def-desc" data-pt="&mdash; quantos treinadores seguiram usando a plataforma após o lançamento">&mdash; how many trainers kept using the platform after launch</span></li>
-              <li><span class="def-name" data-pt="Novos cadastros de treinadores">New trainer signups</span> <span class="def-desc" data-pt="&mdash; quantos entraram quando o atendimento remoto passou a ser possível">&mdash; how many joined once remote coaching became possible</span></li>
-            </ul>
-            <p class="impact-method" data-pt="Desenhei a plataforma e defini o que deveria ser medido, mas não tive acesso aos dados de produto após o handoff.">I designed the platform and defined what should be measured, but did not have access to product analytics after handoff.</p>
-          </div>
-        </div>
-      </div>
-
     </div>
-  </aside>
+    <p class="stat-src" data-r style="--d:.22s">I designed the platform and defined what should be measured, but did not have access to product analytics after handoff.</p>
+  </header>
 
-  <!-- RIGHT: GALLERY -->
-  <div class="case-right">
-    <div class="gallery">
-
-      <!-- ── Overview ── -->
-      <div class="gal-block" data-fade data-trigger="0">
-        <div class="gal-img">
-          <img src="../assets/project-1/project1-1.png" alt="Fitness platform overview" loading="lazy" draggable="false">
-        </div>
-      </div>
-
-      <!-- ── Problem ── -->
-      <div class="gal-block" data-fade data-trigger="1">
-        <div class="gal-img">
-          <img src="../assets/project-1/project1-2.png" alt="Problem mapping and trainer pain points" loading="lazy" draggable="false">
-        </div>
-      </div>
-
-      <!-- ── Approach ── -->
-      <div class="gal-block" data-fade data-trigger="2">
-        <div class="gal-img">
-          <img src="../assets/project-1/project1-wireframe.png" alt="Wireframes for flows and hierarchy" loading="lazy" draggable="false">
-        </div>
-      </div>
-
-      <div class="gal-block" data-fade data-trigger="2">
-        <div class="gal-img">
-          <img src="../assets/project-1/project1-3.png" alt="Design approach and structure" loading="lazy" draggable="false">
-        </div>
-      </div>
-
-      <!-- ── Desktop ── -->
-      <div class="gal-block" data-fade data-trigger="3">
-        <div class="gal-img">
-          <img src="../assets/project-1/project1-4.png" alt="Desktop redesign trainer dashboard" loading="lazy" draggable="false">
-        </div>
-      </div>
-
-      <div class="gal-block" data-fade data-trigger="3">
-        <div class="gal-img">
-          <img src="../assets/project-1/project1-5.png" alt="Exercise library and program assignment" loading="lazy" draggable="false">
-        </div>
-      </div>
-
-      <!-- ── Mobile ── -->
-      <div class="gal-block" data-fade data-trigger="4">
-        <div class="gal-img">
-          <img src="../assets/project-1/project1-6.png" alt="Mobile app workout view" loading="lazy" draggable="false">
-        </div>
-      </div>
-
-      <div class="gal-block" data-fade data-trigger="4">
-        <div class="gal-img">
-          <img src="../assets/project-1/project1-7.png" alt="Mobile app guided exercise" loading="lazy" draggable="false">
-        </div>
-      </div>
-
-      <!-- ── Impact ── -->
-      <div class="gal-block" data-fade data-trigger="5">
-        <div class="gal-img">
-          <img src="../assets/project-1/project1-cover.png" alt="Final product connected coaching experience" loading="lazy" draggable="false">
-        </div>
-      </div>
-
-    </div>
+  <!-- ═══ Cover ═══ -->
+  <div class="bleed" data-r>
+    <img src="../assets/project-1/project1-1.png" alt="The programs view: active trainings, clients and tags" width="1600" height="1200" loading="lazy">
   </div>
 
-</div>
+  <!-- ═══ My process ═══ -->
+  <section class="container">
+    <p class="eyebrow" data-r>my process</p>
 
-<!-- NEXT PROJECT -->
-<section class="next-proj">
-  <a class="next-link" href="../ai-front-desk/">
-    <p class="next-eyebrow" data-split-words data-pt="Próximo projeto">Next project</p>
-    <div class="next-body">
-      <div class="next-info">
-        <span class="next-idx" data-fade style="--fd:0.1s" data-pt="01 · Inteligência Artificial">01 · Artificial Intelligence</span>
-        <div class="next-tags" data-fade style="--fd:0.18s">
-          <span class="next-tag-item" data-pt="Agente de IA">AI Agent</span>
-          <span class="next-tag-item" data-pt="Automação">Automation</span>
-          <span class="next-tag-item">SaaS</span>
-        </div>
-        <h2 class="next-h2" data-split-lines data-pt="Projetando uma Recepção<br>com IA para Fotógrafos">Designing an AI Front Desk<br>for Photographers</h2>
-      </div>
-      <div class="next-arr" data-fade style="--fd:0.35s">
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-          <path d="M3 9H15M15 9L10 4M15 9L10 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+    <div class="block" data-r>
+      <h2>Understanding<br>the problem</h2>
+      <div class="body">
+        <p>During COVID, personal trainers lost the ability to coach in person, putting both client retention and recurring revenue at risk. The existing platform supported workout management, but not a complete remote coaching experience. As in-person sessions stopped, trainers began losing students, income, and continuity.</p>
       </div>
     </div>
-  </a>
-</section>
 
-  <!-- ── Responsive overrides ── -->
-  <style>
-    @media (hover: none) {
-      .cursor { display:none !important; }
-      body { cursor:auto !important; }
-    }
+    <div class="block" data-r>
+      <h3>Competitors analysis &amp; opportunities</h3>
+      <div class="body">
+        <p>Most applications by the time were focused on in-person training sessions, so understanding the business opportunity behind the idea of migrating</p>
+        <ul>
+          <li>Differentiate through simplicity: reduce the effort for a trainer to migrate in-person students and get the first remote workout up and running quickly.</li>
+          <li>Design a mobile experience that's especially accessible for beginner students, with less friction between invite, first access, and first completed workout.</li>
+          <li>Easily add a "Train at home" variant for each type of exercise, automating some existing workouts and reducing rework.</li>
+        </ul>
+        <p>Apps reviewed: Trainerize, TrueCoach, My PT Hub, and FitSW</p>
+      </div>
+    </div>
 
-    @media (max-width: 767px) {
-      /* Nav */
-      nav { padding: 18px 24px !important; }
-      .nav-panel-drawer { right: 24px; left: 24px; width: auto; }
+    <div class="block" data-r>
+      <h3>Wireframes and User testing</h3>
+      <div class="body">
+        <p>Once the opportunity areas were clear, wireframes were built in parallel for both sides of the product.</p>
+        <p>Low-fidelity flows tested with a small group of PTs and students through moderated sessions on clickable prototypes:</p>
+        <ul>
+          <li>Migration flow: turning an existing in-person session into a train-at-home program</li>
+          <li>Day-by-day program builder for PTs</li>
+          <li>Student onboarding: invite → account creation → where-you-train setup → first workout</li>
+        </ul>
+      </div>
+    </div>
+  </section>
 
-      /* Hero: stack cols */
-      .proj-hero {
-        grid-template-columns: 1fr !important;
-        min-height: auto !important;
-        padding-top: 62px !important;
-      }
-      .proj-hero-left {
-        padding: 40px 24px 36px !important;
-        justify-content: flex-start !important;
-        gap: 18px !important;
-      }
-      .proj-h1 { font-size: clamp(30px, 9vw, 44px) !important; }
-      .proj-hero-desc { max-width: 100% !important; font-size: 15px !important; }
-      .proj-hero-right { height: auto !important; min-height: 0 !important; aspect-ratio: 4 / 3 !important; }
+  <!-- ═══ Slider ═══ -->
+  <div class="slider-wrap" id="sliderWrap" data-r>
+    <div class="slider" id="slider" tabindex="0" role="region"
+         aria-label="Screens from the project — drag, scroll or use the arrow keys to move through them">
+      <figure class="slide"><img src="../assets/project-1/project1-wireframe.png" alt="Wireframes for the trainer and student flows" loading="lazy" width="1600" height="1200"></figure>
+      <figure class="slide"><img src="../assets/project-1/project1-2.png" alt="Problem mapping and trainer pain points" loading="lazy" width="1600" height="1200"></figure>
+      <figure class="slide"><img src="../assets/project-1/project1-3.png" alt="Design approach and structure" loading="lazy" width="1600" height="1200"></figure>
+      <figure class="slide"><img src="../assets/project-1/project1-4.png" alt="Redesigned desktop dashboard for trainers" loading="lazy" width="1600" height="1200"></figure>
+      <figure class="slide"><img src="../assets/project-1/project1-5.png" alt="Exercise library and program assignment" loading="lazy" width="1600" height="1200"></figure>
+      <figure class="slide"><img src="../assets/project-1/project1-6.png" alt="Mobile app workout view for students" loading="lazy" width="1600" height="1200"></figure>
+      <figure class="slide"><img src="../assets/project-1/project1-7.png" alt="Mobile app guided exercise" loading="lazy" width="1600" height="1200"></figure>
+    </div>
+    <p class="slider-hint">← → to move</p>
+  </div>
 
-      /* Case study: accordion above gallery */
-      .case-wrap {
-        display: flex !important;
-        flex-direction: column !important;
-      }
-      .case-left {
-        position: static !important;
-        height: auto !important;
-        border-right: none !important;
-        border-bottom: 1px solid var(--black-10) !important;
-      }
-      .acc-wrap { padding: 36px 24px 48px !important; }
-      .case-right { padding: 36px 24px 56px !important; }
+  <!-- ═══ Key decisions ═══ -->
+  <section class="container">
+    <h2 data-r>Key decisions &amp; trade-offs</h2>
 
-      /* Gallery pair: keep 2-col but tighter */
-      .gal-pair { gap: 8px !important; }
+    <div class="block" data-r>
+      <h3>Migration over rework</h3>
+      <div class="body">
+        <p>By allowing personal trainers to feed existing exercises with a Train at home variable, we allowed PTs to quickly convert existing sessions to a ready-to-train training.</p>
+        <ul><li>Trade-off: Speed over quality. Initial migrated sessions would require further iteration to be optimized for a train-at-home model.</li></ul>
+      </div>
+    </div>
 
-      /* Next project */
-      .next-proj { padding: 56px 24px 72px !important; }
-      .next-body {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 28px !important;
-      }
-      .next-h2 { font-size: clamp(28px, 9vw, 44px) !important; }
-      .next-arr { width: 44px !important; height: 44px !important; }
-    }
+    <div class="block" data-r>
+      <h3>Where you train setup</h3>
+      <div class="body">
+        <p>As part of the student onboarding, we had to ask where the remote training would occur. Some people have gyms at their buildings and would prefer to train there over their homes, and these would have better or equivalent equipments.</p>
+        <ul><li>Trade-off: Students local being personalized ended up creating more complexity when setting up students trainings for PTs.</li></ul>
+      </div>
+    </div>
 
-    @media (min-width: 768px) and (max-width: 1023px) {
-      nav { padding: 20px 32px !important; }
-      .nav-panel-drawer { right: 32px; }
-      .proj-hero {
-        grid-template-columns: 1fr 1fr !important;
-        padding-top: 68px !important;
-      }
-      .proj-hero-left { padding: 56px 40px !important; }
-      .case-wrap { grid-template-columns: 300px 1fr !important; }
-      .acc-wrap { padding: 40px 32px 80px !important; }
-      .case-right { padding: 48px 40px 64px 40px !important; }
-      .next-proj { padding: 60px 32px 80px !important; }
-    }
-  </style>
+    <div class="block" data-r>
+      <h3>Day by day training setup</h3>
+      <div class="body">
+        <p>Training sessions would be built on weekly day by day batches instead of full monthly cycles. This would simplify the experience of PTs to build new programs and to have clear focus on daily requirements.</p>
+        <ul><li>Trade-off: Focus over long-range visibility. PTs could no longer see or plan a full month of periodization at a glance. Yet, this could be built later view different views.</li></ul>
+      </div>
+    </div>
 
-  <!-- ─────────────────────────────────────────
-       MOTION SYSTEM — Project Page
-       Spring: cubic-bezier(0.16, 1, 0.3, 1)
-  ───────────────────────────────────────── -->
-  <style>
+    <div class="block" data-r>
+      <h3>Connectivity</h3>
+      <div class="body">
+        <p>As part of the project definition, but left out of the MVP, the next big experience would be to connect personal trainers with their students, to simulate a live experience where students can ask questions, confirm trainings, and rebook sessions directly in app.</p>
+      </div>
+    </div>
+  </section>
 
-    /* ── Reduced-motion: force all animated elements visible ── */
-    @media (prefers-reduced-motion: reduce) {
-      .proj-hero-img {
-        animation: none !important;
-        opacity: 1 !important;
-        transform: none !important;
-      }
-      .gal-img img { transition: none !important; }
-    }
+  <!-- ═══ Closing image ═══ -->
+  <div class="bleed" data-r>
+    <img src="../assets/project-1/project1-cover.png" alt="The landing page hero: the program builder on desktop" width="1600" height="1200" loading="lazy">
+  </div>
 
-    /* ────────────────────────────────
-       S01 — Hero right image entrance
-    ──────────────────────────────── */
-    @keyframes proj-img-in {
-      from { opacity: 0; transform: scale(1.06); }
-      to   { opacity: 1; transform: scale(1); }
-    }
-    .proj-hero-img {
-      opacity: 0;
-      animation-name: proj-img-in;
-      animation-duration: 900ms;
-      animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-      animation-fill-mode: both;
-      animation-delay: 120ms;
-      will-change: transform;
-    }
+  <!-- ═══ What I learned ═══ -->
+  <section class="container">
+    <div class="block" data-r>
+      <h3>What I learned</h3>
+      <div class="body">
+        <ul>
+          <li>Letting PTs reuse existing sessions with a train-at-home flag got the first remote workout shipped fast, without asking trainers to relearn their whole workflow mid-crisis.</li>
+          <li>Flexibility has a setup cost. Letting students choose where they train (home vs. building gym) made the product feel personal, but it pushed complexity onto the PT-side setup.</li>
+          <li>Weekly cadence lowers the barrier to starting. Day-by-day, week-by-week planning was easier for PTs to adopt than full monthly cycles, especially for trainers migrating under pressure.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
 
-    /* ────────────────────────────────
-       S02 — Gallery blocks deeper fade
-       (overrides [data-fade] default of 16px)
-    ──────────────────────────────── */
-    .gal-block[data-fade] {
-      transform: translateY(28px);
-    }
+  <section class="next-proj">
+    <a class="next-link" href="../ai-front-desk/">
+      <p class="next-eyebrow" data-r>Next project</p>
+      <div class="next-body">
+        <div class="next-info">
+          <span class="next-idx" data-r style="--d:.1s">01 · Artificial Intelligence</span>
+          <div class="next-tags" data-r style="--d:.18s">
+            <span class="next-tag-item">AI Agent</span>
+            <span class="next-tag-item">Automation</span>
+            <span class="next-tag-item">SaaS</span>
+          </div>
+          <h2 class="next-h2" data-r style="--d:.26s">Designing an AI Front Desk<br>for Photographers</h2>
+        </div>
+        <div class="next-arr" data-r style="--d:.35s">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9H15M15 9L10 4M15 9L10 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </a>
+  </section>
 
-    /* ────────────────────────────────
-       S06 — Gallery image hover
-    ──────────────────────────────── */
-    .gal-img img {
-      transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1),
-                  filter  600ms cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    @media (hover: hover) {
-      .gal-img:hover img {
-        transform: scale(1.02);
-        filter: brightness(1.04);
-      }
-    }
-
-  </style>
-
-<!-- I18N — EN/PT-BR. Reads the choice made in index.html's footer switcher
-     (localStorage 'site-lang'); no switcher control on this page itself, but
-     the language still applies. Must run before the Text Reveal script below
-     so split-lines/split-words operate on the already-correct-language text.
-     Duplicated verbatim on every page — see rules.md (no shared JS file). -->
-<script>
-  (function () {
-    var lang = localStorage.getItem('site-lang') || 'en';
-    window.__siteLang = lang;
-    document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
-    if (lang === 'pt') {
-      document.querySelectorAll('[data-pt]').forEach(function (el) {
-        el.innerHTML = el.getAttribute('data-pt');
-      });
-      document.querySelectorAll('[data-pt-aria]').forEach(function (el) {
-        el.setAttribute('aria-label', el.getAttribute('data-pt-aria'));
-      });
-    }
-  })();
-</script>
+</main>
 
 <script>
-  /* ── Crosshair cursor (pointer devices only) ── */
-  /* ── Follow cursor ── */
-  const cursorEl = document.getElementById('cursor');
-  if (cursorEl && window.matchMedia('(pointer: fine)').matches) {
-    const CLICKABLE = 'a, button, [role="button"]';
-    document.addEventListener('mousemove', e => {
-      cursorEl.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
-      if (!cursorEl.classList.contains('is-visible')) cursorEl.classList.add('is-visible');
+document.documentElement.classList.add('js');
+
+/* Reveal */
+var io = new IntersectionObserver(function (es) {
+  es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: 0, rootMargin: '0px 0px -8% 0px' });
+document.querySelectorAll('[data-r]').forEach(function (el) { io.observe(el); });
+window.addEventListener('load', function () {
+  setTimeout(function () {
+    document.querySelectorAll('[data-r]:not(.in)').forEach(function (el) {
+      if (el.getBoundingClientRect().top < innerHeight * 1.2) el.classList.add('in');
     });
-    document.addEventListener('mouseover', e => {
-      if (e.target.closest(CLICKABLE)) cursorEl.classList.add('is-link');
+  }, 600);
+});
+
+/* Projects panel */
+var pb = document.getElementById('navProjectsBtn'),
+    pd = document.getElementById('navPanelDrawer'),
+    po = document.getElementById('navPanelOverlay');
+function closePanel() { pd.classList.remove('is-open'); po.classList.remove('is-open'); pb.setAttribute('aria-expanded', 'false'); }
+pb.addEventListener('click', function () {
+  if (pd.classList.contains('is-open')) { closePanel(); return; }
+  pd.classList.add('is-open'); po.classList.add('is-open'); pb.setAttribute('aria-expanded', 'true');
+});
+po.addEventListener('click', closePanel);
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closePanel(); });
+
+/* ── Slider ──────────────────────────────────────────────
+   One animation loop owns the scroll position. Drag moves it 1:1,
+   everything else sets a target and the loop eases toward it — that
+   easing is what keeps wheel, keys and the throw from feeling stiff. */
+(function () {
+  var wrap = document.getElementById('sliderWrap'),
+      sl   = document.getElementById('slider'),
+      cur  = document.getElementById('dragCursor');
+  if (!sl) return;
+
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  var fine   = matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  var EASE  = 0.12;   /* how much of the remaining distance per frame */
+  var THROW = 16;     /* how far a flick carries */
+
+  function maxScroll() { return sl.scrollWidth - sl.clientWidth; }
+  function clamp(v) { return Math.max(0, Math.min(maxScroll(), v)); }
+  function edge() { wrap.classList.toggle('at-end', sl.scrollLeft >= maxScroll() - 2); }
+
+  var target = sl.scrollLeft, raf = 0;
+
+  function run() {
+    var diff = target - sl.scrollLeft;
+    if (Math.abs(diff) < 0.5) { sl.scrollLeft = target; raf = 0; edge(); return; }
+    sl.scrollLeft += diff * EASE;
+    edge();
+    raf = requestAnimationFrame(run);
+  }
+  function glide(to) {
+    target = clamp(to);
+    if (reduce.matches) { sl.scrollLeft = target; edge(); return; }
+    if (!raf) raf = requestAnimationFrame(run);
+  }
+  function stop() {
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+    target = sl.scrollLeft;
+  }
+  function here() { return raf ? target : sl.scrollLeft; }
+
+  /* Arrow cursor follows the pointer while it is over the slider */
+  if (fine) {
+    sl.addEventListener('pointerenter', function () { cur.classList.add('is-on'); });
+    sl.addEventListener('pointerleave', function () { cur.classList.remove('is-on', 'is-grabbing'); });
+    sl.addEventListener('pointermove', function (e) {
+      cur.style.transform = 'translate(' + e.clientX + 'px,' + e.clientY + 'px) translate(-50%,-50%)' +
+                            (cur.classList.contains('is-grabbing') ? ' scale(.9)' : '');
     });
-    document.addEventListener('mouseout', e => {
-      const from = e.target.closest(CLICKABLE);
-      const to = e.relatedTarget && e.relatedTarget.closest ? e.relatedTarget.closest(CLICKABLE) : null;
-      if (from && from !== to) cursorEl.classList.remove('is-link');
-    });
-    document.addEventListener('mouseleave', () => cursorEl.classList.remove('is-visible'));
-    document.addEventListener('mouseenter', () => cursorEl.classList.add('is-visible'));
   }
 
-  /* ── Text Reveal ── */
-  document.querySelectorAll('[data-split-lines]').forEach(el=>{
-    const parts=el.innerHTML.split(/<br\s*\/?>/i);
-    el.innerHTML=parts.map((p,i)=>
-      `<span class="reveal-line"><span class="reveal-line-inner" style="--li:${i}">${p.trim()}</span></span>`
-    ).join('');
-  });
-  document.querySelectorAll('[data-split-words]').forEach(el=>{
-    const words=el.innerText.trim().split(/\s+/);
-    el.innerHTML=words.map((w,i)=>
-      `<span class="reveal-word"><span class="reveal-word-inner" style="--wi:${i}">${w}</span></span>`
-    ).join(' ');
-  });
-  const _io=new IntersectionObserver(entries=>{
-    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('is-visible'); _io.unobserve(e.target); }});
-  },{threshold:.05,rootMargin:'0px 0px -40px 0px'});
-  document.querySelectorAll('[data-split-lines],[data-split-words],[data-fade]').forEach(el=>_io.observe(el));
-  window.addEventListener('load',()=>setTimeout(()=>{
-    document.querySelectorAll('.proj-hero [data-split-lines],.proj-hero [data-split-words],.proj-hero [data-fade]')
-      .forEach(el=>{ el.classList.add('is-visible'); _io.unobserve(el); });
-  },120));
+  /* ── Click and drag (mouse and pen; touch keeps native scrolling) ── */
+  var down = false, startX = 0, startLeft = 0, lastX = 0, lastT = 0, vel = 0;
 
-  /* ── Scroll-driven accordion ── */
-  const accItems = document.querySelectorAll('.acc-item');
-  const caseLeft = document.querySelector('.case-left');
+  sl.addEventListener('pointerdown', function (e) {
+    if (e.button !== 0 || e.pointerType === 'touch') return;
+    stop();
+    down = true;
+    startX = lastX = e.clientX;
+    startLeft = sl.scrollLeft;
+    lastT = performance.now();
+    vel = 0;
+    sl.classList.add('is-dragging');
+    cur.classList.add('is-grabbing');
+    try { sl.setPointerCapture(e.pointerId); } catch (err) {}
+  });
 
-  function openSection(id) {
-    accItems.forEach(item => {
-      item.classList.toggle('is-open', item.dataset.section === id);
-    });
-    const active = document.querySelector(`.acc-item[data-section="${id}"]`);
-    if (active) {
-      const top = active.offsetTop;
-      caseLeft.scrollTo({ top: top - 80, behavior: 'smooth' });
+  sl.addEventListener('pointermove', function (e) {
+    if (!down) return;
+    sl.scrollLeft = clamp(startLeft - (e.clientX - startX));
+    var now = performance.now(), dt = now - lastT;
+    if (dt > 0) {
+      /* px per 16ms frame, smoothed so one jittery sample can't throw it */
+      vel = vel * 0.7 + ((lastX - e.clientX) / dt * 16) * 0.3;
+      lastX = e.clientX;
+      lastT = now;
     }
-  }
-
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) openSection(e.target.dataset.trigger);
-    });
-  }, { threshold: 0, rootMargin: '-20% 0px -50% 0px' });
-
-  document.querySelectorAll('[data-trigger]').forEach(el => obs.observe(el));
-
-  /* ── Manual click on accordion ── */
-  document.querySelectorAll('.acc-head').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const item   = btn.closest('.acc-item');
-      const isOpen = item.classList.contains('is-open');
-      accItems.forEach(i => i.classList.remove('is-open'));
-      if (!isOpen) item.classList.add('is-open');
-    });
+    edge();
   });
 
-  /* ── Projects side panel ── */
-  const panelBtn     = document.getElementById('navProjectsBtn');
-  const panelDrawer  = document.getElementById('navPanelDrawer');
-  const panelOverlay = document.getElementById('navPanelOverlay');
+  function release(e) {
+    if (!down) return;
+    down = false;
+    sl.classList.remove('is-dragging');
+    cur.classList.remove('is-grabbing');
+    if (e && e.pointerId != null) {
+      try { if (sl.hasPointerCapture(e.pointerId)) sl.releasePointerCapture(e.pointerId); } catch (err) {}
+    }
+    /* A slow release should just stop, not drift */
+    if (Math.abs(vel) < 0.4) { target = sl.scrollLeft; edge(); return; }
+    glide(sl.scrollLeft + vel * THROW);
+  }
+  sl.addEventListener('pointerup', release);
+  sl.addEventListener('pointercancel', release);
 
-  function openPanel() {
-    panelDrawer.classList.add('is-open');
-    panelOverlay.classList.add('is-open');
-    panelBtn.setAttribute('aria-expanded', 'true');
-    document.body.style.overflow = 'hidden';
-  }
-  function closePanel() {
-    panelDrawer.classList.remove('is-open');
-    panelOverlay.classList.remove('is-open');
-    panelBtn.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
-  }
-  if (panelBtn) panelBtn.addEventListener('click', () => {
-    panelDrawer.classList.contains('is-open') ? closePanel() : openPanel();
+  /* A vertical wheel over the slider moves it sideways */
+  sl.addEventListener('wheel', function (e) {
+    if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+    var t = here();
+    /* At either end, hand the gesture back to the page */
+    if ((t <= 0 && e.deltaY < 0) || (t >= maxScroll() && e.deltaY > 0)) return;
+    e.preventDefault();
+    glide(t + e.deltaY);
+  }, { passive: false });
+
+  /* Keyboard: one card per press, Home/End to the edges */
+  sl.addEventListener('keydown', function (e) {
+    var card = sl.querySelector('.slide');
+    if (!card) return;
+    var gap  = parseFloat(getComputedStyle(sl).columnGap) || 0;
+    var step = card.getBoundingClientRect().width + gap;
+    if (e.key === 'ArrowRight')     { e.preventDefault(); glide(here() + step); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); glide(here() - step); }
+    else if (e.key === 'Home')      { e.preventDefault(); glide(0); }
+    else if (e.key === 'End')       { e.preventDefault(); glide(maxScroll()); }
   });
-  if (panelOverlay) panelOverlay.addEventListener('click', closePanel);
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && panelDrawer.classList.contains('is-open')) closePanel();
-  });
+
+  /* Touch and trackpad scroll the element natively — keep the target in step */
+  sl.addEventListener('scroll', function () {
+    if (!raf && !down) target = sl.scrollLeft;
+    edge();
+  }, { passive: true });
+
+  addEventListener('resize', function () { target = clamp(target); edge(); });
+  edge();
+})();
 </script>
 </body>
 </html>
