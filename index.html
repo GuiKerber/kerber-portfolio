@@ -370,6 +370,10 @@ html.no-embed .hero-bg{background-image:url("assets/hero-gradient.png"),var(--he
       height:100vh;
       align-items:center;
       overflow:hidden;
+      /* sticky opens a stacking context, and mix-blend-mode only reaches
+         the backdrop inside it — without this the text would invert
+         against nothing and render white instead of black. */
+      background:var(--off-white);
     }
     .about-stage{display:grid;place-items:center;width:100%}
     .about-head,
