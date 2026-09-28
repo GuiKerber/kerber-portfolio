@@ -274,9 +274,19 @@ html.no-embed .hero-bg{background-image:url("../assets/hero-gradient.png"),var(-
 
 /* Base state — no scroll-driven animations, reduced motion, or a browser
    without support: the photo simply sits under the text. */
-.about-stage{display:flex;flex-direction:column;align-items:center;gap:64px}
-.about-photo{height:clamp(200px,34vh,320px);aspect-ratio:4/5;width:auto;margin:0;border-radius:8px;overflow:hidden;background:var(--black-4)}
-.about-photo img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
+/* The stage is a 3x3 grid: the headline owns the centre cell and the
+   Dribbble shots live in the four bands around it. Because the bands are
+   separate grid areas, no image can ever land over or behind a word —
+   it is structural, not a matter of picking lucky coordinates. */
+.about-stage{display:grid;grid-template-columns:1fr min(760px,100%) 1fr;grid-template-rows:auto auto auto;align-items:center;justify-items:center;width:100%;row-gap:48px}
+.about-head{grid-column:2;grid-row:2}
+.lab{position:relative;width:100%;height:100%;pointer-events:none}
+.lab-top{grid-column:1/-1;grid-row:1}
+.lab-bottom{grid-column:1/-1;grid-row:3}
+.lab-left{grid-column:1;grid-row:2}
+.lab-right{grid-column:3;grid-row:2}
+.lab-item{width:var(--w,180px);aspect-ratio:4/3;margin:0;border-radius:6px;overflow:hidden;background:var(--black-4);box-shadow:0 14px 34px rgba(0,0,0,.10)}
+.lab-item img{width:100%;height:100%;object-fit:cover;display:block}
 
 .about-workflow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--black-10)}
 .wf-step{display:flex;flex-direction:column;justify-content:space-between;gap:80px;padding:64px 40px;min-width:0;overflow:hidden;border-right:1px solid var(--black-10)}
@@ -343,17 +353,56 @@ html.no-embed .hero-bg{background-image:url("../assets/hero-gradient.png"),var(-
 .js .block[data-r].in .block-deck{transition-delay:200ms}
 .js .block[data-r].in .block-foot{transition-delay:280ms}
 
-/* ─────────── About: the photo rides up over the text ───────────
-   Text and photo share one grid cell, so "centred over the text" is just
-   the photo's resting position — the timeline only has to carry it up
-   from below and scale it in. The text eases back to 32% as it arrives. */
-@keyframes about-photo-rise{
-  from{transform:translateY(112%) scale(.68)}
-  to  {transform:translateY(0) scale(1)}
+/* ─────────── About: a wall of shots around the headline ─────────── */
+/* Scatter. Top-band items hang from the bottom of their band and bottom-band
+   items from the top, so they grow away from the text; side items hang from
+   the outer edge and are capped well inside their gutter. */
+@media (min-width:1000px){
+  .about-stage{row-gap:0}
+  .lab-item{position:absolute}
+
+  .lab-top .lab-item:nth-child(1){--w:clamp(140px,13vw,206px);left:3%;bottom:6%}
+  .lab-top .lab-item:nth-child(2){--w:clamp(110px,9.5vw,152px);left:23%;bottom:44%}
+  .lab-top .lab-item:nth-child(3){--w:clamp(120px,10.5vw,168px);right:24%;bottom:40%}
+  .lab-top .lab-item:nth-child(4){--w:clamp(150px,14vw,224px);right:2%;bottom:4%}
+
+  .lab-bottom .lab-item:nth-child(1){--w:clamp(150px,14vw,220px);left:2%;top:5%}
+  .lab-bottom .lab-item:nth-child(2){--w:clamp(110px,9.5vw,150px);left:24%;top:42%}
+  .lab-bottom .lab-item:nth-child(3){--w:clamp(125px,11vw,172px);right:23%;top:38%}
+  .lab-bottom .lab-item:nth-child(4){--w:clamp(140px,13vw,204px);right:4%;top:8%}
+
+  /* A share of the gutter, pinned to the outer edge, so the inner edge
+     always stops well short of the text column. The px ceiling is what
+     keeps the two stacked items from meeting on a wide screen: at 4:3
+     their combined height stays under the shortest headline block. */
+  .lab-left  .lab-item:nth-child(1){--w:min(72%,200px);left:2%;top:1%}
+  .lab-left  .lab-item:nth-child(2){--w:min(56%,156px);left:12%;bottom:1%}
+  .lab-right .lab-item:nth-child(1){--w:min(56%,156px);right:12%;top:1%}
+  .lab-right .lab-item:nth-child(2){--w:min(72%,200px);right:2%;bottom:1%}
 }
-@keyframes about-photo-leave{
+
+/* Below that the gutters are too narrow to hold anything, so the bands
+   stop being a scatter and become two rows, above and below the text. */
+/* The side gutters are (viewport - 128px padding - 760px text) / 2, so they
+   only hold a legible thumbnail from about 1230px up. Below that the
+   scatter keeps the top and bottom bands and drops the columns. */
+@media (max-width:1229px){
+  .lab-left,.lab-right{display:none}
+}
+@media (max-width:999px){
+  .lab-top,.lab-bottom{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;grid-column:1/-1}
+  .lab-top .lab-item:nth-child(n+3),
+  .lab-bottom .lab-item:nth-child(n+3){display:none}
+  .lab-item{--w:100%}
+}
+
+@keyframes lab-in{
+  from{opacity:0;transform:translateY(30px) scale(.9)}
+  to  {opacity:1;transform:none}
+}
+@keyframes lab-out{
   from{opacity:1;transform:none}
-  to  {opacity:0;transform:translateY(-10%) scale(.93)}
+  to  {opacity:0;transform:translateY(-20px) scale(.94)}
 }
 
 @supports (animation-timeline: view()) {
@@ -368,50 +417,43 @@ html.no-embed .hero-bg{background-image:url("../assets/hero-gradient.png"),var(-
       padding-block:0;
       view-timeline-name:--about;
     }
+    @media (max-width:999px){
+      .about-intro{min-height:0;padding-block:96px}
+      .about-sticky{position:static;height:auto}
+    }
     .about-sticky{
       position:sticky;
       top:0;
       height:100vh;
       align-items:center;
       overflow:hidden;
-      /* sticky opens a stacking context, and mix-blend-mode only reaches
-         the backdrop inside it — without this the text would invert
-         against nothing and render white instead of black. */
-      background:var(--off-white);
     }
-    .about-stage{display:grid;place-items:center;width:100%}
-    .about-head,
-    .about-photo{grid-area:1/1}
+    .about-stage{height:100%;grid-template-rows:1fr auto 1fr}
 
-    /* The text sits on top of the photo and is painted as a negative of
-       whatever is behind it: white ink through mix-blend-mode:difference
-       lands on #121315 over the off-white page — the same black it had
-       before — and flips to light the moment the photo slides underneath.
-       So every glyph stays legible over both, with no colour to animate. */
-    .about-head{
-      z-index:1;
-      mix-blend-mode:difference;
-      color:#fff;
-    }
-    .about-head .about-eyebrow,
-    .about-head .about-headline{color:#fff}
-    .about-head .dot-sm{background:#fff}
-
-    /* The stage is pinned between cover 29% and 71%. The hold runs to 48%,
-       then the photo climbs in behind the text. */
-    .about-photo{
-      animation:about-photo-rise linear both;
+    /* The stage is pinned between cover 29% and 71%. The headline holds
+       alone until 44%; then the shots come in around it, and they clear
+       out from 72% as the section starts to leave. */
+    .lab-item{
+      animation:lab-in linear both;
       animation-timeline:--about;
-      animation-range:cover 48% cover 66%;
-      z-index:0;
     }
-    /* On the way out the photo clears, so the next section arrives on a
-       clean page instead of the photo hanging around under the text. */
-    .about-photo img{
-      animation:about-photo-leave linear both;
+    .lab-item img{
+      animation:lab-out linear both;
       animation-timeline:--about;
-      animation-range:cover 72% cover 87%;
+      animation-range:cover 72% cover 88%;
     }
+    .lab-top    .lab-item:nth-child(1){animation-range:cover 44% cover 54%}
+    .lab-bottom .lab-item:nth-child(1){animation-range:cover 45% cover 55%}
+    .lab-top    .lab-item:nth-child(4){animation-range:cover 47% cover 57%}
+    .lab-bottom .lab-item:nth-child(4){animation-range:cover 48% cover 58%}
+    .lab-left   .lab-item:nth-child(1){animation-range:cover 50% cover 60%}
+    .lab-right  .lab-item:nth-child(2){animation-range:cover 51% cover 61%}
+    .lab-left   .lab-item:nth-child(2){animation-range:cover 53% cover 63%}
+    .lab-right  .lab-item:nth-child(1){animation-range:cover 54% cover 64%}
+    .lab-top    .lab-item:nth-child(2){animation-range:cover 56% cover 66%}
+    .lab-bottom .lab-item:nth-child(2){animation-range:cover 57% cover 67%}
+    .lab-top    .lab-item:nth-child(3){animation-range:cover 58% cover 68%}
+    .lab-bottom .lab-item:nth-child(3){animation-range:cover 59% cover 69%}
   }
 }
 
@@ -744,6 +786,16 @@ html.no-embed .hero-bg{background-image:url("../assets/hero-gradient.png"),var(-
   <div class="about-intro">
    <div class="about-sticky">
     <div class="about-stage wrap">
+      <div class="lab lab-top" aria-hidden="true">
+        <figure class="lab-item"><img src="../assets/dribbble/origo-synthetic-user-interview-tool.webp" alt="Origo — ferramenta de entrevistas com usuários sintéticos" loading="lazy" width="800" height="600" draggable="false"></figure>
+        <figure class="lab-item"><img src="../assets/dribbble/web3-car-landing-page.webp" alt="Landing page de carro web3" loading="lazy" width="800" height="600" draggable="false"></figure>
+        <figure class="lab-item"><img src="../assets/dribbble/metaverse-map.webp" alt="Mapa do metaverso" loading="lazy" width="800" height="600" draggable="false"></figure>
+        <figure class="lab-item"><img src="../assets/dribbble/gaming-ar-interface.webp" alt="Interface de AR para games" loading="lazy" width="800" height="600" draggable="false"></figure>
+      </div>
+      <div class="lab lab-left" aria-hidden="true">
+        <figure class="lab-item"><img src="../assets/dribbble/chess-app.webp" alt="App de xadrez" loading="lazy" width="800" height="600" draggable="false"></figure>
+        <figure class="lab-item"><img src="../assets/dribbble/novos-training-board.webp" alt="Painel de treinos da Novos" loading="lazy" width="800" height="600" draggable="false"></figure>
+      </div>
       <div class="about-head" data-r>
         <div class="section-label">
           <span class="dot-sm"></span>
@@ -751,9 +803,16 @@ html.no-embed .hero-bg{background-image:url("../assets/hero-gradient.png"),var(-
         </div>
         <h2 class="about-headline">Product Designer sênior com mais de 15 anos em fintech, SaaS, IA, Web3 e games, a maior parte com empresas em estágio inicial e startups. Mais de 50 produtos levados do zero ao lançamento.</h2>
       </div>
-      <figure class="about-photo">
-        <img src="../assets/photo-guilherme.png" alt="Guilherme Kerber" width="1024" height="1536" loading="lazy" draggable="false">
-      </figure>
+      <div class="lab lab-right" aria-hidden="true">
+        <figure class="lab-item"><img src="../assets/dribbble/twire-esports-insights.webp" alt="Twire — insights de esports" loading="lazy" width="800" height="600" draggable="false"></figure>
+        <figure class="lab-item"><img src="../assets/dribbble/pricing-page.webp" alt="Página de planos" loading="lazy" width="800" height="600" draggable="false"></figure>
+      </div>
+      <div class="lab lab-bottom" aria-hidden="true">
+        <figure class="lab-item"><img src="../assets/dribbble/ai-tool-for-connecting-smart-npcs-to-real-ga.webp" alt="Ferramenta de IA para conectar NPCs inteligentes a jogos" loading="lazy" width="800" height="600" draggable="false"></figure>
+        <figure class="lab-item"><img src="../assets/dribbble/koncepted-landing-page.webp" alt="Landing page da Koncepted" loading="lazy" width="800" height="600" draggable="false"></figure>
+        <figure class="lab-item"><img src="../assets/dribbble/binamon-play-to-earn-nft-game.webp" alt="Binamon, jogo NFT play-to-earn" loading="lazy" width="800" height="600" draggable="false"></figure>
+        <figure class="lab-item"><img src="../assets/dribbble/nft-marketplace-concept.webp" alt="Conceito de marketplace de NFT" loading="lazy" width="800" height="600" draggable="false"></figure>
+      </div>
     </div>
    </div>
   </div>
