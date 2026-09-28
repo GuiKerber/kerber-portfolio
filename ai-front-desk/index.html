@@ -59,7 +59,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content
 .nav-btn-contact{background:var(--orange);color:var(--white)}
 .nav-panel-overlay{position:fixed;inset:0;z-index:300;opacity:0;pointer-events:none;transition:opacity .25s ease}
 .nav-panel-overlay.is-open{opacity:1;pointer-events:all}
-.nav-panel-drawer{position:fixed;top:72px;right:64px;width:360px;background:var(--white);border-radius:6px;box-shadow:0 4px 6px rgba(0,0,0,.04),0 12px 40px rgba(0,0,0,.10);z-index:301;transform:translateY(-10px) scale(.97);transform-origin:top right;opacity:0;pointer-events:none;transition:transform .35s var(--spring),opacity .25s ease;overflow:hidden}
+.nav-panel-drawer{position:fixed;top:72px;right:64px;width:360px;background:var(--white);border-radius:6px;border:1px solid var(--black-10);z-index:301;transform:translateY(-10px) scale(.97);transform-origin:top right;opacity:0;pointer-events:none;transition:transform .35s var(--spring),opacity .25s ease;overflow:hidden}
 .nav-panel-drawer.is-open{transform:none;opacity:1;pointer-events:all}
 .nav-panel-item{border-top:1px solid var(--black-10)}
 .nav-panel-item:first-child{border-top:none}
