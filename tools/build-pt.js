@@ -26,12 +26,6 @@ const PAGES = [
     ogDesc: 'Product Designer sênior com mais de 15 anos criando produtos digitais que equilibram clareza, estratégia e qualidade visual.',
   },
   {
-    src: 'resume/index.html', dir: 'resume/',
-    title: 'Guilherme Kerber — Currículo',
-    desc: 'Currículo de Guilherme Kerber, Product Designer sênior com mais de 15 anos desenhando produtos digitais complexos em Fintech, SaaS, IA e Games.',
-    ogDesc: 'Product Designer sênior com mais de 15 anos desenhando produtos digitais complexos em Fintech, SaaS, IA e Games.',
-  },
-  {
     src: 'ai-front-desk/index.html', dir: 'ai-front-desk/',
     title: 'Assistente de IA para Fotógrafos',
     desc: 'Um agente de IA que lê as mensagens recebidas, negocia no tom de voz e na tabela de preços do próprio fotógrafo, e agenda sessões confirmadas direto no calendário.',
@@ -138,7 +132,7 @@ for (const page of PAGES) {
 
   /* 3 · head */
   html = html.replace(/<title>[\s\S]*?<\/title>/,
-    '<title>' + page.title + (page.src === 'index.html' || page.src === 'resume/index.html' ? '' : ' — Guilherme Kerber') + '</title>');
+    '<title>' + page.title + (page.src === 'index.html' ? '' : ' — Guilherme Kerber') + '</title>');
   html = html.replace(/(<meta name="description" content=")[^"]*(")/, '$1' + page.desc + '$2');
   html = html.replace(/(<meta property="og:title" content=")[^"]*(")/, '$1' + page.title + '$2');
   html = html.replace(/(<meta property="og:description" content=")[^"]*(")/, '$1' + (page.ogDesc || page.desc) + '$2');
@@ -186,7 +180,7 @@ const entries = built.map(b => {
     '    <xhtml:link rel="alternate" hreflang="pt-BR" href="' + b.ptUrl + '"/>',
     '    <xhtml:link rel="alternate" hreflang="x-default" href="' + b.enUrl + '"/>',
   ].join('\n');
-  const prio = b.page.src === 'index.html' ? '1.0' : b.page.src === 'resume/index.html' ? '0.6' : '0.8';
+  const prio = b.page.src === 'index.html' ? '1.0' : '0.8';
   return [b.enUrl, b.ptUrl].map(loc =>
     '  <url>\n    <loc>' + loc + '</loc>\n' + alt +
     '\n    <lastmod>' + today + '</lastmod>\n    <priority>' + prio + '</priority>\n  </url>'

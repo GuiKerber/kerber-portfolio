@@ -18,22 +18,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://guikerber.com/resume/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://guikerber.com/resume/"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://guikerber.com/pt/resume/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://guikerber.com/resume/"/>
-    <lastmod>2026-09-28</lastmod>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://guikerber.com/pt/resume/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://guikerber.com/resume/"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://guikerber.com/pt/resume/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://guikerber.com/resume/"/>
-    <lastmod>2026-09-28</lastmod>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://guikerber.com/ai-front-desk/</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://guikerber.com/ai-front-desk/"/>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://guikerber.com/pt/ai-front-desk/"/>
