@@ -279,7 +279,25 @@ html.no-embed .hero-bg{background-image:url("assets/hero-gradient.png"),var(--he
    it is structural, not a matter of picking lucky coordinates. */
 .about-stage{display:grid;grid-template-columns:1fr min(760px,100%) 1fr;grid-template-rows:auto auto auto;align-items:center;justify-items:center;width:100%;row-gap:48px}
 .about-head{grid-column:2;grid-row:2}
-.lab{position:relative;width:100%;height:100%;pointer-events:none}
+/* The band is a window; the track behind it is twice as tall and holds
+   the scatter. Moving the track instead of the items means their relative
+   positions never change — whatever does not overlap at rest cannot start
+   overlapping mid-travel. */
+.lab{position:relative;width:100%;height:100%;pointer-events:none;overflow:hidden}
+.lab-track{position:absolute;left:0;right:0;top:0;height:400%;animation:lab-drift var(--speed,42s) linear infinite}
+.lab-group{position:relative;width:100%;height:50%}
+
+/* Bottom to top, on its own clock. The strip carries the same group
+   twice, so sliding it up by exactly one group lands on an identical
+   frame and the loop never shows a seam. */
+@keyframes lab-drift{
+  from{transform:translateY(0)}
+  to  {transform:translateY(-50%)}
+}
+.lab-top   {--speed:26s}
+.lab-bottom{--speed:31s}
+.lab-left  {--speed:22s}
+.lab-right {--speed:25s}
 .lab-top{grid-column:1/-1;grid-row:1}
 .lab-bottom{grid-column:1/-1;grid-row:3}
 .lab-left{grid-column:1;grid-row:2}
@@ -360,24 +378,30 @@ html.no-embed .hero-bg{background-image:url("assets/hero-gradient.png"),var(--he
   .about-stage{row-gap:0}
   .lab-item{position:absolute}
 
-  .lab-top .lab-item:nth-child(1){--w:clamp(140px,13vw,206px);left:3%;bottom:6%}
-  .lab-top .lab-item:nth-child(2){--w:clamp(110px,9.5vw,152px);left:23%;bottom:44%}
-  .lab-top .lab-item:nth-child(3){--w:clamp(120px,10.5vw,168px);right:24%;bottom:40%}
-  .lab-top .lab-item:nth-child(4){--w:clamp(150px,14vw,224px);right:2%;bottom:4%}
+  .lab-top .lab-item:nth-child(1){--w:clamp(140px,13vw,206px);left:2%;top:1%}
+  .lab-top .lab-item:nth-child(2){--w:clamp(105px,9vw,148px);right:4%;top:16%}
+  .lab-top .lab-item:nth-child(3){--w:clamp(150px,14vw,224px);left:25%;top:31%}
+  .lab-top .lab-item:nth-child(4){--w:clamp(120px,10.5vw,168px);right:26%;top:48%}
+  .lab-top .lab-item:nth-child(5){--w:clamp(140px,13vw,206px);left:6%;top:64%}
+  .lab-top .lab-item:nth-child(6){--w:clamp(105px,9vw,148px);right:7%;top:83%}
 
-  .lab-bottom .lab-item:nth-child(1){--w:clamp(150px,14vw,220px);left:2%;top:5%}
-  .lab-bottom .lab-item:nth-child(2){--w:clamp(110px,9.5vw,150px);left:24%;top:42%}
-  .lab-bottom .lab-item:nth-child(3){--w:clamp(125px,11vw,172px);right:23%;top:38%}
-  .lab-bottom .lab-item:nth-child(4){--w:clamp(140px,13vw,204px);right:4%;top:8%}
+  .lab-bottom .lab-item:nth-child(1){--w:clamp(150px,14vw,220px);right:2%;top:2%}
+  .lab-bottom .lab-item:nth-child(2){--w:clamp(105px,9vw,148px);left:5%;top:17%}
+  .lab-bottom .lab-item:nth-child(3){--w:clamp(140px,13vw,204px);right:25%;top:32%}
+  .lab-bottom .lab-item:nth-child(4){--w:clamp(120px,10.5vw,168px);left:26%;top:49%}
+  .lab-bottom .lab-item:nth-child(5){--w:clamp(105px,9vw,148px);right:6%;top:65%}
+  .lab-bottom .lab-item:nth-child(6){--w:clamp(140px,13vw,206px);left:7%;top:84%}
 
   /* A share of the gutter, pinned to the outer edge, so the inner edge
      always stops well short of the text column. The px ceiling is what
      keeps the two stacked items from meeting on a wide screen: at 4:3
      their combined height stays under the shortest headline block. */
-  .lab-left  .lab-item:nth-child(1){--w:min(72%,200px);left:2%;top:1%}
-  .lab-left  .lab-item:nth-child(2){--w:min(56%,156px);left:12%;bottom:1%}
-  .lab-right .lab-item:nth-child(1){--w:min(56%,156px);right:12%;top:1%}
-  .lab-right .lab-item:nth-child(2){--w:min(72%,200px);right:2%;bottom:1%}
+  .lab-left  .lab-item:nth-child(1){--w:min(72%,200px);left:2%;top:2%}
+  .lab-left  .lab-item:nth-child(2){--w:min(56%,156px);left:14%;top:37%}
+  .lab-left  .lab-item:nth-child(3){--w:min(68%,188px);left:4%;top:70%}
+  .lab-right .lab-item:nth-child(1){--w:min(56%,156px);right:14%;top:5%}
+  .lab-right .lab-item:nth-child(2){--w:min(72%,200px);right:2%;top:38%}
+  .lab-right .lab-item:nth-child(3){--w:min(60%,166px);right:12%;top:71%}
 }
 
 /* Below that the gutters are too narrow to hold anything, so the bands
@@ -389,19 +413,14 @@ html.no-embed .hero-bg{background-image:url("assets/hero-gradient.png"),var(--he
   .lab-left,.lab-right{display:none}
 }
 @media (max-width:999px){
-  .lab-top,.lab-bottom{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;grid-column:1/-1}
+  .lab-top,.lab-bottom{grid-column:1/-1}
   .lab-top .lab-item:nth-child(n+3),
   .lab-bottom .lab-item:nth-child(n+3){display:none}
-  .lab-item{--w:100%}
-}
-
-@keyframes lab-in{
-  from{opacity:0;transform:translateY(30px) scale(.9)}
-  to  {opacity:1;transform:none}
-}
-@keyframes lab-out{
-  from{opacity:1;transform:none}
-  to  {opacity:0;transform:translateY(-20px) scale(.94)}
+  .lab{overflow:visible}
+  .lab-track{position:static;height:auto;animation:none}
+  .lab-group{height:auto;display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .lab-group + .lab-group{display:none}
+  .lab-item{position:static;--w:100%}
 }
 
 @supports (animation-timeline: view()) {
@@ -412,13 +431,9 @@ html.no-embed .hero-bg{background-image:url("assets/hero-gradient.png"),var(--he
        runway the text is centred for a single instant and there is no
        room to read it. */
     .about-intro{
-      min-height:240vh;
+      min-height:150vh;
       padding-block:0;
       view-timeline-name:--about;
-    }
-    @media (max-width:999px){
-      .about-intro{min-height:0;padding-block:96px}
-      .about-sticky{position:static;height:auto}
     }
     .about-sticky{
       position:sticky;
@@ -428,31 +443,17 @@ html.no-embed .hero-bg{background-image:url("assets/hero-gradient.png"),var(--he
       overflow:hidden;
     }
     .about-stage{height:100%;grid-template-rows:1fr auto 1fr}
+    /* No pinning where there is no scatter to pin: the section goes back
+       to flowing with the page and the bands sit above and below. */
+    @media (max-width:999px){
+      .about-intro{min-height:0;padding-block:96px}
+      .about-sticky{position:static;height:auto;overflow:visible}
+      .about-stage{height:auto;grid-template-rows:auto auto auto}
+    }
 
     /* The stage is pinned between cover 29% and 71%. The headline holds
        alone until 44%; then the shots come in around it, and they clear
        out from 72% as the section starts to leave. */
-    .lab-item{
-      animation:lab-in linear both;
-      animation-timeline:--about;
-    }
-    .lab-item img{
-      animation:lab-out linear both;
-      animation-timeline:--about;
-      animation-range:cover 72% cover 88%;
-    }
-    .lab-top    .lab-item:nth-child(1){animation-range:cover 44% cover 54%}
-    .lab-bottom .lab-item:nth-child(1){animation-range:cover 45% cover 55%}
-    .lab-top    .lab-item:nth-child(4){animation-range:cover 47% cover 57%}
-    .lab-bottom .lab-item:nth-child(4){animation-range:cover 48% cover 58%}
-    .lab-left   .lab-item:nth-child(1){animation-range:cover 50% cover 60%}
-    .lab-right  .lab-item:nth-child(2){animation-range:cover 51% cover 61%}
-    .lab-left   .lab-item:nth-child(2){animation-range:cover 53% cover 63%}
-    .lab-right  .lab-item:nth-child(1){animation-range:cover 54% cover 64%}
-    .lab-top    .lab-item:nth-child(2){animation-range:cover 56% cover 66%}
-    .lab-bottom .lab-item:nth-child(2){animation-range:cover 57% cover 67%}
-    .lab-top    .lab-item:nth-child(3){animation-range:cover 58% cover 68%}
-    .lab-bottom .lab-item:nth-child(3){animation-range:cover 59% cover 69%}
   }
 }
 
@@ -561,7 +562,7 @@ html.no-embed .hero-bg{background-image:url("assets/hero-gradient.png"),var(--he
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .marquee-track{animation:none}
+  .marquee-track,.lab-track{animation:none}
   .pv img{animation:none;opacity:1}
   .pv img:nth-child(n+2){display:none}
   .js [data-r]{opacity:1;transform:none}
@@ -786,14 +787,38 @@ html.no-embed .hero-bg{background-image:url("assets/hero-gradient.png"),var(--he
    <div class="about-sticky">
     <div class="about-stage wrap">
       <div class="lab lab-top" aria-hidden="true">
-        <figure class="lab-item"><img src="assets/dribbble/origo-synthetic-user-interview-tool.webp" alt="Origo — Synthetic User Interview tool" data-pt-alt="Origo — ferramenta de entrevistas com usuários sintéticos" loading="lazy" width="800" height="600" draggable="false"></figure>
-        <figure class="lab-item"><img src="assets/dribbble/web3-car-landing-page.webp" alt="Web3 car landing page" data-pt-alt="Landing page de carro web3" loading="lazy" width="800" height="600" draggable="false"></figure>
-        <figure class="lab-item"><img src="assets/dribbble/metaverse-map.webp" alt="Metaverse map" data-pt-alt="Mapa do metaverso" loading="lazy" width="800" height="600" draggable="false"></figure>
-        <figure class="lab-item"><img src="assets/dribbble/gaming-ar-interface.webp" alt="Gaming AR interface" data-pt-alt="Interface de AR para games" loading="lazy" width="800" height="600" draggable="false"></figure>
+        <div class="lab-track">
+          <div class="lab-group">
+            <figure class="lab-item"><img src="assets/dribbble/origo-synthetic-user-interview-tool.webp" alt="Origo — Synthetic User Interview tool" data-pt-alt="Origo — ferramenta de entrevistas com usuários sintéticos" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/web3-car-landing-page.webp" alt="Web3 car landing page" data-pt-alt="Landing page de carro web3" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/metaverse-map.webp" alt="Metaverse map" data-pt-alt="Mapa do metaverso" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/gaming-ar-interface.webp" alt="Gaming AR interface" data-pt-alt="Interface de AR para games" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/onboarding-app-concept.webp" alt="Onboarding app concept" data-pt-alt="Conceito de app de onboarding" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/gamercraft-homepage.webp" alt="Gamercraft homepage" data-pt-alt="Home da Gamercraft" loading="lazy" width="800" height="600" draggable="false"></figure>
+          </div>
+          <div class="lab-group">
+            <figure class="lab-item"><img src="assets/dribbble/origo-synthetic-user-interview-tool.webp" alt="Origo — Synthetic User Interview tool" data-pt-alt="Origo — ferramenta de entrevistas com usuários sintéticos" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/web3-car-landing-page.webp" alt="Web3 car landing page" data-pt-alt="Landing page de carro web3" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/metaverse-map.webp" alt="Metaverse map" data-pt-alt="Mapa do metaverso" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/gaming-ar-interface.webp" alt="Gaming AR interface" data-pt-alt="Interface de AR para games" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/onboarding-app-concept.webp" alt="Onboarding app concept" data-pt-alt="Conceito de app de onboarding" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/gamercraft-homepage.webp" alt="Gamercraft homepage" data-pt-alt="Home da Gamercraft" loading="lazy" width="800" height="600" draggable="false"></figure>
+          </div>
+        </div>
       </div>
       <div class="lab lab-left" aria-hidden="true">
-        <figure class="lab-item"><img src="assets/dribbble/chess-app.webp" alt="Chess app" data-pt-alt="App de xadrez" loading="lazy" width="800" height="600" draggable="false"></figure>
-        <figure class="lab-item"><img src="assets/dribbble/novos-training-board.webp" alt="Novos training board" data-pt-alt="Painel de treinos da Novos" loading="lazy" width="800" height="600" draggable="false"></figure>
+        <div class="lab-track">
+          <div class="lab-group">
+            <figure class="lab-item"><img src="assets/dribbble/chess-app.webp" alt="Chess app" data-pt-alt="App de xadrez" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/novos-training-board.webp" alt="Novos training board" data-pt-alt="Painel de treinos da Novos" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/space-travel.webp" alt="Space travel" data-pt-alt="Viagem espacial" loading="lazy" width="800" height="600" draggable="false"></figure>
+          </div>
+          <div class="lab-group">
+            <figure class="lab-item"><img src="assets/dribbble/chess-app.webp" alt="Chess app" data-pt-alt="App de xadrez" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/novos-training-board.webp" alt="Novos training board" data-pt-alt="Painel de treinos da Novos" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/space-travel.webp" alt="Space travel" data-pt-alt="Viagem espacial" loading="lazy" width="800" height="600" draggable="false"></figure>
+          </div>
+        </div>
       </div>
       <div class="about-head" data-r>
         <div class="section-label">
@@ -805,14 +830,38 @@ html.no-embed .hero-bg{background-image:url("assets/hero-gradient.png"),var(--he
         </h2>
       </div>
       <div class="lab lab-right" aria-hidden="true">
-        <figure class="lab-item"><img src="assets/dribbble/twire-esports-insights.webp" alt="Twire — esports insights" data-pt-alt="Twire — insights de esports" loading="lazy" width="800" height="600" draggable="false"></figure>
-        <figure class="lab-item"><img src="assets/dribbble/pricing-page.webp" alt="Pricing page" data-pt-alt="Página de planos" loading="lazy" width="800" height="600" draggable="false"></figure>
+        <div class="lab-track">
+          <div class="lab-group">
+            <figure class="lab-item"><img src="assets/dribbble/twire-esports-insights.webp" alt="Twire — esports insights" data-pt-alt="Twire — insights de esports" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/pricing-page.webp" alt="Pricing page" data-pt-alt="Página de planos" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/header-exploration-for-maxable.webp" alt="Header exploration for Maxable" data-pt-alt="Exploração de header para a Maxable" loading="lazy" width="800" height="600" draggable="false"></figure>
+          </div>
+          <div class="lab-group">
+            <figure class="lab-item"><img src="assets/dribbble/twire-esports-insights.webp" alt="Twire — esports insights" data-pt-alt="Twire — insights de esports" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/pricing-page.webp" alt="Pricing page" data-pt-alt="Página de planos" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/header-exploration-for-maxable.webp" alt="Header exploration for Maxable" data-pt-alt="Exploração de header para a Maxable" loading="lazy" width="800" height="600" draggable="false"></figure>
+          </div>
+        </div>
       </div>
       <div class="lab lab-bottom" aria-hidden="true">
-        <figure class="lab-item"><img src="assets/dribbble/ai-tool-for-connecting-smart-npcs-to-real-ga.webp" alt="AI tool for connecting smart NPCs to games" data-pt-alt="Ferramenta de IA para conectar NPCs inteligentes a jogos" loading="lazy" width="800" height="600" draggable="false"></figure>
-        <figure class="lab-item"><img src="assets/dribbble/koncepted-landing-page.webp" alt="Koncepted landing page" data-pt-alt="Landing page da Koncepted" loading="lazy" width="800" height="600" draggable="false"></figure>
-        <figure class="lab-item"><img src="assets/dribbble/binamon-play-to-earn-nft-game.webp" alt="Binamon play-to-earn NFT game" data-pt-alt="Binamon, jogo NFT play-to-earn" loading="lazy" width="800" height="600" draggable="false"></figure>
-        <figure class="lab-item"><img src="assets/dribbble/nft-marketplace-concept.webp" alt="NFT marketplace concept" data-pt-alt="Conceito de marketplace de NFT" loading="lazy" width="800" height="600" draggable="false"></figure>
+        <div class="lab-track">
+          <div class="lab-group">
+            <figure class="lab-item"><img src="assets/dribbble/ai-tool-for-connecting-smart-npcs-to-real-ga.webp" alt="AI tool for connecting smart NPCs to games" data-pt-alt="Ferramenta de IA para conectar NPCs inteligentes a jogos" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/koncepted-landing-page.webp" alt="Koncepted landing page" data-pt-alt="Landing page da Koncepted" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/binamon-play-to-earn-nft-game.webp" alt="Binamon play-to-earn NFT game" data-pt-alt="Binamon, jogo NFT play-to-earn" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/nft-marketplace-concept.webp" alt="NFT marketplace concept" data-pt-alt="Conceito de marketplace de NFT" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/gamecenter-app-gamercraft.webp" alt="Gamecenter app for Gamercraft" data-pt-alt="App Gamecenter da Gamercraft" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/web3-landing-page-concept.webp" alt="Web3 landing page concept" data-pt-alt="Conceito de landing page web3" loading="lazy" width="800" height="600" draggable="false"></figure>
+          </div>
+          <div class="lab-group">
+            <figure class="lab-item"><img src="assets/dribbble/ai-tool-for-connecting-smart-npcs-to-real-ga.webp" alt="AI tool for connecting smart NPCs to games" data-pt-alt="Ferramenta de IA para conectar NPCs inteligentes a jogos" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/koncepted-landing-page.webp" alt="Koncepted landing page" data-pt-alt="Landing page da Koncepted" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/binamon-play-to-earn-nft-game.webp" alt="Binamon play-to-earn NFT game" data-pt-alt="Binamon, jogo NFT play-to-earn" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/nft-marketplace-concept.webp" alt="NFT marketplace concept" data-pt-alt="Conceito de marketplace de NFT" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/gamecenter-app-gamercraft.webp" alt="Gamecenter app for Gamercraft" data-pt-alt="App Gamecenter da Gamercraft" loading="lazy" width="800" height="600" draggable="false"></figure>
+            <figure class="lab-item"><img src="assets/dribbble/web3-landing-page-concept.webp" alt="Web3 landing page concept" data-pt-alt="Conceito de landing page web3" loading="lazy" width="800" height="600" draggable="false"></figure>
+          </div>
+        </div>
       </div>
     </div>
    </div>
