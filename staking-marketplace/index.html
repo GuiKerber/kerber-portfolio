@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Introducing a Staking Marketplace to a Multi-Chain Wallet — Guilherme Kerber</title>
+<title>BTC Staking Marketplace — Guilherme Kerber</title>
 <meta name="description" content="A bid market for delegated stake, built into a multi-chain crypto wallet. Delegators post what they hold and node operators bid commission terms against it.">
 <link rel="canonical" href="https://guikerber.com/staking-marketplace/">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://guikerber.com/staking-marketplace/">
-<meta property="og:title" content="Introducing a Staking Marketplace to a Multi-Chain Wallet">
+<meta property="og:title" content="BTC Staking Marketplace">
 <meta property="og:description" content="A bid market for delegated stake, built into a multi-chain crypto wallet. Delegators post what they hold and node operators bid commission terms against it.">
 <meta property="og:image" content="https://guikerber.com/assets/og-cover.jpg">
 <meta property="og:image:type" content="image/jpeg">
@@ -74,17 +74,40 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content
 .proj-btn-primary{background:var(--orange);color:var(--white)}
 .proj-btn-secondary{background:var(--white);color:var(--black)}
 
+/* ─── Case header: full width, facts beside the stat cards ─── */
+.case-head{width:100%;max-width:calc(1440px + var(--px) * 2);margin:0 auto;padding:128px var(--px) var(--px);display:flex;flex-direction:column;gap:var(--gap);align-items:flex-start}
+.head-intro{display:flex;flex-direction:column;gap:16px;width:100%}
+.head-intro .deck{max-width:var(--col)}
+.head-row{display:flex;gap:var(--gap);align-items:stretch;width:100%}
+.head-facts{flex:1 1 50%;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;gap:24px}
+.head-facts:has(.proj-btn){justify-content:space-between}
+.stat-cards{flex:1 1 50%;min-width:0;display:flex;flex-wrap:wrap;gap:4px}
+.stat-card{flex:1 1 200px;min-width:0;min-height:180px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;background:var(--white);border-radius:8px;padding:16px}
+
+/* Image inside a text section */
+.figure{width:100%;aspect-ratio:692/519;background:var(--black-10);border-radius:8px;overflow:hidden}
+.figure img{width:100%;height:100%;object-fit:cover;display:block}
+
 /* ─── Layout: one centred column, matching the frame ─── */
 .container{max-width:calc(var(--col) + var(--px) * 2);margin:0 auto;padding:var(--px);display:flex;flex-direction:column;gap:var(--gap);align-items:flex-start}
 .container--top{padding-top:128px;padding-bottom:var(--px)}
 
 /* ─── Type, taken from the frame ─── */
 .eyebrow{font-size:11px;font-weight:500;line-height:17.82px;letter-spacing:.14em;text-transform:uppercase;color:var(--black-64)}
-.title{font-family:'Syne',sans-serif;font-weight:400;font-size:clamp(52px,7.6vw,93.8px);line-height:.96;letter-spacing:-.03em;color:var(--black)}
+.title{font-family:'Syne',sans-serif;font-weight:400;font-size:clamp(52px,calc(6.5vw - 12px),91px);line-height:.96;letter-spacing:-.03em;color:var(--black)}
 .deck{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:var(--ink)}
 h2{font-family:'Syne',sans-serif;font-weight:700;font-size:clamp(30px,4.2vw,40.4px);line-height:1.08;letter-spacing:-.02em;color:var(--ink)}
 h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:var(--ink)}
 .body{font-size:14px;line-height:20.3px;color:var(--ink)}
+
+/* -- Regra de quebra de texto do projeto --
+   Titulos equilibram as linhas em vez de largar uma palavra sozinha no fim,
+   e paragrafos evitam a viuva na ultima linha. Por isso titulo nenhum leva
+   <br> fixo: a caixa decide onde quebrar, em qualquer largura de tela. */
+h1,h2,h3,h4,.title,.deck,.next-h2,.stat-name,.block-deck,.hero-title,
+.more-title,.wf-title,.row-title,.project-title,.about-headline,
+.nav-panel-title{text-wrap:balance}
+p,li,dd,.stat-desc,.block-client,.row-meta{text-wrap:pretty}
 .body p + p{margin-top:20.3px}
 .body ul{list-style:disc;padding-left:21px;margin-top:20.3px}
 .body li + li{margin-top:2px}
@@ -93,7 +116,7 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
 /* Facts */
 .facts{display:flex;flex-direction:column;gap:8px;width:100%;font-size:14px;line-height:20.3px}
 .facts div{display:flex;gap:14px}
-.facts dt{width:80px;flex:0 0 80px;color:var(--black-64)}
+.facts dt{width:120px;flex:0 0 120px;color:var(--black-64)}
 .facts dd{color:var(--ink)}
 
 /* Stat row under the header */
@@ -188,6 +211,12 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
 
 /* ─── Responsive ─── */
 @media (max-width:1080px){:root{--px:40px}}
+@media (max-width:1080px){
+  .head-row{flex-direction:column;gap:var(--gap)}
+  .head-facts{flex:1 1 auto;max-width:100%;width:100%}
+  .stat-cards{flex-wrap:wrap;width:100%}
+  .stat-card{flex:1 1 220px}
+}
 @media (max-width:767px){
   :root{--px:22px;--gap:26px}
   .container--top{padding-top:96px}
@@ -237,9 +266,9 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
 <div class="nav-panel-overlay" id="navPanelOverlay" aria-hidden="true"></div>
 <div class="nav-panel-drawer" id="navPanelDrawer" role="dialog" aria-label="Projects" aria-modal="true">
   <div class="nav-panel-items">
-    <div class="nav-panel-item"><a class="nav-panel-link" href="../ai-front-desk/"><span class="nav-panel-title">Designing an AI Front Desk for Photographers</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
-    <div class="nav-panel-item"><a class="nav-panel-link" href="../staking-marketplace/"><span class="nav-panel-title">Introducing a Staking Marketplace to a Multi-Chain Wallet</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
-    <div class="nav-panel-item"><a class="nav-panel-link" href="../cross-platform-coaching/"><span class="nav-panel-title">Designing a Cross-Platform Coaching Experience</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
+    <div class="nav-panel-item"><a class="nav-panel-link" href="../ai-front-desk/"><span class="nav-panel-title">AI Photographers Assistant</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
+    <div class="nav-panel-item"><a class="nav-panel-link" href="../staking-marketplace/"><span class="nav-panel-title">BTC Staking Marketplace</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
+    <div class="nav-panel-item"><a class="nav-panel-link" href="../cross-platform-coaching/"><span class="nav-panel-title">Cross-Platform Coaching Experience</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
   </div>
 </div>
 
@@ -263,40 +292,38 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
 
 <main>
 
-  <!-- ═══ Header ═══ -->
-  <header class="container container--top">
-    <p class="eyebrow" data-r>Mobile app (iOS) · Crypto · Fintech · Product Design · 2025</p>
-    <div class="block" style="gap:16px">
-      <h1 class="title" data-r style="--d:.05s">BTC Wallet <span style="color:var(--black-64)">(NDA)</span></h1>
-      <p class="deck" data-r style="--d:.1s">Introducing a Staking Marketplace to a Multi-Chain Wallet</p>
+  <header class="case-head">
+    <p class="eyebrow" data-r>Crypto · Fintech · 2025</p>
+    <div class="head-intro" data-r style="--d:.05s">
+      <h1 class="title">BTC Staking Marketplace</h1>
+      <p class="deck">Lead Multi-chain Wallet (NDA)</p>
     </div>
-
-    <dl class="facts" data-r style="--d:.15s">
-      <div><dt>My role:</dt><dd>Lead Product Designer</dd></div>
-      <div><dt>Team:</dt><dd>Product Designer, 1 PM, 1 PO</dd></div>
-      <div><dt>Scope:</dt><dd>Stakeholder workshops → Journey mapping → UI/UX Design → Prototype</dd></div>
-      <div><dt>Duration:</dt><dd>4 months</dd></div>
-      <div><dt>Contract:</dt><dd>Koncepted contractor</dd></div>
-    </dl>
-
-    <div class="stats" data-r style="--d:.2s">
-      <div class="stat">
-        <p class="stat-name">Request-to-Delegation Rate</p>
-        <div><p class="stat-val">24%</p><p class="stat-desc">Published requests that become active delegations after bid acceptance.</p></div>
+    <div class="head-row" data-r style="--d:.12s">
+      <div class="head-facts">
+      <dl class="facts">
+        <div><dt>Responsibilities:</dt><dd>UI/UX Design, Product Design, Prototype &amp; Usability Testing</dd></div>
+        <div><dt>Team:</dt><dd>Product Designer, 1 PM, 1 PO</dd></div>
+        <div><dt>Deliverables:</dt><dd>iOS &amp; Android app design, Design system, Storybook, Prototype</dd></div>
+        <div><dt>Duration:</dt><dd>4 months</dd></div>
+      </dl>
       </div>
-      <div class="stat">
-        <p class="stat-name">Stake Retention Through First Unbonding</p>
-        <div><p class="stat-val">61%</p><p class="stat-desc">delegators who re-delegate rather than withdraw after their first unlock.</p></div>
+      <div class="stat-cards">
+        <div class="stat-card">
+          <p class="stat-name">Stake Retention Through First Unbonding</p>
+          <div><p class="stat-val">61%</p><p class="stat-desc">delegators who re-delegate rather than withdraw after their first unlock.</p></div>
+        </div>
+        <div class="stat-card">
+          <p class="stat-name">Request-to-Delegation Rate</p>
+          <div><p class="stat-val">24%</p><p class="stat-desc">Published requests that become active delegations after bid acceptance.</p></div>
+        </div>
       </div>
     </div>
   </header>
 
-  <!-- ═══ Cover ═══ -->
   <div class="bleed" data-r>
-    <img src="../assets/project-2/fintech%20cover.png" alt="The staking marketplace inside the multi-chain wallet" width="1600" height="1200" loading="lazy">
+    <img src="../assets/project-2/fintech%20cover.png" alt="The staking marketplace inside the multi-chain wallet" width="1600" height="1200">
   </div>
 
-  <!-- ═══ My process ═══ -->
   <section class="container">
     <p class="eyebrow" data-r>my process</p>
 
@@ -319,22 +346,12 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
         </ul>
       </div>
     </div>
+
+    <figure class="figure" data-r>
+      <img src="../assets/project-2/workshop.png" alt="Stakeholder workshop: aligning on flows, IA and business logic" loading="lazy" width="1600" height="1200">
+    </figure>
   </section>
 
-  <!-- ═══ Slider ═══ -->
-  <div class="slider-wrap" id="sliderWrap" data-r>
-    <div class="slider" id="slider" tabindex="0" role="region"
-         aria-label="Screens from the project — drag, scroll or use the arrow keys to move through them">
-      <figure class="slide"><img src="../assets/project-2/workshop.png" alt="Stakeholder workshop: aligning on flows, IA and business logic" loading="lazy" width="1600" height="1200"></figure>
-      <figure class="slide"><img src="../assets/project-2/fintech%201.png" alt="Feature discoverability and the two user groups: delegators and node operators" loading="lazy" width="1600" height="1200"></figure>
-      <figure class="slide"><img src="../assets/project-2/fintech%202.png" alt="Early wireframes and flow exploration" loading="lazy" width="1600" height="1200"></figure>
-      <figure class="slide"><img src="../assets/project-2/fintech%203.png" alt="Publishing a delegation request and comparing operator bids" loading="lazy" width="1600" height="1200"></figure>
-      <figure class="slide"><img src="../assets/project-2/fintech%204.png" alt="Multi-bid acceptance flow and delegation position dashboard" loading="lazy" width="1600" height="1200"></figure>
-    </div>
-    <p class="slider-hint">← → to move</p>
-  </div>
-
-  <!-- ═══ Key decisions ═══ -->
   <section class="container">
     <h2 data-r>Key decisions &amp; trade-offs</h2>
 
@@ -361,26 +378,18 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
         <ul><li>Trade-off: Prioritizing risk visibility over holdings size means a delegator's largest, healthy position can sit lower on the dashboard than a small, at-risk one</li></ul>
       </div>
     </div>
-
   </section>
 
-  <!-- ═══ Closing image ═══ -->
-  <div class="bleed" data-r>
-    <img src="../assets/project-2/fintech%205.png" alt="Position dashboard: delegation health, alerts and unbonding status at a glance" width="1600" height="1200" loading="lazy">
-  </div>
-
-  <!-- ═══ What I learned ═══ -->
-  <section class="container">
-    <div class="block" data-r>
-      <h3>What I learned</h3>
-      <div class="body">
-        <ul>
-          <li>Inverting the flow so delegators post requests instead of picking from a list meant onboarding had to teach the model itself, not just the screens.</li>
-          <li>Grouping the position dashboard by health instead of size or recency was a small decision that mattered more than most of the visual design.</li>
-        </ul>
-      </div>
+  <div class="slider-wrap" id="sliderWrap" data-r>
+    <div class="slider" id="slider" tabindex="0" role="region"
+         aria-label="Screens from the project — drag, scroll or use the arrow keys to move through them">
+      <figure class="slide"><img src="../assets/project-2/fintech%203.png" alt="Publishing a delegation request and comparing operator bids" loading="lazy" width="1600" height="1200"></figure>
+      <figure class="slide"><img src="../assets/project-2/fintech%204.png" alt="Multi-bid acceptance flow and delegation position dashboard" loading="lazy" width="1600" height="1200"></figure>
+      <figure class="slide"><img src="../assets/project-2/fintech%201.png" alt="Feature discoverability and the two user groups: delegators and node operators" loading="lazy" width="1600" height="1200"></figure>
+      <figure class="slide"><img src="../assets/project-2/fintech%202.png" alt="Early wireframes and flow exploration" loading="lazy" width="1600" height="1200"></figure>
     </div>
-  </section>
+    <p class="slider-hint">← → to move</p>
+  </div>
 
   <section class="next-proj">
     <a class="next-link" href="../cross-platform-coaching/">
@@ -393,7 +402,7 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
             <span class="next-tag-item">Mobile</span>
             <span class="next-tag-item">Desktop</span>
           </div>
-          <h2 class="next-h2" data-r style="--d:.26s">Designing a Cross-Platform<br>Coaching Experience</h2>
+          <h2 class="next-h2" data-r style="--d:.26s">Cross-Platform Coaching Experience</h2>
         </div>
         <div class="next-arr" data-r style="--d:.35s">
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9H15M15 9L10 4M15 9L10 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>

@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Designing an AI Front Desk for Photographers — Guilherme Kerber</title>
+<title>AI Photographers Assistant — Guilherme Kerber</title>
 <meta name="description" content="An AI agent that reads inbound inquiries, negotiates in the photographer's own tone and rates, and books confirmed sessions straight onto the calendar.">
 <link rel="canonical" href="https://guikerber.com/ai-front-desk/">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://guikerber.com/ai-front-desk/">
-<meta property="og:title" content="Designing an AI Front Desk for Photographers">
+<meta property="og:title" content="AI Photographers Assistant">
 <meta property="og:description" content="An AI agent that reads inbound inquiries, negotiates in the photographer's own tone and rates, and books confirmed sessions straight onto the calendar.">
 <meta property="og:image" content="https://guikerber.com/assets/og-cover.jpg">
 <meta property="og:image:type" content="image/jpeg">
@@ -74,17 +74,40 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content
 .proj-btn-primary{background:var(--orange);color:var(--white)}
 .proj-btn-secondary{background:var(--white);color:var(--black)}
 
+/* ─── Case header: full width, facts beside the stat cards ─── */
+.case-head{width:100%;max-width:calc(1440px + var(--px) * 2);margin:0 auto;padding:128px var(--px) var(--px);display:flex;flex-direction:column;gap:var(--gap);align-items:flex-start}
+.head-intro{display:flex;flex-direction:column;gap:16px;width:100%}
+.head-intro .deck{max-width:var(--col)}
+.head-row{display:flex;gap:var(--gap);align-items:stretch;width:100%}
+.head-facts{flex:1 1 50%;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;gap:24px}
+.head-facts:has(.proj-btn){justify-content:space-between}
+.stat-cards{flex:1 1 50%;min-width:0;display:flex;flex-wrap:wrap;gap:4px}
+.stat-card{flex:1 1 200px;min-width:0;min-height:180px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;background:var(--white);border-radius:8px;padding:16px}
+
+/* Image inside a text section */
+.figure{width:100%;aspect-ratio:692/519;background:var(--black-10);border-radius:8px;overflow:hidden}
+.figure img{width:100%;height:100%;object-fit:cover;display:block}
+
 /* ─── Layout: one centred column, matching the frame ─── */
 .container{max-width:calc(var(--col) + var(--px) * 2);margin:0 auto;padding:var(--px);display:flex;flex-direction:column;gap:var(--gap);align-items:flex-start}
 .container--top{padding-top:128px;padding-bottom:var(--px)}
 
 /* ─── Type, taken from the frame ─── */
 .eyebrow{font-size:11px;font-weight:500;line-height:17.82px;letter-spacing:.14em;text-transform:uppercase;color:var(--black-64)}
-.title{font-family:'Syne',sans-serif;font-weight:400;font-size:clamp(52px,7.6vw,93.8px);line-height:.96;letter-spacing:-.03em;color:var(--black)}
+.title{font-family:'Syne',sans-serif;font-weight:400;font-size:clamp(52px,calc(6.5vw - 12px),91px);line-height:.96;letter-spacing:-.03em;color:var(--black)}
 .deck{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:var(--ink)}
 h2{font-family:'Syne',sans-serif;font-weight:700;font-size:clamp(30px,4.2vw,40.4px);line-height:1.08;letter-spacing:-.02em;color:var(--ink)}
 h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:var(--ink)}
 .body{font-size:14px;line-height:20.3px;color:var(--ink)}
+
+/* -- Regra de quebra de texto do projeto --
+   Titulos equilibram as linhas em vez de largar uma palavra sozinha no fim,
+   e paragrafos evitam a viuva na ultima linha. Por isso titulo nenhum leva
+   <br> fixo: a caixa decide onde quebrar, em qualquer largura de tela. */
+h1,h2,h3,h4,.title,.deck,.next-h2,.stat-name,.block-deck,.hero-title,
+.more-title,.wf-title,.row-title,.project-title,.about-headline,
+.nav-panel-title{text-wrap:balance}
+p,li,dd,.stat-desc,.block-client,.row-meta{text-wrap:pretty}
 .body p + p{margin-top:20.3px}
 .body ul{list-style:disc;padding-left:21px;margin-top:20.3px}
 .body li + li{margin-top:2px}
@@ -93,7 +116,7 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
 /* Facts */
 .facts{display:flex;flex-direction:column;gap:8px;width:100%;font-size:14px;line-height:20.3px}
 .facts div{display:flex;gap:14px}
-.facts dt{width:80px;flex:0 0 80px;color:var(--black-64)}
+.facts dt{width:120px;flex:0 0 120px;color:var(--black-64)}
 .facts dd{color:var(--ink)}
 
 /* Stat row under the header */
@@ -188,6 +211,12 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
 
 /* ─── Responsive ─── */
 @media (max-width:1080px){:root{--px:40px}}
+@media (max-width:1080px){
+  .head-row{flex-direction:column;gap:var(--gap)}
+  .head-facts{flex:1 1 auto;max-width:100%;width:100%}
+  .stat-cards{flex-wrap:wrap;width:100%}
+  .stat-card{flex:1 1 220px}
+}
 @media (max-width:767px){
   :root{--px:22px;--gap:26px}
   .container--top{padding-top:96px}
@@ -237,9 +266,9 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
 <div class="nav-panel-overlay" id="navPanelOverlay" aria-hidden="true"></div>
 <div class="nav-panel-drawer" id="navPanelDrawer" role="dialog" aria-label="Projects" aria-modal="true">
   <div class="nav-panel-items">
-    <div class="nav-panel-item"><a class="nav-panel-link" href="../ai-front-desk/"><span class="nav-panel-title">Designing an AI Front Desk for Photographers</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
-    <div class="nav-panel-item"><a class="nav-panel-link" href="../staking-marketplace/"><span class="nav-panel-title">Introducing a Staking Marketplace to a Multi-Chain Wallet</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
-    <div class="nav-panel-item"><a class="nav-panel-link" href="../cross-platform-coaching/"><span class="nav-panel-title">Designing a Cross-Platform Coaching Experience</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
+    <div class="nav-panel-item"><a class="nav-panel-link" href="../ai-front-desk/"><span class="nav-panel-title">AI Photographers Assistant</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
+    <div class="nav-panel-item"><a class="nav-panel-link" href="../staking-marketplace/"><span class="nav-panel-title">BTC Staking Marketplace</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
+    <div class="nav-panel-item"><a class="nav-panel-link" href="../cross-platform-coaching/"><span class="nav-panel-title">Cross-Platform Coaching Experience</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
   </div>
 </div>
 
@@ -263,49 +292,47 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
 
 <main>
 
-  <!-- ═══ Header ═══ -->
-  <header class="container container--top">
-    <p class="eyebrow" data-r>AI Agent · B2B SaaS · Product Design · 2026</p>
-    <div class="block" style="gap:16px">
-      <h1 class="title" data-r style="--d:.05s">46graus</h1>
-      <p class="deck" data-r style="--d:.1s">Redefining AI Agents integrated in the photographers workspace</p>
+  <header class="case-head">
+    <p class="eyebrow" data-r>AI Agent · B2B SaaS · 2026</p>
+    <div class="head-intro" data-r style="--d:.05s">
+      <h1 class="title">AI Photographers Assistant</h1>
+      <p class="deck">Improving an AI agent to 46graus.com</p>
     </div>
-
-    <dl class="facts" data-r style="--d:.15s">
-      <div><dt>My role:</dt><dd>Senior Product Designer, UX Engineer</dd></div>
-      <div><dt>Scope:</dt><dd>Discovery → Redefining agent rules → UI/UX design → Success metrics</dd></div>
-      <div><dt>Duration:</dt><dd>1 month</dd></div>
-      <div><dt>Contract:</dt><dd>Freelancer</dd></div>
-    </dl>
-
-    <div class="stats" data-r style="--d:.2s">
-      <div class="stat">
-        <p class="stat-name">Onboarding TTV</p>
-        <div><p class="stat-val">-35%</p><p class="stat-desc">By removing unnecessary pieces and simplifying AI agent setup</p></div>
+    <div class="head-row" data-r style="--d:.12s">
+      <div class="head-facts">
+      <dl class="facts">
+        <div><dt>Responsibilities:</dt><dd>UI/UX Design, Product Design, AI definitions, AI Prototype</dd></div>
+        <div><dt>Team:</dt><dd>Product Designer, 2 Stakeholders, 2 developers</dd></div>
+        <div><dt>Deliverable:</dt><dd>User testing synthesis, Coded Prototype, Design System library</dd></div>
+        <div><dt>Duration:</dt><dd>1 month</dd></div>
+      </dl>
+        <div>
+          <a class="proj-btn proj-btn-primary" href="https://guikerber.github.io/46graus/#/" target="_blank" rel="noopener">View prototype
+            <svg width="13" height="13" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2 6h8M10 6 7 3M10 6 7 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
       </div>
-      <div class="stat">
-        <p class="stat-name">Agent autonomy</p>
-        <div><p class="stat-val">22% → 61%</p><p class="stat-desc">Inquiries handled end-to-end by the agent</p></div>
+      <div class="stat-cards">
+        <div class="stat-card">
+          <p class="stat-name">Onboarding TTV</p>
+          <div><p class="stat-val">-35%</p><p class="stat-desc">By removing unnecessary pieces and simplifying AI agent setup</p></div>
+        </div>
+        <div class="stat-card">
+          <p class="stat-name">Agent autonomy</p>
+          <div><p class="stat-val">22% &rarr; 61%</p><p class="stat-desc">Inquiries handled end-to-end by the agent</p></div>
+        </div>
+        <div class="stat-card">
+          <p class="stat-name">Admin work saved</p>
+          <div><p class="stat-val">~5 hrs/week</p><p class="stat-desc">Estimated admin work reduced from photographers</p></div>
+        </div>
       </div>
-      <div class="stat">
-        <p class="stat-name">Admin work saved</p>
-        <div><p class="stat-val">~5 hrs/week</p><p class="stat-desc">Estimated admin work reduced from photographers</p></div>
-      </div>
-    </div>
-
-    <div data-r style="--d:.25s">
-      <a class="proj-btn proj-btn-primary" href="https://guikerber.github.io/46graus/#/" target="_blank" rel="noopener">View prototype
-        <svg width="13" height="13" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2 6h8M10 6 7 3M10 6 7 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
     </div>
   </header>
 
-  <!-- ═══ Cover ═══ -->
   <div class="bleed" data-r>
     <img src="../assets/project-5/aperture-cover.png" alt="The AI agent inside the 46graus photographer workspace" width="1600" height="1200">
   </div>
 
-  <!-- ═══ My process ═══ -->
   <section class="container">
     <p class="eyebrow" data-r>my process</p>
 
@@ -315,7 +342,7 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
         <p>The client approached me with an existing agent that has very low autonomy within their userbase. The agent setup was part of the onboarding, and most users would abandon in the middle of the process.</p>
         <p>The value proposition of this assistant was to:</p>
         <ul>
-          <li>Quickly reply leads so they don’t get cold</li>
+          <li>Quickly reply leads so they don't get cold</li>
           <li>Automate the boring part of the photographers workflow</li>
           <li>Automate booking sessions on their agenda</li>
         </ul>
@@ -337,10 +364,14 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
       <h3>User interviews</h3>
       <div class="body">
         <p>During user interviews, I discovered that photographers services are tied to emotional connections and delegating some of the work to an AI agent were not something they were willing to test. They still wanted to delegate part of their work, but wanted to feel in control in some special cases.</p>
-        <p>Special cases such as weddings, new born, and other personal events were flagged as having direct contact with clients were important. Other events such as sports, business events, and small events were flagged as ok to be automated.</p>
+        <p>Cases such as weddings, new born, and other personal events were flagged as having direct contact with clients were important. Other events such as sports, business events, and small events were flagged as ok to be automated.</p>
         <p>It was also noted that an initial message would be ok to be triggered automatically by the agent, but that it would simply book a call with photographers, and not try to close the deal.</p>
       </div>
     </div>
+
+    <figure class="figure" data-r>
+      <img src="../assets/project-5/2%20mobile.png" alt="Chatting with the agent and approving a quote from a phone" loading="lazy" width="1600" height="1200">
+    </figure>
 
     <div class="block" data-r>
       <h3>Design audit</h3>
@@ -350,36 +381,11 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
       </div>
     </div>
 
-    <div class="block" data-r>
-      <h3>Product Design &amp; AI definitions</h3>
-      <div class="body">
-        <p>46graus existing designs lived in Figma, with their own design system as source of truth. For this design task, the client and I decided to take things further, and create a design system library online connected to their figma design system, and to push this feature rapidly with no-code prototyping tools such as Claude Code.</p>
-        <p>On the side, me and the client team collaborated to identify and set new AI agent definitions, the new set of rules and constraints that would actually allow photographers to customize it, and be on control when they wanted to be.</p>
-        <p>Key Challenges:</p>
-        <ul>
-          <li>Identifying Claude rules so it would follow strictly to design system components, and not deviate and create new ones</li>
-          <li>Making sure all prototype designs and its elements were not using any raw value or primitives. Everything should be using semantic tokens.</li>
-        </ul>
-      </div>
-    </div>
+    <figure class="figure" data-r>
+      <img src="../assets/project-5/7%20onboarding.png" alt="Onboarding: uploading a rate sheet and previewing the first conversation" loading="lazy" width="1600" height="1200">
+    </figure>
   </section>
 
-  <!-- ═══ Slider ═══ -->
-  <div class="slider-wrap" id="sliderWrap" data-r>
-    <div class="slider" id="slider" tabindex="0" role="region"
-         aria-label="Product screens — drag, scroll or use the arrow keys to move through them">
-      <figure class="slide"><img src="../assets/project-5/1 dashboard.png" alt="Agent dashboard: performance, conversion and inbound status" loading="lazy" width="1600" height="1200"></figure>
-      <figure class="slide"><img src="../assets/project-5/2 mobile.png" alt="Chatting with the agent and approving a quote from a phone" loading="lazy" width="1600" height="1200"></figure>
-      <figure class="slide"><img src="../assets/project-5/3 status card.png" alt="Status card: live agent status with conversion and autonomy" loading="lazy" width="1600" height="1200"></figure>
-      <figure class="slide"><img src="../assets/project-5/4 expanded chat.png" alt="Expanded chat thread with an AI-drafted counter-offer" loading="lazy" width="1600" height="1200"></figure>
-      <figure class="slide"><img src="../assets/project-5/5 chat widget.png" alt="Chat widget across empty, dashboard, conversation and history views" loading="lazy" width="1600" height="1200"></figure>
-      <figure class="slide"><img src="../assets/project-5/6 internal pages.png" alt="Internal pages: connections, conversation detail, plans and settings" loading="lazy" width="1600" height="1200"></figure>
-      <figure class="slide"><img src="../assets/project-5/7 onboarding.png" alt="Onboarding: uploading a rate sheet and previewing the first conversation" loading="lazy" width="1600" height="1200"></figure>
-    </div>
-    <p class="slider-hint">← → to move</p>
-  </div>
-
-  <!-- ═══ Key decisions ═══ -->
   <section class="container">
     <h2 data-r>Key decisions &amp; trade-offs</h2>
 
@@ -416,56 +422,18 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
     </div>
   </section>
 
-  <!-- ═══ Design system library — image to come ═══ -->
-  <div class="bleed" data-r>
-    <img src="../assets/project-5/design-system.png" alt="The 46graus design system library: semantic colour tokens, type scale and icon set" width="1600" height="1200" loading="lazy">
+  <div class="slider-wrap" id="sliderWrap" data-r>
+    <div class="slider" id="slider" tabindex="0" role="region"
+         aria-label="Screens from the project — drag, scroll or use the arrow keys to move through them">
+      <figure class="slide"><img src="../assets/project-5/1%20dashboard.png" alt="Agent dashboard: performance, conversion and inbound status" loading="lazy" width="1600" height="1200"></figure>
+      <figure class="slide"><img src="../assets/project-5/3%20status%20card.png" alt="Status card: live agent status with conversion and autonomy" loading="lazy" width="1600" height="1200"></figure>
+      <figure class="slide"><img src="../assets/project-5/4%20expanded%20chat.png" alt="Expanded chat thread with an AI-drafted counter-offer" loading="lazy" width="1600" height="1200"></figure>
+      <figure class="slide"><img src="../assets/project-5/5%20chat%20widget.png" alt="Chat widget across empty, dashboard, conversation and history views" loading="lazy" width="1600" height="1200"></figure>
+      <figure class="slide"><img src="../assets/project-5/6%20internal%20pages.png" alt="Internal pages: connections, conversation detail, plans and settings" loading="lazy" width="1600" height="1200"></figure>
+      <figure class="slide"><img src="../assets/project-5/design-system.png" alt="The design system library delivered with the prototype" loading="lazy" width="1600" height="1200"></figure>
+    </div>
+    <p class="slider-hint">← → to move</p>
   </div>
-
-  <!-- ═══ Results ═══ -->
-  <section class="container">
-    <div class="block" data-r>
-      <h2>Results</h2>
-      <div style="width:100%">
-        <div class="res-row">
-          <div class="stat">
-            <p class="stat-name">Onboarding TTV</p>
-            <div><p class="stat-val">-35%</p><p class="stat-desc">By removing unnecessary pieces and simplifying AI agent setup</p></div>
-          </div>
-          <div class="stat">
-            <p class="stat-name">Adoption</p>
-            <div><p class="stat-val">50%</p><p class="stat-desc">Photographers adopted at least 1 service to be automated.</p></div>
-          </div>
-        </div>
-        <div class="res-row">
-          <div class="stat">
-            <p class="stat-name">Agent autonomy</p>
-            <div><p class="stat-val">22% → 61%</p><p class="stat-desc">Inquiries handled end-to-end by the agent</p></div>
-          </div>
-          <div class="stat">
-            <p class="stat-name">Admin work saved</p>
-            <div><p class="stat-val">~5 hrs/week</p><p class="stat-desc">Estimated admin work reduced from photographers</p></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="block" data-r>
-      <h3>What I learned</h3>
-      <div class="body">
-        <ul>
-          <li>Where the AI stops matters more than what it can do. Trust is part of the product. Clear limits made the agent more useful, not less.</li>
-          <li>Simple rules beat smart ones at launch. A clear yes/no on pricing was easier to explain, test and trust than a flexible model.</li>
-          <li>Building interfaces directly with no-code agents is way more effective once the design system component and variables are correctly tied to your agent and claude rules.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div data-r style="padding-top:8px">
-      <a class="proj-btn proj-btn-primary" href="https://guikerber.github.io/46graus/#/" target="_blank" rel="noopener">View prototype
-        <svg width="13" height="13" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2 6h8M10 6 7 3M10 6 7 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
-    </div>
-  </section>
 
   <section class="next-proj">
     <a class="next-link" href="../staking-marketplace/">
@@ -478,7 +446,7 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
             <span class="next-tag-item">Crypto</span>
             <span class="next-tag-item">Fintech</span>
           </div>
-          <h2 class="next-h2" data-r style="--d:.26s">Introducing a Staking Marketplace<br>to a Multi-Chain Wallet</h2>
+          <h2 class="next-h2" data-r style="--d:.26s">BTC Staking Marketplace</h2>
         </div>
         <div class="next-arr" data-r style="--d:.35s">
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9H15M15 9L10 4M15 9L10 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>

@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Designing a Cross-Platform Coaching Experience — Guilherme Kerber</title>
+<title>Cross-Platform Coaching Experience — Guilherme Kerber</title>
 <meta name="description" content="Desktop redesign and mobile MVP for a remote fitness coaching platform, connecting trainers and students when in-person sessions were no longer possible.">
 <link rel="canonical" href="https://guikerber.com/cross-platform-coaching/">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://guikerber.com/cross-platform-coaching/">
-<meta property="og:title" content="Designing a Cross-Platform Coaching Experience">
+<meta property="og:title" content="Cross-Platform Coaching Experience">
 <meta property="og:description" content="Desktop redesign and mobile MVP for a remote fitness coaching platform, connecting trainers and students when in-person sessions were no longer possible.">
 <meta property="og:image" content="https://guikerber.com/assets/og-cover.jpg">
 <meta property="og:image:type" content="image/jpeg">
@@ -74,17 +74,40 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content
 .proj-btn-primary{background:var(--orange);color:var(--white)}
 .proj-btn-secondary{background:var(--white);color:var(--black)}
 
+/* ─── Case header: full width, facts beside the stat cards ─── */
+.case-head{width:100%;max-width:calc(1440px + var(--px) * 2);margin:0 auto;padding:128px var(--px) var(--px);display:flex;flex-direction:column;gap:var(--gap);align-items:flex-start}
+.head-intro{display:flex;flex-direction:column;gap:16px;width:100%}
+.head-intro .deck{max-width:var(--col)}
+.head-row{display:flex;gap:var(--gap);align-items:stretch;width:100%}
+.head-facts{flex:1 1 50%;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;gap:24px}
+.head-facts:has(.proj-btn){justify-content:space-between}
+.stat-cards{flex:1 1 50%;min-width:0;display:flex;flex-wrap:wrap;gap:4px}
+.stat-card{flex:1 1 200px;min-width:0;min-height:180px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;background:var(--white);border-radius:8px;padding:16px}
+
+/* Image inside a text section */
+.figure{width:100%;aspect-ratio:692/519;background:var(--black-10);border-radius:8px;overflow:hidden}
+.figure img{width:100%;height:100%;object-fit:cover;display:block}
+
 /* ─── Layout: one centred column, matching the frame ─── */
 .container{max-width:calc(var(--col) + var(--px) * 2);margin:0 auto;padding:var(--px);display:flex;flex-direction:column;gap:var(--gap);align-items:flex-start}
 .container--top{padding-top:128px;padding-bottom:var(--px)}
 
 /* ─── Type, taken from the frame ─── */
 .eyebrow{font-size:11px;font-weight:500;line-height:17.82px;letter-spacing:.14em;text-transform:uppercase;color:var(--black-64)}
-.title{font-family:'Syne',sans-serif;font-weight:400;font-size:clamp(52px,7.6vw,93.8px);line-height:.96;letter-spacing:-.03em;color:var(--black)}
+.title{font-family:'Syne',sans-serif;font-weight:400;font-size:clamp(52px,calc(6.5vw - 12px),91px);line-height:.96;letter-spacing:-.03em;color:var(--black)}
 .deck{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:var(--ink)}
 h2{font-family:'Syne',sans-serif;font-weight:700;font-size:clamp(30px,4.2vw,40.4px);line-height:1.08;letter-spacing:-.02em;color:var(--ink)}
 h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:var(--ink)}
 .body{font-size:14px;line-height:20.3px;color:var(--ink)}
+
+/* -- Regra de quebra de texto do projeto --
+   Titulos equilibram as linhas em vez de largar uma palavra sozinha no fim,
+   e paragrafos evitam a viuva na ultima linha. Por isso titulo nenhum leva
+   <br> fixo: a caixa decide onde quebrar, em qualquer largura de tela. */
+h1,h2,h3,h4,.title,.deck,.next-h2,.stat-name,.block-deck,.hero-title,
+.more-title,.wf-title,.row-title,.project-title,.about-headline,
+.nav-panel-title{text-wrap:balance}
+p,li,dd,.stat-desc,.block-client,.row-meta{text-wrap:pretty}
 .body p + p{margin-top:20.3px}
 .body ul{list-style:disc;padding-left:21px;margin-top:20.3px}
 .body li + li{margin-top:2px}
@@ -93,7 +116,7 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
 /* Facts */
 .facts{display:flex;flex-direction:column;gap:8px;width:100%;font-size:14px;line-height:20.3px}
 .facts div{display:flex;gap:14px}
-.facts dt{width:80px;flex:0 0 80px;color:var(--black-64)}
+.facts dt{width:120px;flex:0 0 120px;color:var(--black-64)}
 .facts dd{color:var(--ink)}
 
 /* Stat row under the header */
@@ -188,6 +211,12 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
 
 /* ─── Responsive ─── */
 @media (max-width:1080px){:root{--px:40px}}
+@media (max-width:1080px){
+  .head-row{flex-direction:column;gap:var(--gap)}
+  .head-facts{flex:1 1 auto;max-width:100%;width:100%}
+  .stat-cards{flex-wrap:wrap;width:100%}
+  .stat-card{flex:1 1 220px}
+}
 @media (max-width:767px){
   :root{--px:22px;--gap:26px}
   .container--top{padding-top:96px}
@@ -237,9 +266,9 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
 <div class="nav-panel-overlay" id="navPanelOverlay" aria-hidden="true"></div>
 <div class="nav-panel-drawer" id="navPanelDrawer" role="dialog" aria-label="Projects" aria-modal="true">
   <div class="nav-panel-items">
-    <div class="nav-panel-item"><a class="nav-panel-link" href="../ai-front-desk/"><span class="nav-panel-title">Designing an AI Front Desk for Photographers</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
-    <div class="nav-panel-item"><a class="nav-panel-link" href="../staking-marketplace/"><span class="nav-panel-title">Introducing a Staking Marketplace to a Multi-Chain Wallet</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
-    <div class="nav-panel-item"><a class="nav-panel-link" href="../cross-platform-coaching/"><span class="nav-panel-title">Designing a Cross-Platform Coaching Experience</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
+    <div class="nav-panel-item"><a class="nav-panel-link" href="../ai-front-desk/"><span class="nav-panel-title">AI Photographers Assistant</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
+    <div class="nav-panel-item"><a class="nav-panel-link" href="../staking-marketplace/"><span class="nav-panel-title">BTC Staking Marketplace</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
+    <div class="nav-panel-item"><a class="nav-panel-link" href="../cross-platform-coaching/"><span class="nav-panel-title">Cross-Platform Coaching Experience</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
   </div>
 </div>
 
@@ -263,39 +292,38 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
 
 <main>
 
-  <!-- ═══ Header ═══ -->
-  <header class="container container--top">
-    <p class="eyebrow" data-r>Desktop &amp; Mobile app · Fitness · Product Design · 2020-2021</p>
-    <div class="block" style="gap:16px">
-      <h1 class="title" data-r style="--d:.05s">Trybe</h1>
-      <p class="deck" data-r style="--d:.1s">Designing a Cross-Platform Coaching Experience</p>
+  <header class="case-head">
+    <p class="eyebrow" data-r>Health · Fitness · 2020-2021</p>
+    <div class="head-intro" data-r style="--d:.05s">
+      <h1 class="title">Cross-Platform Coaching Experience</h1>
+      <p class="deck">Trybe remote training applications for Personal trainers &amp; Students</p>
     </div>
-
-    <dl class="facts" data-r style="--d:.15s">
-      <div><dt>My role:</dt><dd>UI/UX Design, Branding</dd></div>
-      <div><dt>Scope:</dt><dd>Competitors analysis → UX &amp; Wireframes → User testing → UI Design</dd></div>
-      <div><dt>Duration:</dt><dd>3 months</dd></div>
-      <div><dt>Contract:</dt><dd>Koncepted contractor</dd></div>
-    </dl>
-
-    <div class="stats" data-r style="--d:.2s">
-      <div class="stat">
-        <p class="stat-name">Invite-to-active-student conversion</p>
-        <div><p class="stat-val">40%</p><p class="stat-desc">Out of every 100 students invited, 40 sign up and complete at least one workout</p></div>
+    <div class="head-row" data-r style="--d:.12s">
+      <div class="head-facts">
+      <dl class="facts">
+        <div><dt>Responsibilities:</dt><dd>UI/UX Design, Product Design, Branding</dd></div>
+        <div><dt>Team:</dt><dd>Product Designer, 1 Stakeholder, 1 PM</dd></div>
+        <div><dt>Deliverable:</dt><dd>Competitor Analysis, Userflows &amp; Wireframes, UI Design</dd></div>
+        <div><dt>Duration:</dt><dd>3 months</dd></div>
+      </dl>
       </div>
-      <div class="stat">
-        <p class="stat-name">Adoption among existing students</p>
-        <div><p class="stat-val">61%</p><p class="stat-desc">More than half of an instructor's pre-existing client base begins using remote training</p></div>
+      <div class="stat-cards">
+        <div class="stat-card">
+          <p class="stat-name">Invite-to-active-student conversion</p>
+          <div><p class="stat-val">40%</p><p class="stat-desc">Out of every 100 students invited, 40 sign up and complete at least one workout</p></div>
+        </div>
+        <div class="stat-card">
+          <p class="stat-name">Adoption among existing students</p>
+          <div><p class="stat-val">61%</p><p class="stat-desc">More than half of an instructor’s pre-existing client base begins using remote training</p></div>
+        </div>
       </div>
     </div>
   </header>
 
-  <!-- ═══ Cover ═══ -->
   <div class="bleed" data-r>
-    <img src="../assets/project-1/project1-1.png" alt="The programs view: active trainings, clients and tags" width="1600" height="1200" loading="lazy">
+    <img src="../assets/project-1/project1-1.png" alt="The programs view: active trainings, clients and tags" width="1600" height="1200">
   </div>
 
-  <!-- ═══ My process ═══ -->
   <section class="container">
     <p class="eyebrow" data-r>my process</p>
 
@@ -309,7 +337,7 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
     <div class="block" data-r>
       <h3>Competitors analysis &amp; opportunities</h3>
       <div class="body">
-        <p>Most applications by the time were focused on in-person training sessions, so understanding the business opportunity behind the idea of migrating</p>
+        <p>Most applications by the time were focused on in-person training sessions, so understanding the business opportunity behind the idea of migrating to remote coaching was key.</p>
         <ul>
           <li>Differentiate through simplicity: reduce the effort for a trainer to migrate in-person students and get the first remote workout up and running quickly.</li>
           <li>Design a mobile experience that's especially accessible for beginner students, with less friction between invite, first access, and first completed workout.</li>
@@ -327,28 +355,16 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
         <ul>
           <li>Migration flow: turning an existing in-person session into a train-at-home program</li>
           <li>Day-by-day program builder for PTs</li>
-          <li>Student onboarding: invite → account creation → where-you-train setup → first workout</li>
+          <li>Student onboarding: invite &rarr; account creation &rarr; where-you-train setup &rarr; first workout</li>
         </ul>
       </div>
     </div>
+
+    <figure class="figure" data-r>
+      <img src="../assets/project-1/project1-wireframe.png" alt="Wireframes for the trainer and student flows" loading="lazy" width="1600" height="1200">
+    </figure>
   </section>
 
-  <!-- ═══ Slider ═══ -->
-  <div class="slider-wrap" id="sliderWrap" data-r>
-    <div class="slider" id="slider" tabindex="0" role="region"
-         aria-label="Screens from the project — drag, scroll or use the arrow keys to move through them">
-      <figure class="slide"><img src="../assets/project-1/project1-wireframe.png" alt="Wireframes for the trainer and student flows" loading="lazy" width="1600" height="1200"></figure>
-      <figure class="slide"><img src="../assets/project-1/project1-2.png" alt="Problem mapping and trainer pain points" loading="lazy" width="1600" height="1200"></figure>
-      <figure class="slide"><img src="../assets/project-1/project1-3.png" alt="Design approach and structure" loading="lazy" width="1600" height="1200"></figure>
-      <figure class="slide"><img src="../assets/project-1/project1-4.png" alt="Redesigned desktop dashboard for trainers" loading="lazy" width="1600" height="1200"></figure>
-      <figure class="slide"><img src="../assets/project-1/project1-5.png" alt="Exercise library and program assignment" loading="lazy" width="1600" height="1200"></figure>
-      <figure class="slide"><img src="../assets/project-1/project1-6.png" alt="Mobile app workout view for students" loading="lazy" width="1600" height="1200"></figure>
-      <figure class="slide"><img src="../assets/project-1/project1-7.png" alt="Mobile app guided exercise" loading="lazy" width="1600" height="1200"></figure>
-    </div>
-    <p class="slider-hint">← → to move</p>
-  </div>
-
-  <!-- ═══ Key decisions ═══ -->
   <section class="container">
     <h2 data-r>Key decisions &amp; trade-offs</h2>
 
@@ -375,33 +391,20 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
         <ul><li>Trade-off: Focus over long-range visibility. PTs could no longer see or plan a full month of periodization at a glance. Yet, this could be built later view different views.</li></ul>
       </div>
     </div>
-
-    <div class="block" data-r>
-      <h3>Connectivity</h3>
-      <div class="body">
-        <p>As part of the project definition, but left out of the MVP, the next big experience would be to connect personal trainers with their students, to simulate a live experience where students can ask questions, confirm trainings, and rebook sessions directly in app.</p>
-      </div>
-    </div>
   </section>
 
-  <!-- ═══ Closing image ═══ -->
-  <div class="bleed" data-r>
-    <img src="../assets/project-1/project1-cover.png" alt="The landing page hero: the program builder on desktop" width="1600" height="1200" loading="lazy">
+  <div class="slider-wrap" id="sliderWrap" data-r>
+    <div class="slider" id="slider" tabindex="0" role="region"
+         aria-label="Screens from the project — drag, scroll or use the arrow keys to move through them">
+      <figure class="slide"><img src="../assets/project-1/project1-2.png" alt="Problem mapping and trainer pain points" loading="lazy" width="1600" height="1200"></figure>
+      <figure class="slide"><img src="../assets/project-1/project1-3.png" alt="Design approach and structure" loading="lazy" width="1600" height="1200"></figure>
+      <figure class="slide"><img src="../assets/project-1/project1-4.png" alt="Redesigned desktop dashboard for trainers" loading="lazy" width="1600" height="1200"></figure>
+      <figure class="slide"><img src="../assets/project-1/project1-5.png" alt="Exercise library and program assignment" loading="lazy" width="1600" height="1200"></figure>
+      <figure class="slide"><img src="../assets/project-1/project1-6.png" alt="Mobile app workout view for students" loading="lazy" width="1600" height="1200"></figure>
+      <figure class="slide"><img src="../assets/project-1/project1-7.png" alt="Mobile app guided exercise" loading="lazy" width="1600" height="1200"></figure>
+    </div>
+    <p class="slider-hint">← → to move</p>
   </div>
-
-  <!-- ═══ What I learned ═══ -->
-  <section class="container">
-    <div class="block" data-r>
-      <h3>What I learned</h3>
-      <div class="body">
-        <ul>
-          <li>Letting PTs reuse existing sessions with a train-at-home flag got the first remote workout shipped fast, without asking trainers to relearn their whole workflow mid-crisis.</li>
-          <li>Flexibility has a setup cost. Letting students choose where they train (home vs. building gym) made the product feel personal, but it pushed complexity onto the PT-side setup.</li>
-          <li>Weekly cadence lowers the barrier to starting. Day-by-day, week-by-week planning was easier for PTs to adopt than full monthly cycles, especially for trainers migrating under pressure.</li>
-        </ul>
-      </div>
-    </div>
-  </section>
 
   <section class="next-proj">
     <a class="next-link" href="../ai-front-desk/">
@@ -414,7 +417,7 @@ h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:
             <span class="next-tag-item">Automation</span>
             <span class="next-tag-item">SaaS</span>
           </div>
-          <h2 class="next-h2" data-r style="--d:.26s">Designing an AI Front Desk<br>for Photographers</h2>
+          <h2 class="next-h2" data-r style="--d:.26s">AI Photographers Assistant</h2>
         </div>
         <div class="next-arr" data-r style="--d:.35s">
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9H15M15 9L10 4M15 9L10 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
