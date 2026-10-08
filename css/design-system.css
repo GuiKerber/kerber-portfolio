@@ -1,0 +1,172 @@
+/* ============ Design system reference page ============ */
+/* Layout for design-system.html only. Built on the same tokens as the site. */
+
+.ds {
+  --ds-swatch-min: var(--size-160);
+  --ds-meta-w: var(--size-260);
+  --ds-space-label-w: var(--size-120);
+  padding-bottom: var(--section-pad-lg);
+}
+
+.ds-intro {
+  padding-top: var(--space-35);
+  padding-bottom: var(--section-pad);
+  border-bottom: var(--hairline) solid var(--color-border);
+}
+.ds-intro__eyebrow { color: var(--color-text-muted); }
+.ds-intro__title {
+  margin-top: var(--space-6);
+  font-size: var(--fs-title);
+  color: var(--color-text-strong);
+}
+.ds-intro__lead {
+  max-width: var(--case-text-w);
+  margin-top: var(--space-8);
+  font-size: var(--fs-lead);
+  line-height: var(--lh-reading);
+  color: var(--color-text-muted);
+}
+.ds-toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-6);
+  margin-top: var(--space-12);
+}
+.ds-toc a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  color: var(--color-text-muted);
+  transition: color var(--dur-fast) var(--ease);
+}
+.ds-toc a:hover { color: var(--color-text-strong); }
+
+/* Sections */
+.ds-section {
+  display: grid;
+  gap: var(--space-8);
+  padding-top: var(--section-pad);
+  padding-bottom: var(--section-pad);
+  border-bottom: var(--hairline) solid var(--color-border);
+}
+@media (min-width: 1024px) {
+  .ds-section { grid-template-columns: var(--case-label-w) 1fr; gap: var(--space-6); }
+}
+.ds-section__label { padding-top: 0.4em; font-size: var(--fs-label); color: var(--color-text-muted); }
+.ds-section__body { display: grid; gap: var(--space-12); min-width: 0; }
+.ds-section__title { font-size: var(--fs-subheading); color: var(--color-text-strong); }
+.ds-text { max-width: var(--case-text-w); color: var(--color-text-muted); line-height: var(--lh-reading); }
+.ds-text + .ds-text { margin-top: var(--space-3); }
+.ds-group { display: grid; gap: var(--space-4); }
+.ds-group__title { color: var(--color-text-muted); }
+
+/* Token tables */
+.ds-table { width: 100%; border-collapse: collapse; font-size: var(--fs-body-sm); }
+.ds-table th,
+.ds-table td {
+  padding: var(--space-3) var(--space-4) var(--space-3) 0;
+  border-bottom: var(--hairline) solid var(--color-border);
+  text-align: left;
+  vertical-align: middle;
+}
+.ds-table th { font-weight: var(--fw-regular); color: var(--color-text-muted); }
+.ds-table code,
+.ds-code {
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  letter-spacing: var(--ls-mono);
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+.ds-table td:last-child { color: var(--color-text-muted); }
+.ds-scroll { overflow-x: auto; scrollbar-width: none; }
+.ds-scroll::-webkit-scrollbar { display: none; }
+
+/* Swatches */
+.ds-swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--ds-swatch-min), 1fr));
+  gap: var(--space-4);
+}
+.ds-swatch { display: grid; gap: var(--space-2); }
+.ds-swatch__chip {
+  height: var(--space-16);
+  border: var(--hairline) solid var(--color-border);
+  border-radius: var(--radius-media);
+  background: var(--swatch);
+}
+.ds-dot {
+  display: inline-block;
+  width: var(--size-icon);
+  height: var(--size-icon);
+  border: var(--hairline) solid var(--color-border);
+  border-radius: var(--radius-round);
+  background: var(--swatch);
+  vertical-align: middle;
+}
+
+/* Type specimens */
+.ds-type { display: grid; }
+.ds-type__row {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-6) 0;
+  border-top: var(--hairline) solid var(--color-border);
+}
+@media (min-width: 768px) {
+  .ds-type__row { grid-template-columns: var(--ds-meta-w) 1fr; gap: var(--space-6); align-items: baseline; }
+}
+.ds-type__meta { display: grid; gap: var(--space-1); }
+.ds-type__sample { min-width: 0; color: var(--color-text-strong); overflow-wrap: anywhere; }
+
+/* Spacing bars */
+.ds-space { display: grid; gap: var(--space-2); }
+.ds-space__row { display: grid; grid-template-columns: var(--ds-space-label-w) 1fr; gap: var(--space-4); align-items: center; }
+.ds-space__bar { height: var(--space-3); width: var(--bar); background: var(--color-accent); }
+
+/* Component stages */
+.ds-stage {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-8);
+  border: var(--hairline) solid var(--color-border);
+  border-radius: var(--radius-media);
+}
+.ds-stage--column { flex-direction: column; align-items: stretch; }
+.ds-stage--light {
+  border-color: var(--color-border-inverse);
+  background: var(--color-bg-inverse);
+  color: var(--color-text-inverse);
+}
+.ds-stage--light .header-demo { --h-fg: var(--color-on-paper); --h-bg: var(--color-paper); color: var(--h-fg); }
+.header-demo { --h-fg: var(--color-text-strong); --h-bg: var(--color-on-paper); display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); color: var(--h-fg); }
+.ds-state { display: grid; gap: var(--space-2); justify-items: start; }
+.ds-state__label { color: var(--color-text-muted); }
+.ds-stage--light .ds-state__label { color: var(--color-text-inverse-muted); }
+.ds-states { display: flex; flex-wrap: wrap; gap: var(--space-8); }
+
+.ds-card { width: 100%; max-width: var(--card-w); }
+.ds-figures { display: grid; gap: var(--gap-figures); grid-template-columns: 2fr 1fr 1fr; align-items: end; }
+.ds-figure { display: grid; gap: var(--space-2); }
+.ds-figure__box { background: var(--color-bg-media); border: var(--hairline) solid var(--color-border); }
+.ds-figure__box--full { aspect-ratio: 2900 / 1800; }
+.ds-figure__box--side { aspect-ratio: 3 / 4; }
+.ds-figure__box--grid { aspect-ratio: 1; }
+.ds-puck-demo { position: static; opacity: 1; scale: 1; }
+.ds-ease { display: grid; gap: var(--space-3); }
+.ds-ease__track { position: relative; height: var(--space-3); border-bottom: var(--hairline) solid var(--color-border); }
+.ds-ease__dot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--space-3);
+  height: var(--space-3);
+  border-radius: var(--radius-round);
+  background: var(--color-accent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ds-ease__dot { animation: ds-slide var(--dur-loop) var(--curve) infinite alternate; }
+}
+@keyframes ds-slide { to { left: calc(100% - var(--space-3)); } }

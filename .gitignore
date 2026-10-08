@@ -1,21 +1,12 @@
-# ── Internal working docs — kept local, not published ──
+# Internal working docs, kept local and not published
 design.md
-rules.md
-project-2-stake-desk-copy.txt
 
-# ── Local dev config (preview server) ──
+# Local dev config
 .claude/
 
-# ── OS / editor noise ──
+# OS / editor noise
 .DS_Store
 Thumbs.db
 desktop.ini
 .vscode/
 .idea/
-
-# ── Backups & scratch ──
-*.bak
-*.backup
-*~
-_verify-*.html
-_measure-*.html

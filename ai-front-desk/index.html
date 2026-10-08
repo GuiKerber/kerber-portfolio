@@ -1,618 +1,263 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Photographers Assistant — Guilherme Kerber</title>
-<meta name="description" content="An AI agent that reads inbound inquiries, negotiates in the photographer's own tone and rates, and books confirmed sessions straight onto the calendar.">
-<link rel="canonical" href="https://guikerber.com/ai-front-desk/">
-<link rel="alternate" hreflang="en" href="https://guikerber.com/ai-front-desk/">
-<link rel="alternate" hreflang="pt-BR" href="https://guikerber.com/pt/ai-front-desk/">
-<link rel="alternate" hreflang="x-default" href="https://guikerber.com/ai-front-desk/">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://guikerber.com/ai-front-desk/">
-<meta property="og:title" content="AI Photographers Assistant">
-<meta property="og:description" content="An AI agent that reads inbound inquiries, negotiates in the photographer's own tone and rates, and books confirmed sessions straight onto the calendar.">
-<meta property="og:image" content="https://guikerber.com/assets/og-cover.jpg">
-<meta property="og:image:type" content="image/jpeg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Guilherme Kerber Portfolio — product design across Fintech, SaaS, AI and Gaming">
-<meta property="og:site_name" content="Guilherme Kerber">
-<meta property="og:locale" content="en_US">
-<meta name="twitter:image" content="https://guikerber.com/assets/og-cover.jpg">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --orange:#FF4D00;--black:#080808;--off-white:#EDECEA;--ink:#111110;--white:#fff;
-  --white-8:rgba(255,255,255,.08);--white-16:rgba(255,255,255,.16);--white-32:rgba(255,255,255,.32);
-  --black-10:rgba(0,0,0,.10);--black-18:rgba(0,0,0,.18);--black-64:rgba(0,0,0,.64);
-  --orange-36:rgba(255,77,0,.36);--orange-52:rgba(255,77,0,.52);--orange-8:rgba(255,77,0,.08);
-
-  --col:692px;            /* text column, from the Figma frame */
-  --px:64px;              /* container padding */
-  --gap:32px;             /* block rhythm */
-  --spring:cubic-bezier(.16,1,.3,1);
-}
-html{font-size:16px;scroll-behavior:smooth;scrollbar-gutter:stable}
-::-webkit-scrollbar{width:3px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--orange-36);border-radius:2px}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--off-white);color:var(--ink);overflow-x:hidden;-webkit-font-smoothing:antialiased}
-img{max-width:100%;display:block}
-a{color:inherit}
-:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
-
-/* ─── Nav: the site's own component ─── */
-nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content:space-between;align-items:center;padding:20px 64px;background:rgba(8,8,8,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--white-8)}
-.nav-logo{display:flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;margin-left:-8px}
-.nav-logo img{width:28px;height:28px;filter:brightness(0) invert(1)}
-.nav-actions{display:flex;align-items:center;gap:8px}
-.nav-btn{display:flex;align-items:center;gap:8px;padding:8px 20px;border-radius:4px;font-family:'Syne',sans-serif;font-size:13px;font-weight:500;letter-spacing:-.03em;line-height:1.4;cursor:pointer;border:none;text-decoration:none;white-space:nowrap;transition:opacity .2s ease,transform .15s ease}
-.nav-btn:hover{opacity:.88;transform:translateY(-1px)}
-.nav-btn-projects{background:var(--white);color:var(--black)}
-.nav-btn-contact{background:var(--orange);color:var(--white)}
-.nav-panel-overlay{position:fixed;inset:0;z-index:300;opacity:0;pointer-events:none;transition:opacity .25s ease}
-.nav-panel-overlay.is-open{opacity:1;pointer-events:all}
-.nav-panel-drawer{position:fixed;top:72px;right:64px;width:360px;background:var(--white);border-radius:6px;border:1px solid var(--black-10);z-index:301;transform:translateY(-10px) scale(.97);transform-origin:top right;opacity:0;pointer-events:none;transition:transform .35s var(--spring),opacity .25s ease;overflow:hidden}
-.nav-panel-drawer.is-open{transform:none;opacity:1;pointer-events:all}
-.nav-panel-item{border-top:1px solid var(--black-10)}
-.nav-panel-item:first-child{border-top:none}
-.nav-panel-link{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;text-decoration:none;gap:16px;transition:background .18s ease}
-.nav-panel-link:hover{background:rgba(0,0,0,.025)}
-.nav-panel-link:hover .nav-panel-title{color:var(--orange)}
-.nav-panel-link:hover .nav-panel-arrow-icon{background:var(--orange);border-color:var(--orange)}
-.nav-panel-link:hover .nav-panel-arrow-icon svg path{stroke:var(--white)}
-.nav-panel-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--ink);letter-spacing:-.02em;line-height:1.2;transition:color .18s}
-.nav-panel-arrow-icon{display:flex;align-items:center;justify-content:center;width:26px;height:26px;border:1px solid var(--black-18);border-radius:50%;flex-shrink:0;transition:background .22s,border-color .22s;color:var(--ink)}
-
-/* ─── Button: the site's own component ─── */
-.proj-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border-radius:4px;font-family:'Syne',sans-serif;font-size:13px;font-weight:500;letter-spacing:-.03em;line-height:1.4;text-decoration:none;white-space:nowrap;cursor:pointer;transition:opacity .2s ease,transform .15s ease}
-.proj-btn:hover{opacity:.88;transform:translateY(-1px)}
-.proj-btn-primary{background:var(--orange);color:var(--white)}
-.proj-btn-secondary{background:var(--white);color:var(--black)}
-
-/* ─── Case header: full width, facts beside the stat cards ─── */
-.case-head{width:100%;max-width:calc(1440px + var(--px) * 2);margin:0 auto;padding:128px var(--px) var(--px);display:flex;flex-direction:column;gap:var(--gap);align-items:flex-start}
-.head-intro{display:flex;flex-direction:column;gap:16px;width:100%}
-.head-intro .deck{max-width:var(--col)}
-.head-row{display:flex;gap:var(--gap);align-items:stretch;width:100%}
-.head-facts{flex:1 1 50%;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;gap:24px}
-.head-facts:has(.proj-btn){justify-content:space-between}
-.stat-cards{flex:1 1 50%;min-width:0;display:flex;flex-wrap:wrap;gap:4px}
-.stat-card{flex:1 1 200px;min-width:0;min-height:180px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;background:var(--white);border-radius:8px;padding:16px}
-
-/* Image inside a text section */
-.figure{width:100%;aspect-ratio:692/519;background:var(--black-10);border-radius:8px;overflow:hidden}
-.figure img{width:100%;height:100%;object-fit:cover;display:block}
-
-/* ─── Layout: one centred column, matching the frame ─── */
-.container{max-width:calc(var(--col) + var(--px) * 2);margin:0 auto;padding:var(--px);display:flex;flex-direction:column;gap:var(--gap);align-items:flex-start}
-.container--top{padding-top:128px;padding-bottom:var(--px)}
-
-/* ─── Type, taken from the frame ─── */
-.eyebrow{font-size:11px;font-weight:500;line-height:17.82px;letter-spacing:.14em;text-transform:uppercase;color:var(--black-64)}
-.title{font-family:'Syne',sans-serif;font-weight:400;font-size:clamp(52px,calc(6.5vw - 12px),91px);line-height:.96;letter-spacing:-.03em;color:var(--black)}
-.deck{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:var(--ink)}
-h2{font-family:'Syne',sans-serif;font-weight:700;font-size:clamp(30px,4.2vw,40.4px);line-height:1.08;letter-spacing:-.02em;color:var(--ink)}
-h3{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:var(--ink)}
-.body{font-size:14px;line-height:20.3px;color:var(--ink)}
-
-/* -- Regra de quebra de texto do projeto --
-   Titulos equilibram as linhas em vez de largar uma palavra sozinha no fim,
-   e paragrafos evitam a viuva na ultima linha. Por isso titulo nenhum leva
-   <br> fixo: a caixa decide onde quebrar, em qualquer largura de tela. */
-h1,h2,h3,h4,.title,.deck,.next-h2,.stat-name,.block-deck,.hero-title,
-.more-title,.wf-title,.row-title,.project-title,.about-headline,
-.nav-panel-title{text-wrap:balance}
-p,li,dd,.stat-desc,.block-client,.row-meta{text-wrap:pretty}
-.body p + p{margin-top:20.3px}
-.body ul{list-style:disc;padding-left:21px;margin-top:20.3px}
-.body li + li{margin-top:2px}
-.block{display:flex;flex-direction:column;gap:8px;width:100%}
-
-/* Facts */
-.facts{display:flex;flex-direction:column;gap:8px;width:100%;font-size:14px;line-height:20.3px}
-.facts div{display:flex;gap:14px}
-.facts dt{width:120px;flex:0 0 120px;color:var(--black-64)}
-.facts dd{color:var(--ink)}
-
-/* Stat row under the header */
-.stats{display:flex;gap:16px;padding:32px 0;border-top:.667px solid var(--black-18);border-bottom:.667px solid var(--black-18);width:100%}
-.stat{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:16px}
-.stat-name{font-family:'Syne',sans-serif;font-weight:600;font-size:15px;line-height:24px;color:var(--ink)}
-.stat-val{font-weight:600;font-size:24px;line-height:36px;letter-spacing:-.045em;color:var(--ink)}
-.stat-desc{font-size:14px;line-height:20.3px;color:var(--black-64)}
-
-/* Results grid */
-.res-row{display:flex;gap:16px;padding:32px 0;border-bottom:.667px solid var(--black-18);width:100%}
-.res-row .stat{gap:16px}
-
-/* ─── Full-bleed image blocks ─── */
-.bleed{width:100%;aspect-ratio:1600/1200;background:var(--black-10);overflow:hidden}
-.bleed img{width:100%;height:100%;object-fit:cover}
-
-/* Placeholder until the design system shot arrives */
-.bleed--todo{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:var(--orange-8);border-block:1px dashed var(--orange-52);text-align:center;padding:0 24px}
-.bleed--todo b{font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center;gap:8px}
-.bleed--todo b::before{content:'';width:7px;height:7px;background:var(--orange)}
-.bleed--todo span{font-size:14px;line-height:20.3px;color:var(--black-64);max-width:380px}
-
-/* ─── Slider ─────────────────────────────────────────────
-   Scrollbar hidden on purpose; the cropped card at the edge
-   plus the fade are what say "there is more". ───────────── */
-.slider-wrap{position:relative;width:100%}
-.slider{
-  display:flex;gap:var(--gap);
-  padding:var(--px);
-  overflow-x:auto;overflow-y:hidden;
-  scrollbar-width:none;-ms-overflow-style:none;
-  overscroll-behavior-x:contain;
-  user-select:none;-webkit-user-select:none;
-  cursor:grab;                      /* .js swaps this for the arrow cursor */
-}
-.slider::-webkit-scrollbar{display:none}
-.slider:active{cursor:grabbing}
-/* Hide the real cursor only where the arrow replacement actually runs */
-@media (hover:hover) and (pointer:fine){
-  .js .slider,.js .slider:active{cursor:none}
-}
-.slider:focus-visible{outline:2px solid var(--orange);outline-offset:-2px}
-.slide{flex:0 0 var(--col);width:var(--col);aspect-ratio:1600/1200;border-radius:8px;overflow:hidden;background:var(--black-10)}
-.slide img{width:100%;height:100%;object-fit:cover;pointer-events:none;-webkit-user-drag:none;user-select:none}
-.slider.is-dragging{scroll-behavior:auto}
-.slider.is-dragging .slide{pointer-events:none}
-/* edge fade — the second signal that the row continues */
-.slider-wrap::after{
-  content:'';position:absolute;top:0;right:0;bottom:0;width:96px;pointer-events:none;
-  background:linear-gradient(to right,rgba(237,236,234,0),var(--off-white));
-  opacity:1;transition:opacity .25s ease;
-}
-.slider-wrap.at-end::after{opacity:0}
-
-/* Arrow cursor, shown only while the pointer is over the slider */
-.drag-cursor{
-  position:fixed;top:0;left:0;z-index:150;pointer-events:none;
-  display:flex;align-items:center;gap:6px;
-  padding:10px 12px;border-radius:40px;background:var(--ink);color:var(--white);
-  transform:translate(-50%,-50%) scale(.8);opacity:0;
-  transition:opacity .18s ease,transform .18s var(--spring);
-}
-.drag-cursor.is-on{opacity:1;transform:translate(-50%,-50%) scale(1)}
-.drag-cursor.is-grabbing{transform:translate(-50%,-50%) scale(.9)}
-
-/* Keyboard hint, only useful to sighted keyboard users */
-.slider-hint{
-  position:absolute;left:var(--px);bottom:calc(var(--px) - 26px);
-  font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--black-64);
-  opacity:0;transition:opacity .2s ease;pointer-events:none;
-}
-.slider:focus-visible ~ .slider-hint{opacity:1}
-
-/* ─── Next project: the same footer the live case pages use ─── */
-.next-proj{background:var(--black);padding:80px 0 100px}
-.next-link{display:flex;flex-direction:column;gap:36px;text-decoration:none;max-width:calc(var(--col) + var(--px) * 2);margin:0 auto;padding-inline:var(--px)}
-.next-eyebrow{font-size:10px;font-weight:500;letter-spacing:.13em;text-transform:uppercase;color:var(--white-32)}
-.next-body{display:flex;justify-content:space-between;align-items:flex-end;border-top:1px solid var(--white-8);padding-top:36px;gap:24px}
-.next-info{display:flex;flex-direction:column;gap:14px}
-.next-idx{font-size:10px;font-weight:500;letter-spacing:.13em;text-transform:uppercase;color:var(--orange)}
-.next-tags{display:flex;gap:8px;flex-wrap:wrap}
-.next-tag-item{font-size:10px;font-weight:500;letter-spacing:.13em;text-transform:uppercase;color:var(--white-32);padding:4px 9px;border:1px solid var(--white-8);border-radius:20px}
-.next-h2{font-family:'Syne',sans-serif;font-size:clamp(28px,4.5vw,54px);font-weight:700;color:var(--white);letter-spacing:-.03em;line-height:1;transition:color .3s ease}
-.next-link:hover .next-h2{color:var(--orange)}
-.next-arr{width:56px;height:56px;flex-shrink:0;border:1px solid var(--white-16);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--white);transition:background .25s ease,border-color .25s ease,transform .25s ease}
-.next-link:hover .next-arr{background:var(--orange);border-color:var(--orange);transform:rotate(45deg)}
-
-/* ─── Motion: one reveal. Hidden only while JS is alive. ─── */
-.js [data-r]{opacity:0;transform:translateY(12px)}
-.js [data-r].in{opacity:1;transform:none;transition:opacity .26s ease,transform .26s var(--spring);transition-delay:var(--d,0s)}
-
-/* ─── Responsive ─── */
-@media (max-width:1080px){:root{--px:40px}}
-@media (max-width:1080px){
-  .head-row{flex-direction:column;gap:var(--gap)}
-  .head-facts{flex:1 1 auto;max-width:100%;width:100%}
-  .stat-cards{flex-wrap:wrap;width:100%}
-  .stat-card{flex:1 1 220px}
-}
-@media (max-width:767px){
-  :root{--px:22px;--gap:26px}
-  .container--top{padding-top:96px}
-  .deck{font-size:20px;line-height:30px}
-  h3{font-size:20px;line-height:30px}
-  .stats,.res-row{flex-direction:column;gap:26px}
-  .slide{flex-basis:min(84vw,var(--col));width:min(84vw,var(--col))}
-  .drag-cursor{display:none}
-  .slider{cursor:grab}
-  .slider:active{cursor:grabbing}
-  .next-proj{padding:56px 0 72px}
-  .next-body{flex-direction:column;align-items:flex-start;gap:28px}
-  .next-h2{font-size:clamp(28px,9vw,44px)}
-  .next-arr{width:44px;height:44px}
-}
-@media (min-width:768px) and (max-width:1023px){
-  nav{padding:16px 32px}
-  .nav-panel-drawer{right:32px}
-}
-@media (max-width:767px){
-  nav{padding:16px 24px}
-  .nav-panel-drawer{left:24px;right:24px;width:auto}
-}
-@media (max-width:1023px){
-  .nav-btn{font-size:12px;padding:7px 14px;gap:6px}
-  .nav-btn svg{width:14px;height:14px}
-}
-@media (hover:none){
-  .drag-cursor{display:none}
-  .slider{cursor:auto}
-}
-@media (prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-  .js [data-r]{opacity:1;transform:none}
-  .js [data-r].in{transition:none}
-  .proj-btn,.nav-btn,.drag-cursor{transition:none}
-}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Photographers Assistant · Guilherme Kerber</title>
+  <meta name="description" content="Case study: redesigning the 46graus AI agent so photographers trust it with leads, quotes and bookings. Onboarding TTV -35%, agent autonomy from 22% to 61%.">
+  <link rel="canonical" href="https://guikerber.com/ai-front-desk/">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://guikerber.com/ai-front-desk/">
+  <meta property="og:site_name" content="Guilherme Kerber">
+  <meta property="og:title" content="AI Photographers Assistant · Guilherme Kerber">
+  <meta property="og:description" content="Case study: redesigning the 46graus AI agent so photographers trust it with leads, quotes and bookings. Onboarding TTV -35%, agent autonomy from 22% to 61%.">
+  <meta property="og:image" content="https://guikerber.com/assets/og/ai-photographers.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="The 46graus agent dashboard on a desktop monitor">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <script>try { if (sessionStorage.getItem("page-shift")) document.documentElement.classList.add("is-shifting"); } catch (e) {}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500&family=Martian+Mono:wght@400&family=Inter+Tight:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/case.css">
 </head>
-<body>
+<body class="case-page">
+  <a class="skip-link" href="#main">Skip to content</a>
 
-<div class="drag-cursor" id="dragCursor" aria-hidden="true">
-  <svg width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M7 2 3 6l4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-  <svg width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M5 2l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-</div>
-
-<div class="nav-panel-overlay" id="navPanelOverlay" aria-hidden="true"></div>
-<div class="nav-panel-drawer" id="navPanelDrawer" role="dialog" aria-label="Projects" aria-modal="true">
-  <div class="nav-panel-items">
-    <div class="nav-panel-item"><a class="nav-panel-link" href="../ai-front-desk/"><span class="nav-panel-title" data-pt="Assistente de IA para Fotógrafos">AI Photographers Assistant</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
-    <div class="nav-panel-item"><a class="nav-panel-link" href="../staking-marketplace/"><span class="nav-panel-title" data-pt="Marketplace de Staking em BTC">BTC Staking Marketplace</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
-    <div class="nav-panel-item"><a class="nav-panel-link" href="../cross-platform-coaching/"><span class="nav-panel-title" data-pt="Experiência de Coaching Multiplataforma">Cross-Platform Coaching Experience</span><div class="nav-panel-arrow-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L7 3M10 6L7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></a></div>
-  </div>
-</div>
-
-<nav>
-  <a class="nav-logo" href="../" aria-label="Guilherme Kerber — Home"><img src="../assets/logo.svg" alt="GK logo" width="28" height="28"></a>
-  <div class="nav-actions">
-    <button class="nav-btn nav-btn-projects" id="navProjectsBtn" aria-expanded="false" aria-controls="navPanelDrawer">
-      <span data-pt="Meus Projetos">My Projects</span>
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-        <line x1="2.5" y1="4.5" x2="13.5" y2="4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="2.5" y1="8" x2="13.5" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="2.5" y1="11.5" x2="13.5" y2="11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
-    </button>
-    <a class="nav-btn nav-btn-contact" href="../#contact">
-      <span data-pt="Entre em contato">Get in touch</span>
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13.5 2.5L1.5 6.5L6.5 8.5M13.5 2.5L10 13.5L6.5 8.5M13.5 2.5L6.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <header class="header">
+    <a class="logo" href="../" aria-label="Guilherme Kerber, home" data-transition-label="Guilherme Kerber">
+      <svg class="logo__mark" viewBox="0 0 27 26.7773" aria-hidden="true"><use href="#logo-mark"/></svg>
+      <span class="logo__word">GUI KERBER<sup>®</sup></span>
     </a>
-  </div>
-</nav>
-
-<main>
-
-  <header class="case-head">
-    <p class="eyebrow" data-r data-pt="Agente de IA · SaaS B2B · 2026">AI Agent · B2B SaaS · 2026</p>
-    <div class="head-intro" data-r style="--d:.05s">
-      <h1 class="title" data-pt="Assistente de IA para Fotógrafos">AI Photographers Assistant</h1>
-      <p class="deck" data-pt="Evoluindo o agente de IA da 46graus.com">Improving an AI agent to 46graus.com</p>
-    </div>
-    <div class="head-row" data-r style="--d:.12s">
-      <div class="head-facts">
-      <dl class="facts">
-        <div><dt data-pt="Responsabilidades:">Responsibilities:</dt><dd data-pt="UI/UX Design, Product Design, definições de IA, protótipo de IA">UI/UX Design, Product Design, AI definitions, AI Prototype</dd></div>
-        <div><dt data-pt="Time:">Team:</dt><dd data-pt="Product Designer, 2 stakeholders, 2 desenvolvedores">Product Designer, 2 Stakeholders, 2 developers</dd></div>
-        <div><dt data-pt="Entregáveis:">Deliverable:</dt><dd data-pt="Síntese dos testes com usuários, protótipo em código, biblioteca de design system">User testing synthesis, Coded Prototype, Design System library</dd></div>
-        <div><dt data-pt="Duração:">Duration:</dt><dd data-pt="1 mês">1 month</dd></div>
-      </dl>
-        <div>
-          <a class="proj-btn proj-btn-primary" href="https://guikerber.github.io/46graus/#/" target="_blank" rel="noopener"><span data-pt="Ver protótipo">View prototype</span>
-            <svg width="13" height="13" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2 6h8M10 6 7 3M10 6 7 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </a>
-        </div>
-      </div>
-      <div class="stat-cards">
-        <div class="stat-card">
-          <p class="stat-name" data-pt="TTV de onboarding">Onboarding TTV</p>
-          <div><p class="stat-val">-35%</p><p class="stat-desc" data-pt="Removendo peças desnecessárias e simplificando a configuração do agente de IA">By removing unnecessary pieces and simplifying AI agent setup</p></div>
-        </div>
-        <div class="stat-card">
-          <p class="stat-name" data-pt="Autonomia do agente">Agent autonomy</p>
-          <div><p class="stat-val">22% &rarr; 61%</p><p class="stat-desc" data-pt="Pedidos resolvidos de ponta a ponta pelo agente">Inquiries handled end-to-end by the agent</p></div>
-        </div>
-        <div class="stat-card">
-          <p class="stat-name" data-pt="Trabalho administrativo poupado">Admin work saved</p>
-          <div><p class="stat-val" data-pt="~5 h/semana">~5 hrs/week</p><p class="stat-desc" data-pt="Estimativa de trabalho administrativo reduzido para os fotógrafos">Estimated admin work reduced from photographers</p></div>
-        </div>
-      </div>
-    </div>
+    <nav class="header__actions" aria-label="Primary">
+      <a class="pill pill--solid" href="#contact">
+        <span class="pill__roll"><span>Let's talk</span></span>
+      </a>
+      <button class="pill pill--ghost" type="button" aria-expanded="false" aria-controls="menu" data-menu-toggle>
+        <span class="pill__roll"><span data-menu-label>Menu</span></span>
+        <span class="pill__icon" aria-hidden="true"><i></i><i></i></span>
+      </button>
+    </nav>
   </header>
 
-  <div class="bleed" data-r>
-    <img src="../assets/project-5/aperture-cover.png" alt="The AI agent inside the 46graus photographer workspace" data-pt-alt="O agente de IA dentro do workspace do fotógrafo na 46graus" width="1600" height="1200">
+  <div class="menu" id="menu" hidden>
+    <ul class="menu__list" role="list">
+      <li><a class="display" href="../#about" data-menu-link>About</a></li>
+      <li><a class="display" href="../#work" data-menu-link>Work</a></li>
+      <li><a class="display" href="../#explorations" data-menu-link>Explorations</a></li>
+      <li><a class="display" href="#contact" data-menu-link>Contact</a></li>
+    </ul>
+    <div class="menu__foot mono">
+      <a href="https://www.linkedin.com/in/guikerber/" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a href="https://dribbble.com/kerber" target="_blank" rel="noopener">Dribbble ↗</a>
+      <span>contact@guikerber.com</span>
+    </div>
   </div>
 
-  <section class="container">
-    <p class="eyebrow" data-r data-pt="meu processo">my process</p>
+  <main id="main">
+    <article class="case">
 
-    <div class="block" data-r>
-      <h2 data-pt="Entendendo<br>o problema">Understanding<br>the problem</h2>
-      <div class="body">
-        <p data-pt="O cliente me procurou com um agente já existente que tinha autonomia muito baixa dentro da base de usuários. A configuração do agente fazia parte do onboarding, e a maioria dos usuários abandonava no meio do processo.">The client approached me with an existing agent that has very low autonomy within their userbase. The agent setup was part of the onboarding, and most users would abandon in the middle of the process.</p>
-        <p data-pt="A proposta de valor desse assistente era:">The value proposition of this assistant was to:</p>
-        <ul>
-          <li data-pt="Responder leads rapidamente para que não esfriem">Quickly reply leads so they don't get cold</li>
-          <li data-pt="Automatizar a parte chata do fluxo de trabalho dos fotógrafos">Automate the boring part of the photographers workflow</li>
-          <li data-pt="Automatizar o agendamento de sessões na agenda deles">Automate booking sessions on their agenda</li>
-        </ul>
-      </div>
-    </div>
+      <!-- Intro -->
+      <header class="case-hero container">
+        <p class="case-hero__eyebrow mono" data-fade-up>AI agent · B2B SaaS · 2026</p>
+        <h1 class="case-hero__title display" data-blur-in>AI Photographers Assistant</h1>
+        <p class="case-hero__dek" data-fade-up>I improved the AI agent inside 46graus, a workspace for photographers. It had low autonomy, and most users quit its setup halfway. I redesigned the setup, the agent's rules and the workspace so photographers trust it with leads, quotes and bookings.</p>
 
-    <div class="block" data-r>
-      <h3 data-pt="Entrevistas com stakeholders">Stakeholder interviews</h3>
-      <div class="body">
-        <p data-pt="Nas primeiras entrevistas, entendi que a oportunidade do agente de IA era real: muitos fotógrafos gastavam horas por semana em algo que podia ser automatizado, mas não sabiam onde traçar o limite dessa automação dentro do fluxo de trabalho.">During initial interview, I understood that the AI agent opportunity was real, many photographers would spend hours weekly on something that could be automated, but they were not sure where to draw the line to automate this part of their users workflow.</p>
-        <ul>
-          <li data-pt="Em média, fotógrafos gastavam de 3 a 7 horas por semana vendendo, falando com clientes e agendando sessões.">On average, photographers would spend 3-7h per week doing sales, contacting clients, and booking sessions.</li>
-          <li data-pt="Fotógrafos com agenda cheia recebiam de 5 a 10 leads por semana">Busy photographers would get 5-10 leads every week</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="block" data-r>
-      <h3 data-pt="Entrevistas com usuários">User interviews</h3>
-      <div class="body">
-        <p data-pt="Nas entrevistas com usuários, descobri que os serviços de fotografia estão ligados a conexões emocionais, e delegar parte do trabalho a um agente de IA não era algo que eles topavam testar. Eles ainda queriam delegar parte do trabalho, mas queriam se sentir no controle em alguns casos especiais.">During user interviews, I discovered that photographers services are tied to emotional connections and delegating some of the work to an AI agent were not something they were willing to test. They still wanted to delegate part of their work, but wanted to feel in control in some special cases.</p>
-        <p data-pt="Casos como casamentos, newborn e outros eventos pessoais foram apontados como momentos em que o contato direto com o cliente é importante. Já eventos esportivos, corporativos e de menor porte foram apontados como tranquilos de automatizar.">Cases such as weddings, new born, and other personal events were flagged as having direct contact with clients were important. Other events such as sports, business events, and small events were flagged as ok to be automated.</p>
-        <p data-pt="Também ficou claro que uma mensagem inicial disparada automaticamente pelo agente seria bem aceita, desde que ela apenas agendasse uma conversa com o fotógrafo, sem tentar fechar o negócio.">It was also noted that an initial message would be ok to be triggered automatically by the agent, but that it would simply book a call with photographers, and not try to close the deal.</p>
-      </div>
-    </div>
-
-    <figure class="figure" data-r>
-      <img src="../assets/project-5/2%20mobile.png" alt="Chatting with the agent and approving a quote from a phone" data-pt-alt="Conversando com o agente e aprovando um orçamento pelo celular" loading="lazy" width="1600" height="1200">
-    </figure>
-
-    <div class="block" data-r>
-      <h3 data-pt="Auditoria de design">Design audit</h3>
-      <div class="body">
-        <p data-pt="Na auditoria de design, revisei a configuração de onboarding dos agentes de IA e o painel do agente com o chat. O fluxo de onboarding dependia demais de vários grupos de campos para preencher serviços e tabelas de preço, e era ali que a maioria dos usuários abandonava a funcionalidade.">During the design audit, I have reviewed the onboarding setup for AI agents and the agent dashboard + chat panel. The onboarding flow to setup agents were heavily relying on multiple groups of inputs to fill services and price specifications, and that was where most of the users were abandoning the feature.</p>
-        <p data-pt="A página de chat do agente também era uma página isolada, como a maioria dos chatbots hoje, sem nenhum contexto sobre o que o usuário deveria fazer ali.">The agent chat page were also a stand alone page, like most chatbot nowadays, with no context on what the user should do with it.</p>
-      </div>
-    </div>
-
-    <figure class="figure" data-r>
-      <img src="../assets/project-5/7%20onboarding.png" alt="Onboarding: uploading a rate sheet and previewing the first conversation" data-pt-alt="Onboarding: subindo a tabela de preços e prevendo a primeira conversa" loading="lazy" width="1600" height="1200">
-    </figure>
-  </section>
-
-  <section class="container">
-    <h2 data-r data-pt="Decisões e trade-offs">Key decisions &amp; trade-offs</h2>
-
-    <div class="block" data-r>
-      <h3 data-pt="Onde o agente para">Where the agent stops</h3>
-      <div class="body">
-        <p data-pt="O agente responde, agenda e negocia sozinho com base na configuração de cada serviço, não do pacote inteiro. Ele também para e pergunta em conflitos de data, orçamentos fora da faixa e decisões de bom senso (como um desconto em um mês fraco).">The agent replies, schedules and negotiates on its own based on individual services setups, not as a whole package. It also stops and asks on date conflicts, budgets outside range, and judgment calls (like a discount in a slow month).</p>
-        <ul><li data-pt="Trade-off: menos automação → mais confiança. Fotógrafo nenhum liga um agente cujo comportamento não consegue prever.">Trade-off: Less automation → more trust. Photographers won't turn on an agent they can't predict.</li></ul>
-      </div>
-    </div>
-
-    <div class="block" data-r>
-      <h3 data-pt="Preço nunca é inventado">Price is never invented</h3>
-      <div class="body">
-        <p data-pt="A autonomia do agente sobre preços ficou estritamente presa a tabelas definidas por serviço, incluindo um percentual de flexibilidade definido pelo próprio fotógrafo.">The agent autonomy related to prices were strictly tied to defined price tables per service, including a flexibility percentage that was set by the photographers.</p>
-        <ul><li data-pt="Trade-off: entregue como uma regra simples de sim/não, com flexibilidade básica, para que o fotógrafo confie que a IA não vai precificar errado.">Trade-off: Shipped as a simple yes/no rule, with basic flexibility, making it easier for photographers to trust the AI will not rate it incorrectly.</li></ul>
-      </div>
-    </div>
-
-    <div class="block" data-r>
-      <h3 data-pt="Onboarding inteligente">Smart onboarding process</h3>
-      <div class="body">
-        <p data-pt="A maioria dos fotógrafos já tem um arquivo ou site com seus serviços e preços, então permitimos subir esses arquivos para preencher automaticamente os campos que travavam o onboarding.">Most photographers already have a file or website with their services and fees, so we allowed them to add these files to auto-fill the old inputs that were slowing the onboarding process.</p>
-        <ul><li data-pt="Trade-off: preenche muitos campos automaticamente, mas ainda exige revisão manual caso algum dado seja lido errado.">Trade-off: Auto-fill a lot of fields, but would still require manual revision in case some input were not correctly read.</li></ul>
-      </div>
-    </div>
-
-    <div class="block" data-r>
-      <h3 data-pt="Dashboard e chat trabalhando juntos">Dashboard + chat, working together</h3>
-      <div class="body">
-        <p data-pt="Refiz o dashboard, as páginas de mensagens e a caixa de chat do agente como duas partes da mesma tela. O chat deixou de ser uma página isolada e passou a ajudar o usuário a contextualizar o que via no dashboard: quais são meus leads mais recentes, existe conflito na agenda… tudo apoiado por listas, gráficos e cards.">Reworked the dashboard, messages pages, and agent chatbox as two parts of the same screen. Agent chat were no longer a single view page, it was part of whole and would help user contextualize with what they were seeing on the dashboard. What are my latest leads, is there a calendar conflict, …, all supported by visual lists, charts, and cards.</p>
-        <ul><li data-pt="Trade-off: menos espaço para cada parte. Chat e dashboard dividem uma tela só, então o layout fica mais denso.">Trade-off: Less room for each part. Chat and dashboard share one screen, so the layout gets denser.</li></ul>
-      </div>
-    </div>
-  </section>
-
-  <div class="slider-wrap" id="sliderWrap" data-r>
-    <div class="slider" id="slider" tabindex="0" role="region"
-         aria-label="Screens from the project — drag, scroll or use the arrow keys to move through them" data-pt-label="Telas do projeto — arraste, role ou use as setas para navegar">
-      <figure class="slide"><img src="../assets/project-5/1%20dashboard.png" alt="Agent dashboard: performance, conversion and inbound status" data-pt-alt="Dashboard do agente: desempenho, conversão e status das mensagens recebidas" loading="lazy" width="1600" height="1200"></figure>
-      <figure class="slide"><img src="../assets/project-5/3%20status%20card.png" alt="Status card: live agent status with conversion and autonomy" data-pt-alt="Card de status: situação do agente ao vivo, com conversão e autonomia" loading="lazy" width="1600" height="1200"></figure>
-      <figure class="slide"><img src="../assets/project-5/4%20expanded%20chat.png" alt="Expanded chat thread with an AI-drafted counter-offer" data-pt-alt="Conversa expandida com uma contraproposta escrita pela IA" loading="lazy" width="1600" height="1200"></figure>
-      <figure class="slide"><img src="../assets/project-5/5%20chat%20widget.png" alt="Chat widget across empty, dashboard, conversation and history views" data-pt-alt="Widget de chat nos estados vazio, dashboard, conversa e histórico" loading="lazy" width="1600" height="1200"></figure>
-      <figure class="slide"><img src="../assets/project-5/6%20internal%20pages.png" alt="Internal pages: connections, conversation detail, plans and settings" data-pt-alt="Páginas internas: conexões, detalhe da conversa, planos e configurações" loading="lazy" width="1600" height="1200"></figure>
-      <figure class="slide"><img src="../assets/project-5/design-system.png" alt="The design system library delivered with the prototype" data-pt-alt="A biblioteca de design system entregue junto com o protótipo" loading="lazy" width="1600" height="1200"></figure>
-    </div>
-    <p class="slider-hint" data-pt="← → para navegar">← → to move</p>
-  </div>
-
-  <section class="next-proj">
-    <a class="next-link" href="../staking-marketplace/">
-      <p class="next-eyebrow" data-r data-pt="Próximo projeto">Next project</p>
-      <div class="next-body">
-        <div class="next-info">
-          <span class="next-idx" data-r style="--d:.1s" data-pt="02 · Fintech">02 · Fintech</span>
-          <div class="next-tags" data-r style="--d:.18s">
-            <span class="next-tag-item" data-pt="Product Design">Product Design</span>
-            <span class="next-tag-item" data-pt="Cripto">Crypto</span>
-            <span class="next-tag-item" data-pt="Fintech">Fintech</span>
+        <dl class="impact" aria-label="Impact">
+          <div class="impact__item" data-fade-up>
+            <dt>Onboarding TTV</dt>
+            <dd class="impact__value">-35%</dd>
+            <dd class="impact__note">Faster setup, with rate sheets auto-filling the form</dd>
           </div>
-          <h2 class="next-h2" data-r style="--d:.26s" data-pt="Marketplace de Staking em BTC">BTC Staking Marketplace</h2>
+          <div class="impact__item" data-fade-up>
+            <dt>Agent autonomy</dt>
+            <dd class="impact__value">22% → 61%</dd>
+            <dd class="impact__note">Inquiries the agent now handles on its own</dd>
+          </div>
+          <div class="impact__item" data-fade-up>
+            <dt>Admin work saved</dt>
+            <dd class="impact__value">~5 hrs/week</dd>
+            <dd class="impact__note">Less time on sales, follow-ups and booking (estimated)</dd>
+          </div>
+        </dl>
+
+        <dl class="case-meta" data-fade-up>
+          <div class="case-meta__row"><dt class="caps">Client</dt><dd>46graus</dd></div>
+          <div class="case-meta__row"><dt class="caps">Role</dt><dd>UI/UX design, product design, AI definitions, AI prototype</dd></div>
+          <div class="case-meta__row"><dt class="caps">Team</dt><dd>Product designer, 2 stakeholders, 2 developers</dd></div>
+          <div class="case-meta__row"><dt class="caps">Deliverables</dt><dd>User testing synthesis, coded prototype, design system library</dd></div>
+          <div class="case-meta__row"><dt class="caps">Duration</dt><dd>1 month</dd></div>
+        </dl>
+
+        <a class="link-btn case-hero__cta" href="https://guikerber.github.io/46graus/#/" target="_blank" rel="noopener" data-fade-up>
+          <span class="link-btn__arrow link-btn__arrow--in" aria-hidden="true">↗</span>
+          <span class="link-btn__label">View prototype</span>
+          <span class="link-btn__arrow link-btn__arrow--out" aria-hidden="true">↗</span>
+        </a>
+      </header>
+
+      <figure class="case-figure case-figure--full" data-reveal>
+        <img src="../assets/cases/ai-photographers/cover.webp" alt="The 46graus agent dashboard on a desktop monitor" width="2900" height="1810">
+      </figure>
+
+      <!-- Challenge -->
+      <section class="case-block container" aria-labelledby="challenge">
+        <h2 class="case-block__label caps" id="challenge">Challenge</h2>
+        <div class="case-block__body" data-fade-up>
+          <p>46graus came to me with an AI agent that photographers barely used. Its setup was part of onboarding, and most users quit halfway through.</p>
+          <p>The agent was meant to reply to leads before they went cold, take over the repetitive part of the job and book sessions straight into the calendar.</p>
         </div>
-        <div class="next-arr" data-r style="--d:.35s">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9H15M15 9L10 4M15 9L10 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </section>
+
+      <figure class="case-figure case-figure--full" data-reveal>
+        <img src="../assets/cases/ai-photographers/onboarding-rates.webp" alt="Onboarding: an uploaded rate sheet becomes an editable price table, next to a preview of the agent booking a client" width="2900" height="1800" loading="lazy">
+      </figure>
+
+      <!-- Research -->
+      <section class="case-block container" aria-labelledby="research">
+        <h2 class="case-block__label caps" id="research">Research</h2>
+        <div class="case-block__body" data-fade-up>
+          <p>Stakeholder interviews confirmed the opportunity: photographers spend 3–7 hours a week on sales and booking. The open question was where to draw the line on automation.</p>
+          <p>User interviews answered it. Photography runs on emotional connection. Weddings, newborn shoots and other personal events had to stay personal, while sports, business and small events were fine to automate. A first automatic reply was welcome, as long as it booked a call instead of closing the deal.</p>
+          <p>The design audit found the drop-off: setup asked for long groups of service and price inputs, and the chat lived on its own page, with no context.</p>
+        </div>
+      </section>
+
+      <div class="case-figures" data-reveal>
+        <figure class="case-figure"><img src="../assets/cases/ai-photographers/agent-cards.webp" alt="Agent status, conversion and autonomy cards" width="1440" height="1920" loading="lazy"></figure>
+        <figure class="case-figure"><img src="../assets/cases/ai-photographers/mobile-quote.webp" alt="Adjusting and approving a quote with the agent from a phone" width="1440" height="1920" loading="lazy"></figure>
+      </div>
+
+      <!-- Solution -->
+      <section class="case-block container" aria-labelledby="solution">
+        <h2 class="case-block__label caps" id="solution">Solution</h2>
+        <div class="case-block__body">
+          <ul class="decisions" role="list">
+            <li class="decision" data-fade-up>
+              <h3 class="decision__title heading">Where the agent stops</h3>
+              <p>It replies, schedules and negotiates per service, not as one package. It stops and asks on date conflicts, out-of-range budgets and judgment calls, like a discount in a slow month.</p>
+              <p class="decision__trade"><span class="mono">Trade-off</span>Less automation, more trust. Photographers won't turn on an agent they can't predict.</p>
+            </li>
+            <li class="decision" data-fade-up>
+              <h3 class="decision__title heading">Price is never invented</h3>
+              <p>Prices come only from each service's table, with a flexibility range the photographer sets.</p>
+              <p class="decision__trade"><span class="mono">Trade-off</span>A simple yes/no rule, so photographers trust the agent won't misquote.</p>
+            </li>
+            <li class="decision" data-fade-up>
+              <h3 class="decision__title heading">Smart onboarding</h3>
+              <p>Most photographers already have a rate sheet or website. Uploading it auto-fills the inputs that used to slow setup down.</p>
+              <p class="decision__trade"><span class="mono">Trade-off</span>Still needs a quick review in case something is misread.</p>
+            </li>
+            <li class="decision" data-fade-up>
+              <h3 class="decision__title heading">Dashboard and chat, together</h3>
+              <p>The chat moved next to the dashboard, so the agent answers with leads, calendar conflicts and charts in view.</p>
+              <p class="decision__trade"><span class="mono">Trade-off</span>Less room for each part, so the screen gets denser.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <figure class="case-figure case-figure--full" data-reveal>
+        <img src="../assets/cases/ai-photographers/dashboard-chat.webp" alt="Agent dashboard with conversion, autonomy and inbound status, and the chat open beside it" width="2900" height="1800" loading="lazy">
+      </figure>
+
+      <div class="case-figures" data-reveal>
+        <figure class="case-figure"><img src="../assets/cases/ai-photographers/chat-counter-offer.webp" alt="Chat history and a counter-offer drafted by the agent" width="1200" height="1200" loading="lazy"></figure>
+        <figure class="case-figure"><img src="../assets/cases/ai-photographers/screens-overview.webp" alt="Six product screens: conversations, connections, client details, plans and agent settings" width="1200" height="1200" loading="lazy"></figure>
+        <figure class="case-figure"><img src="../assets/cases/ai-photographers/chat-states.webp" alt="Chat panel states: a new chat, a dashboard summary and a quote ready to approve" width="1200" height="1200" loading="lazy"></figure>
+        <figure class="case-figure"><img src="../assets/cases/ai-photographers/plans.webp" alt="Studio and Studio Pro subscription plans" width="1200" height="1200" loading="lazy"></figure>
+      </div>
+
+      <!-- Impact -->
+      <section class="case-block container" aria-labelledby="impact">
+        <h2 class="case-block__label caps" id="impact">Impact</h2>
+        <div class="case-block__body" data-fade-up>
+          <p>Time to value dropped 35%, and the agent now handles 61% of inquiries end to end, up from 22%. Half of photographers automated at least one service. They keep the conversations that matter and hand off the rest.</p>
+        </div>
+      </section>
+
+      <!-- Learnings -->
+      <section class="case-block container" aria-labelledby="learnings">
+        <h2 class="case-block__label caps" id="learnings">What I learned</h2>
+        <div class="case-block__body">
+          <ul class="learnings" role="list">
+            <li data-fade-up><strong>Where the AI stops matters more than what it can do.</strong> Clear limits made the agent more useful, not less.</li>
+            <li data-fade-up><strong>Simple rules beat smart ones at launch.</strong> A yes/no on pricing was easier to explain, test and trust.</li>
+            <li data-fade-up><strong>AI prototyping works once the design system is wired in.</strong> Rules that force real components and semantic tokens kept Claude Code from inventing UI.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Next -->
+      <nav class="case-next container" aria-label="Next project">
+        <a class="case-next__link" href="../staking-marketplace/" data-transition-label="BTC Staking Marketplace">
+          <span class="case-next__label caps">Next project</span>
+          <span class="case-next__title display">BTC Staking Marketplace</span>
+          <span class="case-next__meta mono">Mobile app (iOS) · Crypto · Fintech</span>
+        </a>
+      </nav>
+    </article>
+
+    <footer class="footer" id="contact" aria-labelledby="contact-title">
+      <canvas class="footer__lines" aria-hidden="true"></canvas>
+      <div class="container footer__inner">
+        <div class="footer__top">
+          <p class="footer__label caps">Contact</p>
+          <h2 class="footer__title display" id="contact-title">
+            <span class="footer__mask"><span class="footer__line">Say hello at</span></span>
+            <span class="footer__email-line">
+              <button class="footer__email" type="button" data-copy-email="contact@guikerber.com" aria-describedby="copy-hint">
+                <span class="footer__email-text">contact@guikerber.com</span>
+                <span class="footer__copied mono" aria-hidden="true">Copied</span>
+              </button>
+            </span>
+          </h2>
+          <span class="sr-only" id="copy-hint">Copies the email address</span>
+          <span class="sr-only" aria-live="polite" data-copy-status></span>
+        </div>
+
+        <div class="footer__body">
+          <p class="footer__desc">Open to freelance projects, full-time positions, and creative collaborations. If you have a product problem that needs attention, let’s talk.</p>
+          <div class="footer__social">
+            <a class="link-btn link-btn--sm" href="https://www.linkedin.com/in/guikerber/" target="_blank" rel="noopener">
+              <span class="link-btn__arrow link-btn__arrow--in" aria-hidden="true">↗</span>
+              <span class="link-btn__label">LinkedIn</span>
+              <span class="link-btn__arrow link-btn__arrow--out" aria-hidden="true">↗</span>
+            </a>
+            <a class="link-btn link-btn--sm" href="https://dribbble.com/kerber" target="_blank" rel="noopener">
+              <span class="link-btn__arrow link-btn__arrow--in" aria-hidden="true">↗</span>
+              <span class="link-btn__label">Dribbble</span>
+              <span class="link-btn__arrow link-btn__arrow--out" aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer__bar mono">
+          <span>© 2026 Guilherme Kerber</span>
+          <a class="footer__top-link" href="#main">Back to top ↑</a>
         </div>
       </div>
-    </a>
-  </section>
+    </footer>
+  </main>
 
-</main>
+  <div class="copy-puck" aria-hidden="true">
+    <svg class="copy-puck__copy" viewBox="0 0 16 16" fill="none"><rect x="5.6" y="5.6" width="7.8" height="7.8" rx="1.6" stroke="currentColor" stroke-width="1.3"/><path d="M10.4 5.6V4A1.5 1.5 0 0 0 8.9 2.5H4A1.5 1.5 0 0 0 2.5 4v4.9A1.5 1.5 0 0 0 4 10.4h1.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+    <svg class="copy-puck__check" viewBox="0 0 16 16" fill="none"><path d="M3.6 8.4l2.9 2.9L12.4 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
 
-<script>
-document.documentElement.classList.add('js');
+  <svg class="sprite" aria-hidden="true">
+    <symbol id="logo-mark" viewBox="0 0 27 26.7773">
+      <path fill="currentColor" fill-rule="evenodd" d="M23.6533 0C25.5015 0.000230991 26.9998 1.49846 27 3.34668V23.4297C27 25.2781 25.5017 26.7771 23.6533 26.7773H3.34668C1.49832 26.7771 0 25.2781 0 23.4297V3.34668C0.00023112 1.49846 1.49846 0.000231099 3.34668 0H23.6533ZM12.3516 4.68652C12.3514 4.34856 11.9897 4.13304 11.6924 4.29395L6.48145 7.11523C6.3376 7.19328 6.24805 7.34413 6.24805 7.50781V21.9736C6.24805 22.3153 6.61656 22.5303 6.91406 22.3623L20.749 14.5479C20.8888 14.4687 20.9754 14.3208 20.9756 14.1602V9.83398C20.9754 9.49138 20.605 9.27706 20.3076 9.44727L17.2646 11.1885C16.9671 11.3587 16.5967 11.1436 16.5967 10.8008V7.11523C16.5967 6.76916 16.2194 6.55461 15.9219 6.73145L13.0254 8.45312C12.728 8.62957 12.3516 8.41526 12.3516 8.06934V4.68652ZM18.7441 17.8916C17.5118 17.8916 16.5127 18.8907 16.5127 20.123C16.5128 21.3553 17.5118 22.3545 18.7441 22.3545C19.9762 22.3542 20.9745 21.3552 20.9746 20.123C20.9746 18.8908 19.9763 17.8918 18.7441 17.8916Z"/>
+    </symbol>
+  </svg>
 
-/* Reveal */
-var io = new IntersectionObserver(function (es) {
-  es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-}, { threshold: 0, rootMargin: '0px 0px -8% 0px' });
-document.querySelectorAll('[data-r]').forEach(function (el) { io.observe(el); });
-window.addEventListener('load', function () {
-  setTimeout(function () {
-    document.querySelectorAll('[data-r]:not(.in)').forEach(function (el) {
-      if (el.getBoundingClientRect().top < innerHeight * 1.2) el.classList.add('in');
-    });
-  }, 600);
-});
-
-/* Projects panel */
-var pb = document.getElementById('navProjectsBtn'),
-    pd = document.getElementById('navPanelDrawer'),
-    po = document.getElementById('navPanelOverlay');
-function closePanel() { pd.classList.remove('is-open'); po.classList.remove('is-open'); pb.setAttribute('aria-expanded', 'false'); }
-pb.addEventListener('click', function () {
-  if (pd.classList.contains('is-open')) { closePanel(); return; }
-  pd.classList.add('is-open'); po.classList.add('is-open'); pb.setAttribute('aria-expanded', 'true');
-});
-po.addEventListener('click', closePanel);
-document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closePanel(); });
-
-/* ── Slider ──────────────────────────────────────────────
-   One animation loop owns the scroll position. Drag moves it 1:1,
-   everything else sets a target and the loop eases toward it — that
-   easing is what keeps wheel, keys and the throw from feeling stiff. */
-(function () {
-  var wrap = document.getElementById('sliderWrap'),
-      sl   = document.getElementById('slider'),
-      cur  = document.getElementById('dragCursor');
-  if (!sl) return;
-
-  var reduce = matchMedia('(prefers-reduced-motion: reduce)');
-  var fine   = matchMedia('(hover: hover) and (pointer: fine)').matches;
-
-  var EASE  = 0.12;   /* how much of the remaining distance per frame */
-  var THROW = 16;     /* how far a flick carries */
-
-  function maxScroll() { return sl.scrollWidth - sl.clientWidth; }
-  function clamp(v) { return Math.max(0, Math.min(maxScroll(), v)); }
-  function edge() { wrap.classList.toggle('at-end', sl.scrollLeft >= maxScroll() - 2); }
-
-  var target = sl.scrollLeft, raf = 0;
-
-  function run() {
-    var diff = target - sl.scrollLeft;
-    if (Math.abs(diff) < 0.5) { sl.scrollLeft = target; raf = 0; edge(); return; }
-    sl.scrollLeft += diff * EASE;
-    edge();
-    raf = requestAnimationFrame(run);
-  }
-  function glide(to) {
-    target = clamp(to);
-    if (reduce.matches) { sl.scrollLeft = target; edge(); return; }
-    if (!raf) raf = requestAnimationFrame(run);
-  }
-  function stop() {
-    if (raf) { cancelAnimationFrame(raf); raf = 0; }
-    target = sl.scrollLeft;
-  }
-  function here() { return raf ? target : sl.scrollLeft; }
-
-  /* Arrow cursor follows the pointer while it is over the slider */
-  if (fine) {
-    sl.addEventListener('pointerenter', function () { cur.classList.add('is-on'); });
-    sl.addEventListener('pointerleave', function () { cur.classList.remove('is-on', 'is-grabbing'); });
-    sl.addEventListener('pointermove', function (e) {
-      cur.style.transform = 'translate(' + e.clientX + 'px,' + e.clientY + 'px) translate(-50%,-50%)' +
-                            (cur.classList.contains('is-grabbing') ? ' scale(.9)' : '');
-    });
-  }
-
-  /* ── Click and drag (mouse and pen; touch keeps native scrolling) ── */
-  var down = false, startX = 0, startLeft = 0, lastX = 0, lastT = 0, vel = 0;
-
-  sl.addEventListener('pointerdown', function (e) {
-    if (e.button !== 0 || e.pointerType === 'touch') return;
-    stop();
-    down = true;
-    startX = lastX = e.clientX;
-    startLeft = sl.scrollLeft;
-    lastT = performance.now();
-    vel = 0;
-    sl.classList.add('is-dragging');
-    cur.classList.add('is-grabbing');
-    try { sl.setPointerCapture(e.pointerId); } catch (err) {}
-  });
-
-  sl.addEventListener('pointermove', function (e) {
-    if (!down) return;
-    sl.scrollLeft = clamp(startLeft - (e.clientX - startX));
-    var now = performance.now(), dt = now - lastT;
-    if (dt > 0) {
-      /* px per 16ms frame, smoothed so one jittery sample can't throw it */
-      vel = vel * 0.7 + ((lastX - e.clientX) / dt * 16) * 0.3;
-      lastX = e.clientX;
-      lastT = now;
-    }
-    edge();
-  });
-
-  function release(e) {
-    if (!down) return;
-    down = false;
-    sl.classList.remove('is-dragging');
-    cur.classList.remove('is-grabbing');
-    if (e && e.pointerId != null) {
-      try { if (sl.hasPointerCapture(e.pointerId)) sl.releasePointerCapture(e.pointerId); } catch (err) {}
-    }
-    /* A slow release should just stop, not drift */
-    if (Math.abs(vel) < 0.4) { target = sl.scrollLeft; edge(); return; }
-    glide(sl.scrollLeft + vel * THROW);
-  }
-  sl.addEventListener('pointerup', release);
-  sl.addEventListener('pointercancel', release);
-
-  /* A vertical wheel over the slider moves it sideways */
-  sl.addEventListener('wheel', function (e) {
-    if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
-    var t = here();
-    /* At either end, hand the gesture back to the page */
-    if ((t <= 0 && e.deltaY < 0) || (t >= maxScroll() && e.deltaY > 0)) return;
-    e.preventDefault();
-    glide(t + e.deltaY);
-  }, { passive: false });
-
-  /* Keyboard: one card per press, Home/End to the edges */
-  sl.addEventListener('keydown', function (e) {
-    var card = sl.querySelector('.slide');
-    if (!card) return;
-    var gap  = parseFloat(getComputedStyle(sl).columnGap) || 0;
-    var step = card.getBoundingClientRect().width + gap;
-    if (e.key === 'ArrowRight')     { e.preventDefault(); glide(here() + step); }
-    else if (e.key === 'ArrowLeft') { e.preventDefault(); glide(here() - step); }
-    else if (e.key === 'Home')      { e.preventDefault(); glide(0); }
-    else if (e.key === 'End')       { e.preventDefault(); glide(maxScroll()); }
-  });
-
-  /* Touch and trackpad scroll the element natively — keep the target in step */
-  sl.addEventListener('scroll', function () {
-    if (!raf && !down) target = sl.scrollLeft;
-    edge();
-  }, { passive: true });
-
-  addEventListener('resize', function () { target = clamp(target); edge(); });
-  edge();
-})();
-</script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+  <script type="module" src="../js/case.js"></script>
 </body>
 </html>

@@ -1,73 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  <url>
-    <loc>https://guikerber.com/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://guikerber.com/"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://guikerber.com/pt/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://guikerber.com/"/>
-    <lastmod>2026-09-28</lastmod>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://guikerber.com/pt/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://guikerber.com/"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://guikerber.com/pt/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://guikerber.com/"/>
-    <lastmod>2026-09-28</lastmod>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://guikerber.com/ai-front-desk/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://guikerber.com/ai-front-desk/"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://guikerber.com/pt/ai-front-desk/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://guikerber.com/ai-front-desk/"/>
-    <lastmod>2026-09-28</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://guikerber.com/pt/ai-front-desk/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://guikerber.com/ai-front-desk/"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://guikerber.com/pt/ai-front-desk/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://guikerber.com/ai-front-desk/"/>
-    <lastmod>2026-09-28</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://guikerber.com/staking-marketplace/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://guikerber.com/staking-marketplace/"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://guikerber.com/pt/staking-marketplace/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://guikerber.com/staking-marketplace/"/>
-    <lastmod>2026-09-28</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://guikerber.com/pt/staking-marketplace/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://guikerber.com/staking-marketplace/"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://guikerber.com/pt/staking-marketplace/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://guikerber.com/staking-marketplace/"/>
-    <lastmod>2026-09-28</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://guikerber.com/cross-platform-coaching/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://guikerber.com/cross-platform-coaching/"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://guikerber.com/pt/cross-platform-coaching/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://guikerber.com/cross-platform-coaching/"/>
-    <lastmod>2026-09-28</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://guikerber.com/pt/cross-platform-coaching/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://guikerber.com/cross-platform-coaching/"/>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://guikerber.com/pt/cross-platform-coaching/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://guikerber.com/cross-platform-coaching/"/>
-    <lastmod>2026-09-28</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://guikerber.com/design-system.html</loc>
-    <lastmod>2026-09-28</lastmod>
-    <priority>0.3</priority>
-  </url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://guikerber.com/</loc><lastmod>2026-10-08</lastmod></url>
+  <url><loc>https://guikerber.com/ai-front-desk/</loc><lastmod>2026-10-08</lastmod></url>
+  <url><loc>https://guikerber.com/staking-marketplace/</loc><lastmod>2026-10-08</lastmod></url>
+  <url><loc>https://guikerber.com/cross-platform-coaching/</loc><lastmod>2026-10-08</lastmod></url>
 </urlset>

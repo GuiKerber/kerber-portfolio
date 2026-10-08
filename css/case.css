@@ -1,0 +1,204 @@
+/* ============ Case study page ============ */
+/* Layout: a label column on the left, content on the right, with full-bleed
+   images between text blocks. Every value comes from tokens.css. */
+
+.case { padding-bottom: var(--section-pad-lg); }
+
+/* ---- Intro ---- */
+.case-hero {
+  padding-top: var(--space-35);
+  padding-bottom: var(--section-pad);
+}
+@media (min-width: 1024px) {
+  .case-hero { padding-top: var(--space-45); }
+}
+.case-hero__eyebrow { color: var(--color-text-muted); }
+.case-hero__title {
+  max-width: var(--title-measure);
+  margin-top: var(--space-6);
+  font-size: var(--fs-title);
+  color: var(--color-text);
+}
+.case-hero__dek {
+  max-width: var(--case-text-w);
+  margin-top: var(--space-8);
+  font-size: var(--fs-lead);
+  line-height: var(--lh-reading);
+  color: var(--color-text-muted);
+}
+.case-hero__cta { margin-top: var(--space-8); }
+
+/* Impact list: big numbers lead the page */
+.impact {
+  display: grid;
+  gap: var(--space-8);
+  margin: var(--section-pad) 0 0;
+  padding-top: var(--space-8);
+  border-top: var(--hairline) solid var(--color-border);
+}
+@media (min-width: 768px) {
+  .impact { grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
+}
+.impact__item { display: flex; flex-direction: column; gap: var(--space-2); }
+.impact__item dt {
+  order: 1;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+.impact__value {
+  order: 0;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-impact);
+  letter-spacing: var(--ls-impact);
+  line-height: var(--lh-none);
+  color: var(--color-text-strong);
+}
+.impact__note {
+  order: 2;
+  margin: 0;
+  max-width: var(--note-measure);
+  color: var(--color-text-muted);
+  font-size: var(--fs-note);
+}
+
+/* Meta table: label / value rows */
+.case-meta {
+  margin: var(--section-pad) 0 0;
+  max-width: calc(var(--case-label-w) + var(--case-text-w));
+}
+.case-meta__row {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3) 0;
+  border-bottom: var(--hairline) solid var(--color-border);
+}
+@media (min-width: 768px) {
+  .case-meta__row { grid-template-columns: var(--case-label-w) 1fr; gap: var(--space-6); align-items: baseline; }
+}
+.case-meta__row dt { color: var(--color-text-muted); font-size: var(--fs-label); }
+.case-meta__row dd { margin: 0; color: var(--color-text); }
+
+/* ---- Figures ---- */
+.case-figure {
+  margin: 0;
+  overflow: hidden;
+  background: var(--color-bg-media);
+}
+/* Each image keeps its own proportion (from its width/height attributes):
+   full 2900x1800, side-by-side 3:4, grid 1:1 */
+.case-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.case-figure--gap { margin-top: var(--gap-figures); }
+.case-figures {
+  display: grid;
+  gap: var(--gap-figures);
+  margin-top: var(--gap-figures);
+}
+@media (min-width: 768px) {
+  .case-figures { grid-template-columns: 1fr 1fr; }
+}
+
+/* ---- Text blocks ---- */
+.case-block {
+  display: grid;
+  gap: var(--space-4);
+  padding-top: var(--section-pad);
+  padding-bottom: var(--section-pad);
+}
+@media (min-width: 768px) {
+  .case-block { grid-template-columns: var(--case-label-w) 1fr; gap: var(--space-6); padding-top: var(--section-pad-lg); padding-bottom: var(--section-pad-lg); }
+}
+.case-block__label {
+  margin: 0;
+  padding-top: 0.4em; /* optical: sits on the first line of the body */
+  font-size: var(--fs-label);
+  color: var(--color-text-muted);
+}
+.case-block__body { max-width: var(--case-text-w); }
+.case-block__body > p {
+  font-size: var(--fs-lead);
+  line-height: var(--lh-reading);
+  color: var(--color-text);
+}
+.case-block__body > * + * { margin-top: var(--space-6); }
+.case-block__sub {
+  font-size: var(--fs-subheading);
+  color: var(--color-text-strong);
+}
+.case-block__body > .case-block__sub + * { margin-top: var(--space-4); }
+.case-block__body > .case-block__note { font-size: var(--fs-mono); color: var(--color-text-muted); }
+
+/* Bullet list with a short dash marker */
+.case-list { display: grid; gap: var(--space-3); }
+.case-list li {
+  position: relative;
+  padding-left: 1.5em;
+  font-size: var(--fs-lead);
+  line-height: var(--lh-reading);
+  color: var(--color-text);
+}
+.case-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.8em;
+  width: 0.7em;
+  height: var(--hairline);
+  background: var(--color-text-muted);
+}
+
+/* Decision cards */
+.decisions {
+  display: grid;
+  gap: var(--space-8);
+}
+@media (min-width: 768px) {
+  .decisions { grid-template-columns: 1fr 1fr; gap: var(--space-12) var(--space-8); }
+}
+.decision { padding-top: var(--space-4); border-top: var(--hairline) solid var(--color-border); }
+.decision__title {
+  margin: 0 0 var(--space-3);
+  font-size: var(--fs-subheading);
+  color: var(--color-text-strong);
+}
+.decision p { color: var(--color-text-muted); line-height: var(--lh-reading); }
+.decision p.decision__trade { margin-top: var(--space-4); color: var(--color-text); }
+.decision__trade .mono { display: block; margin-bottom: var(--space-1); color: var(--color-text-muted); font-size: var(--fs-caption); }
+
+/* Learnings list */
+.learnings { display: grid; }
+.learnings li {
+  padding: var(--space-6) 0;
+  border-top: var(--hairline) solid var(--color-border);
+  font-size: var(--fs-lead);
+  line-height: var(--lh-reading);
+  color: var(--color-text-muted);
+}
+.learnings li:last-child { border-bottom: var(--hairline) solid var(--color-border); }
+.learnings strong { font-weight: var(--fw-regular); color: var(--color-text-strong); }
+
+/* ---- Next project ---- */
+.case-next { padding-top: var(--space-12); }
+.case-next__link {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-8) 0;
+  border-top: var(--hairline) solid var(--color-border);
+  border-bottom: var(--hairline) solid var(--color-border);
+}
+.case-next__label { color: var(--color-text-muted); font-size: var(--fs-label); }
+.case-next__title {
+  font-size: var(--fs-title);
+  color: var(--color-text-muted);
+  transition: color var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.case-next__meta { color: var(--color-text-muted); }
+.case-next__link:hover .case-next__title,
+.case-next__link:focus-visible .case-next__title { color: var(--color-text-strong); transform: translateX(var(--nudge)); }
