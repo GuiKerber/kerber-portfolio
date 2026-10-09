@@ -10,3 +10,6 @@ Thumbs.db
 desktop.ini
 .vscode/
 .idea/
+
+# Brand image generator (local tool)
+tools/brand/
