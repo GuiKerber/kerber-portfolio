@@ -335,6 +335,15 @@ body.theme-light:not(.menu-open) .header {
 .icon-btn[aria-disabled="true"] { opacity: var(--opacity-disabled); pointer-events: none; }
 .icon-btn svg { width: var(--size-icon); height: var(--size-icon); }
 
+/* ============ Text link (inline) ============ */
+.text-link {
+  color: var(--color-text);
+  border-bottom: var(--hairline) solid var(--color-border);
+  transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+.text-link:hover { color: var(--color-text-strong); border-color: var(--color-text-strong); }
+.text-link:active { opacity: var(--opacity-pressed); }
+
 /* ============ Tag ============ */
 .tags {
   display: flex;

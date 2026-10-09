@@ -202,3 +202,16 @@
 .case-next__meta { color: var(--color-text-muted); }
 .case-next__link:hover .case-next__title,
 .case-next__link:focus-visible .case-next__title { color: var(--color-text-strong); transform: translateX(var(--nudge)); }
+
+/* ---- Resume entry: organisation, role, dates, summary, highlights ---- */
+.entry { display: grid; gap: var(--space-4); }
+.entry + .entry {
+  margin-top: var(--space-12);
+  padding-top: var(--space-12);
+  border-top: var(--hairline) solid var(--color-border);
+}
+.entry__head { display: grid; gap: var(--space-1); }
+.entry__org { font-size: var(--fs-subheading); color: var(--color-text-strong); }
+.entry__role { font-size: var(--fs-lead); color: var(--color-text); }
+.entry__meta { margin-top: var(--space-1); color: var(--color-text-muted); }
+.entry > p { font-size: var(--fs-lead); line-height: var(--lh-reading); color: var(--color-text-muted); }
