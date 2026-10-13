@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Photographers Assistant · Slides · Guilherme Kerber</title>
+  <!-- Unlisted: no link from the site, kept out of search and the sitemap -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Case study slides: redesigning the 46graus AI agent so photographers trust it with leads, quotes and bookings.">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Guilherme Kerber">
+  <meta property="og:title" content="AI Photographers Assistant · Slides">
+  <meta property="og:description" content="Case study slides: redesigning the 46graus AI agent so photographers trust it with leads, quotes and bookings.">
+  <meta property="og:image" content="https://guikerber.com/assets/og/ai-photographers.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500&family=Martian+Mono:wght@400&family=Inter+Tight:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/tokens.css">
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/case.css">
+  <link rel="stylesheet" href="../../css/slides.css">
+</head>
+<body class="deck-page">
+  <a class="skip-link" href="#main">Skip to slides</a>
+
+  <div class="deck" data-theme="dark">
+    <canvas class="deck__lines" aria-hidden="true"></canvas>
+
+    <header class="deck__top">
+      <div class="logo deck__brand">
+        <svg class="logo__mark" viewBox="0 0 27 26.7773" aria-hidden="true"><use href="#logo-mark"/></svg>
+        <span class="logo__word">GUI KERBER<sup>®</sup></span>
+      </div>
+      <p class="deck__status mono">
+        <span class="deck__chapter" data-deck-chapter>Intro</span>
+        <span class="deck__count" data-deck-count>01 / 28</span>
+      </p>
+    </header>
+
+    <main class="slides" id="main" aria-label="AI Photographers Assistant, case study slides" tabindex="-1">
+
+      <!-- ============ Intro ============ -->
+
+      <section class="slide" data-theme="dark" data-chapter="Intro" data-lines aria-roledescription="slide" aria-label="Cover">
+        <div class="slide__inner slide__inner--split slide__inner--split-even">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Case study · 46graus · 2026</p>
+            <h1 class="slide__statement display" data-in="words">AI Photographers Assistant</h1>
+            <p class="slide__lead slide__lead--muted" data-in="up">Redesigning an AI agent so photographers trust it with leads, quotes and bookings.</p>
+            <dl class="case-meta" data-in="up">
+              <div class="case-meta__row"><dt class="caps">Role</dt><dd>Product designer: UI/UX, AI definitions, AI prototype</dd></div>
+              <div class="case-meta__row"><dt class="caps">Team</dt><dd>Me, 2 stakeholders, 2 developers</dd></div>
+              <div class="case-meta__row"><dt class="caps">Duration</dt><dd>1 month</dd></div>
+            </dl>
+          </div>
+          <figure class="slide-figure" data-in="clip">
+            <img src="../../assets/cases/ai-photographers/cover.webp" alt="The 46graus agent dashboard on a desktop monitor" width="2900" height="1810">
+          </figure>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Intro" aria-roledescription="slide" aria-label="Context" hidden>
+        <div class="slide__inner slide__inner--split slide__inner--split-even">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Intro · Context</p>
+            <h2 class="slide__title display" data-in="words">An AI agent inside a platform for photographers</h2>
+          </div>
+          <div class="slide__col">
+            <p class="slide__lead slide__lead--muted" data-in="up">46graus is a digital platform for photographers. Around its website builder, it offers integrated tools, and the newest one is an AI agent that answers leads, sends quotes and books sessions.</p>
+            <ul class="rows" role="list" aria-label="46graus tools" data-in="up">
+              <li><span class="rows__main">Website builder</span><span class="rows__side mono">Core</span></li>
+              <li><span class="rows__main">Online store and blog</span><span class="rows__side mono">Tools</span></li>
+              <li><span class="rows__main">Image proofing for clients</span><span class="rows__side mono">Tools</span></li>
+              <li><span class="rows__main">AI agent</span><span class="rows__side mono">New · this project</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Intro" aria-roledescription="slide" aria-label="Project timeline" hidden>
+        <div class="slide__inner">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Intro · Timeline</p>
+            <h2 class="slide__title slide__title--wide display" data-in="words">One month, from listening to a working prototype</h2>
+          </div>
+          <figure class="timeline" aria-label="Project timeline over four weeks">
+            <div class="timeline__weeks mono" aria-hidden="true" data-in="up">
+              <span>Week 1</span><span>Week 2</span><span>Week 3</span><span>Week 4</span>
+            </div>
+            <!-- Each bar runs on day lines 1 to 29: --start is its first day, --end the day after its last -->
+            <ol class="timeline__rows" role="list">
+              <li class="timeline__row" style="--start: 1; --end: 8">
+                <p class="timeline__label" data-in="up"><span class="timeline__name heading">Research</span> <span class="timeline__desc">Interviews, design audit, survey</span> <span class="timeline__when mono">Days 1 to 7</span></p>
+                <span class="timeline__bar" data-in="wipe"></span>
+              </li>
+              <li class="timeline__row" style="--start: 5; --end: 9">
+                <p class="timeline__label" data-in="up"><span class="timeline__name heading">Synthesis</span> <span class="timeline__desc">Personas, problem, goal</span> <span class="timeline__when mono">Days 5 to 8</span></p>
+                <span class="timeline__bar" data-in="wipe"></span>
+              </li>
+              <li class="timeline__row" style="--start: 8; --end: 29">
+                <p class="timeline__label" data-in="up"><span class="timeline__name heading">UI design and prototype</span> <span class="timeline__desc">Onboarding, dashboard and chat, designed straight in code with the real components</span> <span class="timeline__when mono">Days 8 to 28</span></p>
+                <span class="timeline__bar" data-in="wipe"></span>
+              </li>
+            </ol>
+          </figure>
+        </div>
+      </section>
+
+      <!-- ============ Discovery ============ -->
+
+
+      <!-- Each study runs in three steps: problem, goal and method, results -->
+
+      <section class="slide" data-theme="dark" data-chapter="Discovery" aria-roledescription="slide" aria-label="Stakeholder interviews: problem" hidden>
+        <div class="slide__inner">
+          <p class="slide__eyebrow mono" data-in="up">Stakeholder interviews · 01 Problem</p>
+          <h2 class="slide__statement slide__statement--wide display" data-in="words">46graus had an AI agent that few photographers used. <span class="slide__soft">It handled 22% of inquiries on its own, and most people quit its setup halfway.</span></h2>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Discovery" aria-roledescription="slide" aria-label="Stakeholder interviews: goal and method" hidden>
+        <div class="slide__inner slide__inner--split slide__inner--split-even">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Stakeholder interviews · 02 Goal and method</p>
+            <h2 class="slide__title display" data-in="words">Understand the business goal and the problems they were trying to solve</h2>
+          </div>
+          <div class="slide__col">
+            <p class="kv kv--lead" data-in="up"><span class="kv__label mono">Method</span><span class="kv__value">One interview call with both people who decide what the agent can do.</span></p>
+            <ul class="rows" role="list" aria-label="Who I interviewed" data-in="up">
+              <li><span class="rows__main">Miguel Martins</span><span class="rows__side mono">CEO, 46graus</span></li>
+              <li><span class="rows__main">William</span><span class="rows__side mono">Lead Developer, 46graus</span></li>
+            </ul>
+            <p class="kv kv--quiet" data-in="up"><span class="kv__label mono">Tools</span><span class="kv__value">Fireflies.ai · Claude Code</span></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Discovery" aria-roledescription="slide" aria-label="Stakeholder interviews: results" hidden>
+        <div class="slide__inner slide__inner--split slide__inner--split-even">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Stakeholder interviews · 03 Results</p>
+            <h2 class="slide__title display" data-in="words">The opportunity was real</h2>
+            <p class="quote" data-in="up"><span class="quote__by mono">Fact</span><span class="quote__text heading">Photographers lose hours every week to sales admin, work that has nothing to do with taking photos.</span></p>
+            <div class="kv" data-in="up">
+              <p class="kv__label mono">Assumptions to test</p>
+              <ul class="rows rows--compact" role="list" aria-label="Assumptions to test">
+                <li><span class="rows__main">Photographers will let an AI answer every inquiry</span><span class="rows__side mono">User interviews</span></li>
+                <li><span class="rows__main">People quit the setup because it asks too much</span><span class="rows__side mono">Design audit</span></li>
+                <li><span class="rows__main">Most photographers keep their prices in a file</span><span class="rows__side mono">Survey</span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="slide__col">
+            <dl class="impact impact--two" aria-label="Photographers’ workload">
+              <div class="impact__item" data-in="up">
+                <dt>Hours a week</dt>
+                <dd class="impact__value"><span data-count>3</span>–<span data-count>7</span> h</dd>
+                <dd class="impact__note">Spent on sales, follow-ups and booking</dd>
+              </div>
+              <div class="impact__item" data-in="up">
+                <dt>Leads a week</dt>
+                <dd class="impact__value"><span data-count>5</span>–<span data-count>10</span></dd>
+                <dd class="impact__note">Coming in for a busy photographer</dd>
+              </div>
+            </dl>
+            <p class="kv kv--quiet" data-in="up"><span class="kv__label mono">Source</span><span class="kv__value">Desk research, from past studies</span></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Discovery" aria-roledescription="slide" aria-label="User interviews: problem" hidden>
+        <div class="slide__inner">
+          <p class="slide__eyebrow mono" data-in="up">User interviews · 01 Problem</p>
+          <h2 class="slide__statement slide__statement--wide display" data-in="words">The team assumed photographers would let an AI answer every inquiry. <span class="slide__soft">Nobody had asked them.</span></h2>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Discovery" aria-roledescription="slide" aria-label="User interviews: goal and method" hidden>
+        <div class="slide__inner slide__inner--split slide__inner--split-even">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">User interviews · 02 Goal and method</p>
+            <h2 class="slide__title display" data-in="words">Understand how photographers feel about handing client work to an AI agent</h2>
+            <ul class="rows" role="list" aria-label="How the interviews ran" data-in="up">
+              <li><span class="rows__main">6 photographers</span><span class="rows__side mono">Participants</span></li>
+              <li><span class="rows__main">Remote, recorded and transcribed</span><span class="rows__side mono">Format</span></li>
+            </ul>
+            <p class="kv kv--quiet" data-in="up"><span class="kv__label mono">Tools</span><span class="kv__value">Fireflies.ai</span></p>
+          </div>
+          <div class="pair pair--figures">
+            <figure class="slide-figure" data-in="clip">
+              <img src="../../assets/cases/ai-photographers/interview-plan.webp" alt="Interview plan in Notion: background, research goal, research questions and assumptions to test" width="1440" height="1920">
+              <figcaption class="mono">Interview plan</figcaption>
+            </figure>
+            <figure class="slide-figure" data-in="clip">
+              <img src="../../assets/cases/ai-photographers/interview-script.webp" alt="Interview script in Notion: session details, checklist and the first blocks of questions" width="1440" height="1920">
+              <figcaption class="mono">Interview script</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Discovery" aria-roledescription="slide" aria-label="User interviews: results" hidden>
+        <div class="slide__inner slide__inner--split slide__inner--split-even">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">User interviews · 03 Results</p>
+            <h2 class="slide__title display" data-in="words">Everyone would hand off the paperwork. <span class="slide__soft">Letting an AI negotiate depended on the service.</span></h2>
+          </div>
+          <div class="slide__col">
+            <ol class="steps" role="list" aria-label="What photographers said, and the opportunity in each">
+              <li data-in="up"><span class="steps__num mono">01</span><span class="steps__title heading">“Answering leads isn’t a chore to take off my plate. It is the work.” <span class="slide__soft">Wedding photographer</span></span><span class="steps__text">Opportunity: Let each photographer choose, service by service, what the agent handles.</span></li>
+              <li data-in="up"><span class="steps__num mono">02</span><span class="steps__title heading">“The price, what’s included, that’s information. Anyone says it the same way.” <span class="slide__soft">Newborn photographer</span></span><span class="steps__text">Opportunity: Automate factual replies and quotes straight from the price table.</span></li>
+              <li data-in="up"><span class="steps__num mono">03</span><span class="steps__title heading">“It has to be clear to the client that it’s an automatic reply, without pretending it’s me writing.” <span class="slide__soft">Maternity and family photographer</span></span><span class="steps__text">Opportunity: A first reply that introduces itself as an assistant.</span></li>
+              <li data-in="up"><span class="steps__num mono">04</span><span class="steps__title heading">“Booking two sessions on the same day without noticing. That’s the nightmare.” <span class="slide__soft">Newborn and family photographer</span></span><span class="steps__text">Opportunity: Check the calendar before every booking, and ask on any conflict.</span></li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Discovery" aria-roledescription="slide" aria-label="Design audit: problem" hidden>
+        <div class="slide__inner">
+          <p class="slide__eyebrow mono" data-in="up">Design audit · 01 Problem</p>
+          <h2 class="slide__statement slide__statement--wide display" data-in="words">Most people who started the agent setup quit halfway, <span class="slide__soft">and the team didn’t know why.</span></h2>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Discovery" aria-roledescription="slide" aria-label="Design audit: goal and method" hidden>
+        <div class="slide__inner slide__inner--split slide__inner--split-even">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Design audit · 02 Goal and method</p>
+            <h2 class="slide__title display" data-in="words">Find where and why users quit the setup</h2>
+          </div>
+          <div class="slide__col">
+            <p class="kv kv--lead" data-in="up"><span class="kv__label mono">Method</span><span class="kv__value">A screen-by-screen review of the onboarding flow, noting each problem next to a possible fix.</span></p>
+            <ul class="rows" role="list" aria-label="Audit scope" data-in="up">
+              <li><span class="rows__main">The agent onboarding flow</span><span class="rows__side mono">Scope</span></li>
+              <li><span class="rows__main">A problem and a solution note on each screen</span><span class="rows__side mono">Output</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Discovery" aria-roledescription="slide" aria-label="Design audit: results" hidden>
+        <div class="slide__inner slide__inner--split slide__inner--split-even">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Design audit · 03 Results</p>
+            <h2 class="slide__title display" data-in="words">Setup was where people gave up</h2>
+            <ol class="steps" role="list">
+              <li data-in="up"><span class="steps__num mono">01</span><span class="steps__title heading">Long groups of inputs</span><span class="steps__text">Setup asked photographers to type every service, its unit and its price into repeated groups of fields. The more services they offered, the longer it got, and this is where most of them quit.</span></li>
+              <li data-in="up"><span class="steps__num mono">02</span><span class="steps__title heading">Lack of clarity on automations</span><span class="steps__text">Setup never showed what the agent would do on its own and where it would stop. Without knowing what they were turning on, photographers didn’t trust it with their clients.</span></li>
+            </ol>
+          </div>
+          <figure class="slide-figure" data-in="clip">
+            <img src="../../assets/cases/ai-photographers/audit-setup.webp" alt="Audit of the old setup: a long list of service, unit and price fields, with a problem note saying users get lost after adding many services and a solution note proposing to upload the price sheet and fill the list automatically" width="1600" height="1200">
+          </figure>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Discovery" aria-roledescription="slide" aria-label="Survey: problem" hidden>
+        <div class="slide__inner">
+          <p class="slide__eyebrow mono" data-in="up">Survey · 01 Problem</p>
+          <h2 class="slide__statement slide__statement--wide display" data-in="words">The audit pointed at the price inputs, <span class="slide__soft">but we didn’t know where photographers already keep their prices.</span></h2>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Discovery" aria-roledescription="slide" aria-label="Survey: goal and method" hidden>
+        <div class="slide__inner slide__inner--split slide__inner--split-even">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Survey · 02 Goal and method</p>
+            <h2 class="slide__title display" data-in="words">Learn where photographers keep their prices and how they share them</h2>
+            <p class="kv kv--lead" data-in="up"><span class="kv__label mono">Method</span><span class="kv__value">A multiple-choice survey with 100 photographers, more than one answer allowed, before redesigning the fields.</span></p>
+          </div>
+          <div class="slide__col">
+            <ol class="steps" role="list" aria-label="Survey questions">
+              <li data-in="up"><span class="steps__num mono">Q1</span><span class="steps__title heading">Where do you keep your price table?</span><span class="steps__text">PDF or image file · On my website · Spreadsheet · Other</span></li>
+              <li data-in="up"><span class="steps__num mono">Q2</span><span class="steps__title heading">How do clients get your prices?</span><span class="steps__text">By message · On a call · A pricing page · A PDF price list</span></li>
+              <li data-in="up"><span class="steps__num mono">Q3</span><span class="steps__title heading">How do you build your prices?</span><span class="steps__text">Fixed packages · Hourly or daily rate · Custom quote · Other</span></li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Discovery" aria-roledescription="slide" aria-label="Survey: results" hidden>
+        <div class="slide__inner">
+          <div class="slide-head-split">
+            <div class="slide__col">
+              <p class="slide__eyebrow mono" data-in="up">Survey · 03 Results</p>
+              <h2 class="slide__title display" data-in="words">Prices already live in a file</h2>
+            </div>
+            <div class="slide__col">
+              <p class="slide__lead slide__lead--muted" data-in="up">75% keep prices in a PDF or image, and 89% send them by message. Setup should start from the file they already have.</p>
+            </div>
+          </div>
+          <div class="slide-grid" aria-label="Survey results">
+            <section class="survey__q" data-in="up" aria-labelledby="sq1">
+              <p class="survey__num mono">Question 1</p>
+              <h3 class="survey__title heading" id="sq1">Where do you keep your price table?</h3>
+              <ul class="survey__options survey__options--results" role="list">
+                <li><span>PDF or image file</span><span class="survey__pct mono">75%</span><span class="survey__bar" aria-hidden="true"><span data-in="wipe" style="--value: 75%"></span></span></li>
+                <li><span>On my website</span><span class="survey__pct mono">42%</span><span class="survey__bar" aria-hidden="true"><span data-in="wipe" style="--value: 42%"></span></span></li>
+                <li><span>Spreadsheet</span><span class="survey__pct mono">23%</span><span class="survey__bar" aria-hidden="true"><span data-in="wipe" style="--value: 23%"></span></span></li>
+                <li><span>Other</span><span class="survey__pct mono">37%</span><span class="survey__bar" aria-hidden="true"><span data-in="wipe" style="--value: 37%"></span></span></li>
+              </ul>
+            </section>
+            <section class="survey__q" data-in="up" aria-labelledby="sq2">
+              <p class="survey__num mono">Question 2</p>
+              <h3 class="survey__title heading" id="sq2">How do clients get your prices?</h3>
+              <ul class="survey__options survey__options--results" role="list">
+                <li><span>By message, when they ask</span><span class="survey__pct mono">89%</span><span class="survey__bar" aria-hidden="true"><span data-in="wipe" style="--value: 89%"></span></span></li>
+                <li><span>On a call</span><span class="survey__pct mono">48%</span><span class="survey__bar" aria-hidden="true"><span data-in="wipe" style="--value: 48%"></span></span></li>
+                <li><span>A pricing page on my website</span><span class="survey__pct mono">42%</span><span class="survey__bar" aria-hidden="true"><span data-in="wipe" style="--value: 42%"></span></span></li>
+                <li><span>A PDF price list</span><span class="survey__pct mono">22%</span><span class="survey__bar" aria-hidden="true"><span data-in="wipe" style="--value: 22%"></span></span></li>
+              </ul>
+            </section>
+            <section class="survey__q" data-in="up" aria-labelledby="sq3">
+              <p class="survey__num mono">Question 3</p>
+              <h3 class="survey__title heading" id="sq3">How do you build your prices?</h3>
+              <ul class="survey__options survey__options--results" role="list">
+                <li><span>Fixed packages per service</span><span class="survey__pct mono">79%</span><span class="survey__bar" aria-hidden="true"><span data-in="wipe" style="--value: 79%"></span></span></li>
+                <li><span>Hourly or daily rate</span><span class="survey__pct mono">74%</span><span class="survey__bar" aria-hidden="true"><span data-in="wipe" style="--value: 74%"></span></span></li>
+                <li><span>Custom quote for each client</span><span class="survey__pct mono">24%</span><span class="survey__bar" aria-hidden="true"><span data-in="wipe" style="--value: 24%"></span></span></li>
+                <li><span>Other</span><span class="survey__pct mono">13%</span><span class="survey__bar" aria-hidden="true"><span data-in="wipe" style="--value: 13%"></span></span></li>
+              </ul>
+            </section>
+          </div>
+          <p class="kv kv--quiet" data-in="up"><span class="kv__label mono">Sample</span><span class="kv__value">100 photographers · More than one answer allowed, so each question adds up to more than 100%</span></p>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Discovery" aria-roledescription="slide" aria-label="Synthesis" hidden>
+        <div class="slide__inner slide__inner--split slide__inner--split-even">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Discovery · Synthesis</p>
+            <h2 class="slide__title display" data-in="words">From transcripts to patterns</h2>
+            <ol class="steps" role="list">
+              <li data-in="up"><span class="steps__num mono">01</span><span class="steps__title heading">Gather</span><span class="steps__text">Interview transcripts from Fireflies.ai, audit notes and survey answers, in one place.</span></li>
+              <li data-in="up"><span class="steps__num mono">02</span><span class="steps__title heading">Extract</span><span class="steps__text">Claude Code read every transcript and pulled out quotes, pains and needs, each tagged to its participant.</span></li>
+              <li data-in="up"><span class="steps__num mono">03</span><span class="steps__title heading">Cluster</span><span class="steps__text">It laid them out as an affinity map in FigJam, grouped by theme.</span></li>
+              <li data-in="up"><span class="steps__num mono">04</span><span class="steps__title heading">Review</span><span class="steps__text">I checked every cluster against the transcripts, merged overlaps and named the themes.</span></li>
+            </ol>
+            <p class="kv kv--quiet" data-in="up"><span class="kv__label mono">Tools</span><span class="kv__value">Fireflies.ai · Claude Code · FigJam</span></p>
+          </div>
+          <figure class="slide-figure" data-in="clip">
+            <img src="../../assets/cases/ai-photographers/affinity-map.webp" alt="The 46graus UX board in FigJam: an affinity map of research notes color-coded by source and grouped into eight themes, next to a pains and needs board and the persona cards" width="1600" height="1200">
+          </figure>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Discovery" aria-roledescription="slide" aria-label="Insight 1: emotional connection" hidden>
+        <div class="slide__inner slide__inner--split slide__inner--split-even">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Discovery · Insight 1</p>
+            <h2 class="slide__title display" data-in="words">Photography runs on emotional connection</h2>
+            <p class="slide__lead slide__lead--muted" data-in="up">A wedding or a newborn’s first days happen once, so clients want to feel a bond with the photographer before they hire. Photographers would hand off facts and paperwork, but not the conversation that builds that bond.</p>
+            <p class="quote" data-in="up"><span class="quote__by mono">Wedding photographer</span><span class="quote__text heading">“Good photos are everywhere. What the client is buying is me.”</span></p>
+          </div>
+          <div class="slide__col">
+            <div class="spectrum">
+              <div class="spectrum__axis caps" data-in="up">
+                <span>Keep personal</span>
+                <span class="spectrum__line" data-in="wipe" aria-hidden="true"></span>
+                <span>Fine to automate</span>
+              </div>
+              <div class="spectrum__groups">
+                <ul class="tags" role="list" aria-label="Keep personal" data-in="up">
+                  <li class="tag">The first conversation</li>
+                  <li class="tag">Discounts</li>
+                  <li class="tag">Weddings</li>
+                </ul>
+                <ul class="tags" role="list" aria-label="Fine to automate" data-in="up">
+                  <li class="tag">Fixed prices</li>
+                  <li class="tag">Free dates</li>
+                  <li class="tag">Contracts and reminders</li>
+                </ul>
+              </div>
+            </div>
+            <p class="kv kv--quiet" data-in="up"><span class="kv__label mono">Next</span><span class="kv__value">How far each photographer moved along this line became the two personas, Ana and Rafael, on the FigJam board.</span></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Discovery" aria-roledescription="slide" aria-label="Insight 2: book a call, don't close" hidden>
+        <div class="slide__inner">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Discovery · Insight 2</p>
+            <h2 class="slide__title slide__title--wide display" data-in="words">A first reply is welcome. <span class="slide__soft">Closing the deal is not.</span></h2>
+            <p class="slide__lead slide__lead--muted" data-in="up">An automatic first reply was fine if it was honest about being automatic and stuck to facts. Negotiating and closing stayed with the photographer. After that, the paperwork could go back to the agent.</p>
+          </div>
+          <ol class="flow" role="list" aria-label="Who does what">
+            <li class="flow__step" data-in="up"><span class="flow__who mono">Lead</span>Asks about a date</li>
+            <li class="flow__step" data-in="up"><span class="flow__who mono">Agent</span>Replies right away, as an assistant</li>
+            <li class="flow__step" data-in="up"><span class="flow__who mono">Agent</span>Shares prices and free dates</li>
+            <li class="flow__stop mono" data-in="up">Hand-off</li>
+            <li class="flow__step flow__step--human" data-in="up"><span class="flow__who mono">Photographer</span>Negotiates and closes</li>
+          </ol>
+          <div class="pair">
+            <p class="quote" data-in="up"><span class="quote__by mono">Maternity and family photographer</span><span class="quote__text heading">“It has to be clear to the client that it’s an automatic reply, without pretending it’s me writing.”</span></p>
+            <p class="quote" data-in="up"><span class="quote__by mono">Newborn photographer</span><span class="quote__text heading">“The price, what’s included, that’s information. Anyone says it the same way.”</span></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Discovery" aria-roledescription="slide" aria-label="Insight 3: one mistake and they quit" hidden>
+        <div class="slide__inner slide__inner--split slide__inner--split-even">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Discovery · Insight 3</p>
+            <h2 class="slide__title display" data-in="words">One mistake, and they’d stop using it</h2>
+            <p class="slide__lead slide__lead--muted" data-in="up">I asked what would make them give up on the agent. The answers were specific, and each one became a rule.</p>
+            <p class="quote" data-in="up"><span class="quote__by mono">Newborn and family photographer</span><span class="quote__text heading">“Booking two sessions on the same day without noticing. That’s the nightmare.”</span></p>
+          </div>
+          <ol class="steps" role="list">
+            <li data-in="up"><span class="steps__num mono">01</span><span class="steps__title heading">A double-booked date</span><span class="steps__text">Promising a date that was already taken was the worst case anyone could picture. They wanted a warning, not a decision. It became a guardrail: never double-book.</span></li>
+            <li data-in="up"><span class="steps__num mono">02</span><span class="steps__title heading">A discount they didn’t approve</span><span class="steps__text">One discount sets a precedent the client remembers. Price talks had to stay inside limits the photographer sets. It became the flex range.</span></li>
+          </ol>
+        </div>
+      </section>
+
+
+      <!-- ============ Define ============ -->
+
+
+      <section class="slide" data-theme="light" data-chapter="Define" aria-roledescription="slide" aria-label="How might we" hidden>
+        <div class="slide__inner">
+          <p class="slide__eyebrow mono" data-in="up">Define · How might we</p>
+          <h2 class="slide__statement slide__statement--wide display" data-in="words">How might we let photographers hand off the repetitive part of sales, <span class="slide__soft">without losing the personal touch?</span></h2>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="light" data-chapter="Define" aria-roledescription="slide" aria-label="Goal statement" hidden>
+        <div class="slide__inner">
+          <p class="slide__eyebrow mono" data-in="up">Define · Goal statement</p>
+          <h2 class="slide__title slide__title--wide display" data-in="words"><span class="slide__soft">Our AI agent will let</span> photographers hand off replies, quotes and bookings, service by service and step by step, <span class="slide__soft">which will</span> keep leads warm and give them control over what’s automated.</h2>
+          <div class="measures" data-in="up">
+            <span class="measures__label mono">We’ll measure it by</span>
+            <span class="tag">Agent autonomy</span>
+            <span class="tag">Onboarding time to value</span>
+            <span class="tag">Admin hours saved</span>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ============ Design ============ -->
+
+      <section class="slide" data-theme="dark" data-chapter="Design" aria-roledescription="slide" aria-label="Decision 1: where the agent stops" hidden>
+        <div class="slide__inner slide__inner--split slide__inner--split-even">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Design · Decision 1 of 3</p>
+            <h2 class="slide__title display" data-in="words">Where the agent stops</h2>
+            <p class="slide__lead slide__lead--muted" data-in="up">It replies, schedules and negotiates per service, not as one package. It stops and asks on date conflicts, out-of-range budgets and judgment calls, like a discount in a slow month.</p>
+            <p class="decision__trade" data-in="up"><span class="mono">Trade-off</span>Less automation, more trust. Photographers won’t turn on an agent they can’t predict.</p>
+          </div>
+          <figure class="rules" aria-label="How the agent decides">
+            <ol class="rules__flow" role="list">
+              <li class="rules__step" data-in="up">
+                <span class="rules__marker" aria-hidden="true"></span>
+                <span class="rules__text"><span class="rules__who mono">Trigger</span><span class="rules__q">A new inquiry comes in</span></span>
+              </li>
+              <li class="rules__step" data-in="up">
+                <span class="rules__marker" aria-hidden="true"></span>
+                <span class="rules__text"><span class="rules__who mono">Agent · always</span><span class="rules__q">Replies right away</span></span>
+              </li>
+              <li class="rules__step" data-in="up">
+                <span class="rules__marker rules__marker--check" aria-hidden="true"></span>
+                <span class="rules__text"><span class="rules__who mono">Check</span><span class="rules__q">Is this service set to automatic?</span><span class="rules__hint">Weddings and custom packages usually aren’t</span></span>
+                <span class="rules__branch"><span class="rules__answer mono">No</span><span class="flow__step flow__step--human"><span class="flow__who mono">You</span>Books a call, you take over</span></span>
+              </li>
+              <li class="rules__step" data-in="up">
+                <span class="rules__marker rules__marker--check" aria-hidden="true"></span>
+                <span class="rules__text"><span class="rules__who mono">Check</span><span class="rules__q">Is the date free?</span></span>
+                <span class="rules__branch"><span class="rules__answer mono">No</span><span class="flow__step flow__step--human"><span class="flow__who mono">You</span>Stops and asks</span></span>
+              </li>
+              <li class="rules__step" data-in="up">
+                <span class="rules__marker rules__marker--check" aria-hidden="true"></span>
+                <span class="rules__text"><span class="rules__who mono">Check</span><span class="rules__q">Is the budget inside your range?</span><span class="rules__hint">Service price, minus the flex you set</span></span>
+                <span class="rules__branch"><span class="rules__answer mono">No</span><span class="flow__step flow__step--human"><span class="flow__who mono">You</span>Stops and asks</span></span>
+              </li>
+              <li class="rules__step" data-in="up">
+                <span class="rules__marker rules__marker--check" aria-hidden="true"></span>
+                <span class="rules__text"><span class="rules__who mono">Check</span><span class="rules__q">Is it a judgment call?</span><span class="rules__hint">Like a discount in a slow month</span></span>
+                <span class="rules__branch"><span class="rules__answer mono">Yes</span><span class="flow__step flow__step--human"><span class="flow__who mono">You</span>Stops and asks</span></span>
+              </li>
+              <li class="rules__step" data-in="up">
+                <span class="rules__marker" aria-hidden="true"></span>
+                <span class="rules__text"><span class="rules__who mono">Agent</span><span class="rules__q">Negotiates inside your range and books the session</span></span>
+              </li>
+            </ol>
+            <div class="rules__guards" data-in="up">
+              <p class="rules__guards-title mono">Guardrails · always on</p>
+              <ul role="list">
+                <li>Never invents a price</li>
+                <li>Never goes past your flex range</li>
+                <li>Never closes a personal service</li>
+                <li>Never double-books</li>
+              </ul>
+            </div>
+          </figure>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Design" aria-roledescription="slide" aria-label="Decision 2: onboarding" hidden>
+        <div class="slide__inner">
+          <div class="slide-head-split">
+            <div class="slide__col">
+              <p class="slide__eyebrow mono" data-in="up">Design · Decision 2 of 3</p>
+              <h2 class="slide__title display" data-in="words">Set the rules, then share what you have</h2>
+            </div>
+            <div class="slide__col">
+              <p class="slide__lead slide__lead--muted" data-in="up">Setup was where people gave up. Now it asks what the agent may do, then reads the files they already have.</p>
+            </div>
+          </div>
+          <div class="compare compare--4x3 compare--3">
+            <figure data-in="clip">
+              <img src="../../assets/cases/ai-photographers/onboarding-rules.webp" alt="Onboarding step 2: choose the AI model and switch agent rules on or off for chat, prices and agenda, such as sending the first reply or booking sessions when the calendar is free" width="1600" height="1200">
+              <figcaption><span class="mono">01 · Agent setup</span> One-line rules decide what the agent handles.</figcaption>
+            </figure>
+            <figure data-in="clip">
+              <img src="../../assets/cases/ai-photographers/onboarding-upload.webp" alt="Onboarding step 3: an uploaded rate sheet becomes service cards; the wedding card shows a $3,200 full-day rate, AI can flex up to a 10% range, and agent autonomy switched on" width="1600" height="1200">
+              <figcaption><span class="mono">02 · Price upload</span> The rate sheet becomes services the agent quotes from.</figcaption>
+            </figure>
+            <figure data-in="clip">
+              <img src="../../assets/cases/ai-photographers/onboarding-pitching.webp" alt="Onboarding step 4: upload pitching material, with a portfolio PDF and client testimonials the agent can draw from when it pitches the photographer to a new client" width="1600" height="1200">
+              <figcaption><span class="mono">03 · Pitching material</span> Portfolio and testimonials the agent pitches with.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Design" aria-roledescription="slide" aria-label="Decision 3: dashboard and chat together" hidden>
+        <div class="slide__inner">
+          <div class="slide-head-split">
+            <div class="slide__col">
+              <p class="slide__eyebrow mono" data-in="up">Design · Decision 3 of 3</p>
+              <h2 class="slide__title display" data-in="words">Dashboard and chat, together</h2>
+            </div>
+            <div class="slide__col">
+              <p class="slide__lead slide__lead--muted" data-in="up">The chat sits beside the dashboard, so the agent answers with leads, calendar conflicts and charts in view.</p>
+            </div>
+          </div>
+          <div class="compare compare--4x3">
+            <figure data-in="clip">
+              <img src="../../assets/cases/ai-photographers/dashboard-side-chat.webp" alt="Agent dashboard with conversion, autonomy, inbound status and recent inquiries, with the chat open in a side panel where the agent flags a calendar conflict for Marina's wedding" width="1600" height="1200">
+              <figcaption><span class="mono">01 · Side panel</span> Quick questions, with the dashboard in view.</figcaption>
+            </figure>
+            <figure data-in="clip">
+              <img src="../../assets/cases/ai-photographers/chat-full-screen.webp" alt="Chat expanded to full screen with chat history on the left and the agent drafting a counter-offer for Fonte Studio, with approve and decline actions" width="1600" height="1200">
+              <figcaption><span class="mono">02 · Full screen</span> Long threads, drafts and history get the whole page.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ============ Outcome ============ -->
+
+      <section class="slide" data-theme="light" data-chapter="Outcome" aria-roledescription="slide" aria-label="Impact" hidden>
+        <div class="slide__inner">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Outcome · Impact</p>
+            <h2 class="slide__title slide__title--wide display" data-in="words">Photographers keep the conversations that matter and hand off the rest</h2>
+          </div>
+          <dl class="impact" aria-label="Impact">
+            <div class="impact__item" data-in="up">
+              <dt>Onboarding TTV</dt>
+              <dd class="impact__value">-<span data-count>35</span>%</dd>
+              <dd class="impact__note">Faster setup, with rate sheets auto-filling the form</dd>
+            </div>
+            <div class="impact__item" data-in="up">
+              <dt>Agent autonomy</dt>
+              <dd class="impact__value">22% → <span data-count data-from="22">61</span>%</dd>
+              <dd class="impact__note">Inquiries the agent now handles on its own</dd>
+            </div>
+            <div class="impact__item" data-in="up">
+              <dt>Admin work saved</dt>
+              <dd class="impact__value">~<span data-count>5</span> hrs/week</dd>
+              <dd class="impact__note">Less time on sales, follow-ups and booking (estimated)</dd>
+            </div>
+          </dl>
+          <p class="kv kv--quiet" data-in="up"><span class="kv__label mono">Source</span><span class="kv__value">Reported by 46graus for the first month after launch. I asked the team for these numbers; I didn’t measure them myself.</span></p>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Outcome" aria-roledescription="slide" aria-label="The redesigned workspace" hidden>
+        <div class="slide__inner">
+          <div class="slide__head">
+            <div class="slide__col">
+              <p class="slide__eyebrow mono" data-in="up">Outcome · The product</p>
+              <h2 class="slide__title slide__title--wide display" data-in="words">The redesigned workspace</h2>
+            </div>          </div>
+          <div class="marquee" data-marquee data-in="clip">
+            <div class="marquee__track">
+              <ul class="marquee__group" role="list">
+                <li><img src="../../assets/cases/ai-photographers/dashboard-side-chat.webp" alt="Agent dashboard with the chat open in a side panel" width="1600" height="1200"></li>
+                <li><img src="../../assets/cases/ai-photographers/mobile-quote.webp" alt="Approving a quote with the agent from a phone" width="1440" height="1920"></li>
+                <li><img src="../../assets/cases/ai-photographers/chat-counter-offer.webp" alt="A counter-offer drafted by the agent" width="1200" height="1200"></li>
+                <li><img src="../../assets/cases/ai-photographers/onboarding-upload.webp" alt="Onboarding with an uploaded rate sheet turned into service cards" width="1600" height="1200"></li>
+                <li><img src="../../assets/cases/ai-photographers/agent-cards.webp" alt="Agent status, conversion and autonomy cards" width="1440" height="1920"></li>
+                <li><img src="../../assets/cases/ai-photographers/chat-states.webp" alt="Chat panel states" width="1200" height="1200"></li>
+                <li><img src="../../assets/cases/ai-photographers/screens-overview.webp" alt="Six product screens" width="1200" height="1200"></li>
+                <li><img src="../../assets/cases/ai-photographers/plans.webp" alt="Studio and Studio Pro plans" width="1200" height="1200"></li>
+              </ul>
+              <ul class="marquee__group" role="list" aria-hidden="true">
+                <li><img src="../../assets/cases/ai-photographers/dashboard-side-chat.webp" alt="" width="1600" height="1200"></li>
+                <li><img src="../../assets/cases/ai-photographers/mobile-quote.webp" alt="" width="1440" height="1920"></li>
+                <li><img src="../../assets/cases/ai-photographers/chat-counter-offer.webp" alt="" width="1200" height="1200"></li>
+                <li><img src="../../assets/cases/ai-photographers/onboarding-upload.webp" alt="" width="1600" height="1200"></li>
+                <li><img src="../../assets/cases/ai-photographers/agent-cards.webp" alt="" width="1440" height="1920"></li>
+                <li><img src="../../assets/cases/ai-photographers/chat-states.webp" alt="" width="1200" height="1200"></li>
+                <li><img src="../../assets/cases/ai-photographers/screens-overview.webp" alt="" width="1200" height="1200"></li>
+                <li><img src="../../assets/cases/ai-photographers/plans.webp" alt="" width="1200" height="1200"></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Outcome" aria-roledescription="slide" aria-label="What I learned" hidden>
+        <div class="slide__inner slide__inner--split">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Outcome · What I learned</p>
+            <h2 class="slide__title display" data-in="words">Three things I’d take to the next AI product</h2>
+          </div>
+          <ul class="learnings" role="list">
+            <li data-in="up"><strong>Fit the AI to its context.</strong> Knowing where the agent works, and setting limits that suit that context, is what lets people use it with confidence and get real work off their plate.</li>
+            <li data-in="up"><strong>Money needs certainty.</strong> People don’t hand financial decisions to an AI agent until they’re sure it will stick to their numbers.</li>
+            <li data-in="up"><strong>AI prototyping works once the design system is wired in.</strong> Rules that force real components and semantic tokens kept Claude Code from inventing UI.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ Close ============ -->
+
+      <section class="slide" data-theme="dark" data-chapter="Thanks" data-lines aria-roledescription="slide" aria-label="Thank you" hidden>
+        <div class="slide__inner slide__inner--end">
+          <h2 class="slide__statement display" data-in="words">Thank you. <span class="slide__soft">Questions?</span></h2>
+          <p class="slide__subheading heading" data-in="up">contact@guikerber.com</p>
+          <div class="closing__links" data-in="up">
+            <a class="link-btn link-btn--lg" href="../">
+              <span class="link-btn__arrow link-btn__arrow--in" aria-hidden="true">→</span>
+              <span class="link-btn__label">Read the case</span>
+              <span class="link-btn__arrow link-btn__arrow--out" aria-hidden="true">→</span>
+            </a>
+            <a class="link-btn link-btn--lg" href="https://guikerber.github.io/46graus/#/" target="_blank" rel="noopener">
+              <span class="link-btn__arrow link-btn__arrow--in" aria-hidden="true">↗</span>
+              <span class="link-btn__label">View prototype</span>
+              <span class="link-btn__arrow link-btn__arrow--out" aria-hidden="true">↗</span>
+            </a>
+            <a class="link-btn link-btn--lg" href="https://www.linkedin.com/in/guikerber/" target="_blank" rel="noopener">
+              <span class="link-btn__arrow link-btn__arrow--in" aria-hidden="true">↗</span>
+              <span class="link-btn__label">LinkedIn</span>
+              <span class="link-btn__arrow link-btn__arrow--out" aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="deck__bottom">
+      <nav class="deck__controls" aria-label="Slides">
+        <button class="icon-btn" type="button" data-deck-prev aria-label="Previous slide" aria-keyshortcuts="ArrowLeft" title="Previous (←)">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="icon-btn" type="button" data-deck-next aria-label="Next slide" aria-keyshortcuts="ArrowRight" title="Next (→)">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="icon-btn" type="button" data-deck-full aria-label="Enter full screen" aria-pressed="false" aria-keyshortcuts="F" title="Full screen (F)" hidden>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </nav>
+    </footer>
+
+    <div class="deck__progress" aria-hidden="true"><div class="deck__progress-fill" data-deck-progress></div></div>
+    <p class="sr-only" aria-live="polite" data-deck-status></p>
+  </div>
+
+  <svg class="sprite" aria-hidden="true">
+    <symbol id="logo-mark" viewBox="0 0 27 26.7773">
+      <path fill="currentColor" fill-rule="evenodd" d="M23.6533 0C25.5015 0.000230991 26.9998 1.49846 27 3.34668V23.4297C27 25.2781 25.5017 26.7771 23.6533 26.7773H3.34668C1.49832 26.7771 0 25.2781 0 23.4297V3.34668C0.00023112 1.49846 1.49846 0.000231099 3.34668 0H23.6533ZM12.3516 4.68652C12.3514 4.34856 11.9897 4.13304 11.6924 4.29395L6.48145 7.11523C6.3376 7.19328 6.24805 7.34413 6.24805 7.50781V21.9736C6.24805 22.3153 6.61656 22.5303 6.91406 22.3623L20.749 14.5479C20.8888 14.4687 20.9754 14.3208 20.9756 14.1602V9.83398C20.9754 9.49138 20.605 9.27706 20.3076 9.44727L17.2646 11.1885C16.9671 11.3587 16.5967 11.1436 16.5967 10.8008V7.11523C16.5967 6.76916 16.2194 6.55461 15.9219 6.73145L13.0254 8.45312C12.728 8.62957 12.3516 8.41526 12.3516 8.06934V4.68652ZM18.7441 17.8916C17.5118 17.8916 16.5127 18.8907 16.5127 20.123C16.5128 21.3553 17.5118 22.3545 18.7441 22.3545C19.9762 22.3542 20.9745 21.3552 20.9746 20.123C20.9746 18.8908 19.9763 17.8918 18.7441 17.8916Z"/>
+    </symbol>
+  </svg>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script type="module" src="../../js/slides.js"></script>
+</body>
+</html>

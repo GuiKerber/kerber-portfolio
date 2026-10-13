@@ -62,6 +62,12 @@
   --font-size-stack-sm: clamp(2rem, 10.5vw, 4.5rem);
   --font-size-stack-lg: clamp(3rem, 7.2vw, 8.5rem);
 
+  /* Font size: fits the viewport on both axes (slides, where height is fixed) */
+  --font-size-fit-500: clamp(1rem, min(1.45vw, 2.5vh), 1.4rem);
+  --font-size-fit-700: clamp(1.25rem, min(2.1vw, 3.6vh), 2.1rem);
+  --font-size-fit-1100: clamp(2rem, min(4.4vw, 7.6vh), 4.75rem);
+  --font-size-fit-1400: clamp(2.5rem, min(6.6vw, 11.5vh), 7rem);
+
   /* Line height */
   --leading-76: 0.76;
   --leading-90: 0.9;
@@ -140,6 +146,7 @@
   --duration-250: 250ms;
   --duration-300: 300ms;
   --duration-1800: 1800ms;
+  --duration-60000: 60s;
   --easing-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --easing-out: cubic-bezier(0.22, 1, 0.36, 1);
 
@@ -221,6 +228,13 @@
   --fs-caption: var(--font-size-75);
   --fs-micro: var(--font-size-50);
 
+  /* Type: slides (sized to the screen height too, so a slide never overflows) */
+  --fs-slide-statement: var(--font-size-fit-1400);
+  --fs-slide-title: var(--font-size-fit-1100);
+  --fs-slide-number: var(--font-size-fit-1100);
+  --fs-slide-subheading: var(--font-size-fit-700);
+  --fs-slide-lead: var(--font-size-fit-500);
+
   /* Type: line height */
   --lh-stack: var(--leading-76);
   --lh-hero: var(--leading-90);
@@ -259,6 +273,7 @@
   --dur-pop: var(--duration-250);
   --dur: var(--duration-300);
   --dur-loop: var(--duration-1800);
+  --dur-marquee: var(--duration-60000);       /* one full lap of the image strip */
   --opacity-pressed: var(--opacity-70);
   --opacity-disabled: var(--opacity-40);
   --blur-reveal: var(--blur-12);           /* text sharpens in from this blur */
@@ -318,6 +333,8 @@
   --title-measure: 14ch;
   --note-measure: 30ch;
   --gap-figures: var(--space-5);
+  --slide-text-w: 40rem;                     /* reading width on a slide */
+  --timeline-bar-h: clamp(var(--size-44), 7.5vh, var(--size-64));
 }
 
 @media (min-width: 768px) {

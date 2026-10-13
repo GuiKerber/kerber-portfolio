@@ -269,7 +269,7 @@ body.theme-light:not(.menu-open) .header {
   gap: var(--space-6);
   color: var(--color-text-muted);
 }
-.menu__foot a { display: inline-flex; align-items: center; min-height: var(--tap); }
+.menu__foot > * { display: inline-flex; align-items: center; min-height: var(--tap); } /* links and the email share one baseline */
 .menu__foot a:hover { color: var(--color-text-strong); }
 
 /* ============ Link button (underline + arrows) ============ */

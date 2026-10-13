@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trybe Coaching · Slides · Guilherme Kerber</title>
+  <!-- Unlisted: no link from the site, kept out of search and the sitemap -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Case study slides: the visual and interaction design of Trybe, remote training apps for personal trainers and students.">
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500&family=Martian+Mono:wght@400&family=Inter+Tight:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/tokens.css">
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/case.css">
+  <link rel="stylesheet" href="../../css/slides.css">
+</head>
+<body class="deck-page">
+  <a class="skip-link" href="#main">Skip to slides</a>
+
+  <div class="deck" data-theme="dark">
+    <canvas class="deck__lines" aria-hidden="true"></canvas>
+
+    <header class="deck__top">
+      <div class="logo deck__brand">
+        <svg class="logo__mark" viewBox="0 0 27 26.7773" aria-hidden="true"><use href="#logo-mark"/></svg>
+        <span class="logo__word">GUI KERBER<sup>®</sup></span>
+      </div>
+      <p class="deck__status mono">
+        <span class="deck__chapter" data-deck-chapter>Intro</span>
+        <span class="deck__count" data-deck-count>01 / 13</span>
+      </p>
+    </header>
+
+    <main class="slides" id="main" aria-label="Trybe Coaching, case study slides" tabindex="-1">
+
+      <!-- ============ Intro ============ -->
+
+      <section class="slide" data-theme="dark" data-chapter="Intro" data-lines aria-roledescription="slide" aria-label="Cover">
+        <div class="slide__inner slide__inner--split slide__inner--split-even">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Case study · Trybe · 2020–2021</p>
+            <h1 class="slide__statement display" data-in="words">Cross-Platform Coaching Experience</h1>
+            <p class="slide__lead slide__lead--muted" data-in="up">The visual and interaction design behind two apps: a program builder for personal trainers and a workout app for their students.</p>
+            <dl class="case-meta" data-in="up">
+              <div class="case-meta__row"><dt class="caps">Role</dt><dd>UI/UX design, product design, branding</dd></div>
+              <div class="case-meta__row"><dt class="caps">Team</dt><dd>Me, 1 stakeholder, 1 PM</dd></div>
+              <div class="case-meta__row"><dt class="caps">Duration</dt><dd>3 months</dd></div>
+            </dl>
+          </div>
+          <figure class="slide-figure" data-in="clip">
+            <img src="../../assets/cases/coaching/cover.webp" alt="The Trybe program builder on a laptop" width="2900" height="1800">
+          </figure>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Intro" aria-roledescription="slide" aria-label="Context" hidden>
+        <div class="slide__inner slide__inner--split slide__inner--split-even">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Intro · Context</p>
+            <h2 class="slide__title display" data-in="words">Gyms closed overnight</h2>
+            <p class="slide__lead slide__lead--muted" data-in="up">During COVID, personal trainers lost in-person coaching, and with it students, income and continuity. The platform managed workouts, but it wasn’t a remote coaching experience.</p>
+          </div>
+          <div class="slide__col">
+            <ol class="steps" role="list">
+              <li data-in="up"><span class="steps__num mono">01</span><span class="steps__title heading">Trainers had to migrate fast</span><span class="steps__text">Get existing students onto a first remote workout without rebuilding every session.</span></li>
+              <li data-in="up"><span class="steps__num mono">02</span><span class="steps__title heading">Students were often beginners</span><span class="steps__text">From invite to first completed workout with as little friction as possible.</span></li>
+              <li data-in="up"><span class="steps__num mono">03</span><span class="steps__title heading">Simplicity was the edge</span><span class="steps__text">Trainerize, TrueCoach, My PT Hub and FitSW were built around in-person training.</span></li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Intro" aria-roledescription="slide" aria-label="Two apps, two contexts" hidden>
+        <div class="slide__inner">
+          <div class="slide-head-split">
+            <div class="slide__col">
+              <p class="slide__eyebrow mono" data-in="up">Intro · Two contexts</p>
+              <h2 class="slide__title display" data-in="words">One product, two very different moments</h2>
+            </div>
+            <div class="slide__col">
+              <p class="slide__lead slide__lead--muted" data-in="up">Trainers plan at a desk, with time and a big screen. Students glance at a phone between sets, out of breath. Every UI decision started from which of the two moments it served.</p>
+            </div>
+          </div>
+          <div class="compare compare--full">
+            <figure data-in="clip">
+              <img src="../../assets/cases/coaching/program-builder.webp" alt="Desktop program builder: a training week split into daily columns" width="2900" height="1800">
+              <figcaption class="mono">Trainer · desktop · dense, for planning</figcaption>
+            </figure>
+            <figure data-in="clip">
+              <img src="../../assets/cases/coaching/deck-student-app.webp" alt="Student mobile app: weekly results, a workout list and a rest timer" width="2000" height="1241">
+              <figcaption class="mono">Student · mobile · glanceable, mid-workout</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ Foundations ============ -->
+
+      <section class="slide" data-theme="dark" data-chapter="Foundations" aria-roledescription="slide" aria-label="From wireframes to UI" hidden>
+        <div class="slide__inner slide__inner--split slide__inner--split-even">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Foundations · Wireframes</p>
+            <h2 class="slide__title display" data-in="words">Structure first, in grayscale</h2>
+            <p class="slide__lead slide__lead--muted" data-in="up">Both sides were wireframed in parallel and tested as clickable prototypes with a small group of trainers and students, before any color.</p>
+            <ul class="rows" role="list" aria-label="Flows tested" data-in="up">
+              <li><span class="rows__main">Turning an in-person session into a train-at-home program</span><span class="rows__side mono">Trainer</span></li>
+              <li><span class="rows__main">The day-by-day program builder</span><span class="rows__side mono">Trainer</span></li>
+              <li><span class="rows__main">Invite, account, where you train, first workout</span><span class="rows__side mono">Student</span></li>
+            </ul>
+          </div>
+          <figure class="slide-figure" data-in="clip">
+            <img src="../../assets/cases/coaching/wireframes.webp" alt="Grayscale wireframes for the trainer side: profile, week builder, library, assigning a program and the programs list" width="1200" height="1200">
+          </figure>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Foundations" aria-roledescription="slide" aria-label="Visual language" hidden>
+        <div class="slide__inner slide__inner--split slide__inner--split-even">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Foundations · Visual language</p>
+            <h2 class="slide__title display" data-in="words">A dark gym, one bright signal</h2>
+            <ol class="steps" role="list">
+              <li data-in="up"><span class="steps__num mono">01</span><span class="steps__title heading">Green means go</span><span class="steps__text">One saturated green marks what moves you forward or what’s active: Start workout, Save, Next, the current tab, the exercise order.</span></li>
+              <li data-in="up"><span class="steps__num mono">02</span><span class="steps__title heading">Purple means structure</span><span class="steps__text">A second accent marks how a workout is built: superset links, the rest timer’s progress, the card you’re editing or dragging.</span></li>            </ol>
+          </div>
+          <figure class="slide-figure" data-in="clip">
+            <img src="../../assets/cases/coaching/deck-landing.webp" alt="Trybe landing page for fitness creators: green Apply Now buttons, purple accents on the quote and the rest timer, and big workout numbers over gym photography" width="2000" height="1241">
+          </figure>
+        </div>
+      </section>
+
+      <!-- ============ Trainer app ============ -->
+
+      <section class="slide" data-theme="dark" data-chapter="Trainer app" aria-roledescription="slide" aria-label="Decision 1: a week of day columns" hidden>
+        <div class="slide__inner slide__inner--split slide__inner--split-wide">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Trainer app · Decision 1</p>
+            <h2 class="slide__title display" data-in="words">A week of day columns</h2>
+            <p class="slide__lead slide__lead--muted" data-in="up">Programs are built week by week, one column per day, instead of full monthly cycles. Each day carries its own actions: delete, duplicate, move and expand. Dragging a day lifts the card and leaves a dashed slot where it will land.</p>
+            <p class="decision__trade" data-in="up"><span class="mono">Trade-off</span>Focus over long-range visibility. A full month of periodization isn’t visible at a glance, and could come later as another view.</p>
+          </div>
+          <figure class="slide-figure" data-in="clip">
+            <img src="../../assets/cases/coaching/program-builder.webp" alt="Program builder: Workout Week 1 with six day columns; Day 2 is being dragged, lifted with a purple outline over a dashed drop slot" width="2900" height="1800">
+          </figure>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Trainer app" aria-roledescription="slide" aria-label="Decision 2: building a day without typing" hidden>
+        <div class="slide__inner slide__inner--split slide__inner--split-wide">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Trainer app · Decision 2</p>
+            <h2 class="slide__title display" data-in="words">Building a day, with as little typing as possible</h2>
+            <ol class="steps" role="list">
+              <li data-in="up"><span class="steps__num mono">01</span><span class="steps__title heading">Supersets read as pairs</span><span class="steps__text">Linked exercises share a number, 1A and 1B, joined by a Superset chip, so the pairing reads before the details.</span></li>
+              <li data-in="up"><span class="steps__num mono">02</span><span class="steps__title heading">Steppers for numbers</span><span class="steps__text">Sets, rest and timer change with minus and plus, in sensible steps, so a value is one tap away.</span></li>
+              <li data-in="up"><span class="steps__num mono">03</span><span class="steps__title heading">Insert where you are</span><span class="steps__text">The Exercise + chip sits on the edge of the card being edited, so the next exercise is added right below it.</span></li>
+            </ol>
+          </div>
+          <figure class="slide-figure" data-in="clip">
+            <img src="../../assets/cases/coaching/deck-day-editor.webp" alt="Editing Day 2 in the trainer app, with arrows to Day 1 and Day 3: a superset of Incline Dumbbell 1A and Lateral Raises 1B, a new exercise with set, rest and timer steppers, and an Exercise plus chip" width="2000" height="1241">
+          </figure>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Trainer app" aria-roledescription="slide" aria-label="Programs at a glance" hidden>
+        <div class="slide__inner slide__inner--split slide__inner--split-even">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Trainer app · Programs</p>
+            <h2 class="slide__title display" data-in="words">Every program, scannable in one line</h2>
+            <p class="slide__lead slide__lead--muted" data-in="up">Each row answers what a trainer checks first: how long it runs, who is on it and how it’s labeled.</p>
+            <ul class="rows" role="list" aria-label="Program row anatomy" data-in="up">
+              <li><span class="rows__main">Length in days, inside a ring</span><span class="rows__side mono">How long</span></li>
+              <li><span class="rows__main">A stack of client photos, then +N</span><span class="rows__side mono">Who</span></li>
+              <li><span class="rows__main">Tags you can remove in place</span><span class="rows__side mono">What</span></li>
+            </ul>
+          </div>
+          <figure class="slide-figure" data-in="clip">
+            <img src="../../assets/cases/coaching/programs.webp" alt="Programs list: four active trainings, each with a day count ring, client avatars with a plus count and removable tags" width="1440" height="1920">
+          </figure>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Trainer app" aria-roledescription="slide" aria-label="Decision 3: migration over rework" hidden>
+        <div class="slide__inner slide__inner--split slide__inner--split-wide">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Trainer app · Decision 3</p>
+            <h2 class="slide__title display" data-in="words">Migration over rework</h2>
+            <p class="slide__lead slide__lead--muted" data-in="up">Trainers could add a Train at home variant to the exercises they already had, turning existing sessions into remote ones instead of starting over.</p>
+            <p class="decision__trade" data-in="up"><span class="mono">Trade-off</span>Speed over quality. Migrated sessions still needed tuning to work well at home.</p>
+          </div>
+          <figure class="slide-figure" data-in="clip">
+            <img src="../../assets/cases/coaching/deck-trainer-screens.webp" alt="Trainer desktop screens: assigning a program to clients, the programs list, editing a workout week and the exercise library" width="2000" height="1241">
+          </figure>
+        </div>
+      </section>
+
+      <!-- ============ Student app ============ -->
+
+      <section class="slide" data-theme="dark" data-chapter="Student app" aria-roledescription="slide" aria-label="Decision 4: designed for between sets" hidden>
+        <div class="slide__inner slide__inner--split slide__inner--split-wide">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Student app · Decision 4</p>
+            <h2 class="slide__title display" data-in="words">Designed for between sets</h2>
+            <ul class="rows" role="list" aria-label="Student app decisions" data-in="up">
+              <li><span class="rows__main">Photo cards show the movement before the name</span><span class="rows__side mono">Recognize</span></li>
+              <li><span class="rows__main">A check on each card, so progress shows in the list</span><span class="rows__side mono">Track</span></li>
+              <li><span class="rows__main">A large rest ring, with Pause, Previous and Next as wide targets</span><span class="rows__side mono">Act</span></li>
+            </ul>
+          </div>
+          <figure class="slide-figure" data-in="clip">
+            <img src="../../assets/cases/coaching/deck-student-app.webp" alt="Student app: weekly results with big numbers, a workout list of photo cards with checks and a floating Start Workout button, and a rest timer ring with Previous and Next" width="2000" height="1241">
+          </figure>
+        </div>
+      </section>
+
+      <section class="slide" data-theme="dark" data-chapter="Student app" aria-roledescription="slide" aria-label="Decision 5: onboarding you can touch" hidden>
+        <div class="slide__inner slide__inner--split slide__inner--split-even">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Student app · Decision 5</p>
+            <h2 class="slide__title display" data-in="words">Onboarding you can touch</h2>
+            <ol class="steps" role="list">
+              <li data-in="up"><span class="steps__num mono">01</span><span class="steps__title heading">Pick muscles on the body</span><span class="steps__text">Choosing a group lights it up on the anatomy illustration, front or back. The illustration becomes the input.</span></li>
+              <li data-in="up"><span class="steps__num mono">02</span><span class="steps__title heading">A wheel for numbers</span><span class="steps__text">Height scrolls on a picker, with the chosen value large and centered. No keyboard, no units to type.</span></li>
+              <li data-in="up"><span class="steps__num mono">03</span><span class="steps__title heading">Progress inside the button bar</span><span class="steps__text">The step count sits next to the main action, so beginners always know how much is left.</span></li>
+            </ol>
+            <p class="decision__trade" data-in="up"><span class="mono">Trade-off</span>Asking where students train made plans feel personal, but added setup work on the trainer side.</p>
+          </div>
+          <figure class="slide-figure" data-in="clip">
+            <img src="../../assets/cases/coaching/deck-onboarding.webp" alt="Student onboarding: target muscle selection with the chest lit up on the anatomy illustration, a height wheel picker and account creation" width="2000" height="1241">
+          </figure>
+        </div>
+      </section>
+
+      <!-- ============ Outcome ============ -->
+
+      <section class="slide" data-theme="light" data-chapter="Outcome" aria-roledescription="slide" aria-label="Impact" hidden>
+        <div class="slide__inner">
+          <div class="slide__col">
+            <p class="slide__eyebrow mono" data-in="up">Outcome · Impact</p>
+            <h2 class="slide__title slide__title--wide display" data-in="words">Trainers kept their students, now remotely</h2>
+          </div>
+          <dl class="impact impact--two" aria-label="Impact">
+            <div class="impact__item" data-in="up">
+              <dt>Invite-to-active-student conversion</dt>
+              <dd class="impact__value"><span data-count>40</span>%</dd>
+              <dd class="impact__note">Out of every 100 students invited, 40 sign up and complete at least one workout.</dd>
+            </div>
+            <div class="impact__item" data-in="up">
+              <dt>Adoption among existing students</dt>
+              <dd class="impact__value"><span data-count>61</span>%</dd>
+              <dd class="impact__note">More than half of a trainer’s existing clients started training remotely.</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+
+      <!-- ============ Close ============ -->
+
+      <section class="slide" data-theme="dark" data-chapter="Thanks" data-lines aria-roledescription="slide" aria-label="Thank you" hidden>
+        <div class="slide__inner slide__inner--end">
+          <h2 class="slide__statement display" data-in="words">Thank you. <span class="slide__soft">Questions?</span></h2>
+          <p class="slide__subheading heading" data-in="up">contact@guikerber.com</p>
+          <div class="closing__links" data-in="up">
+            <a class="link-btn link-btn--lg" href="../">
+              <span class="link-btn__arrow link-btn__arrow--in" aria-hidden="true">→</span>
+              <span class="link-btn__label">Read the case</span>
+              <span class="link-btn__arrow link-btn__arrow--out" aria-hidden="true">→</span>
+            </a>
+            <a class="link-btn link-btn--lg" href="https://dribbble.com/kerber" target="_blank" rel="noopener">
+              <span class="link-btn__arrow link-btn__arrow--in" aria-hidden="true">↗</span>
+              <span class="link-btn__label">Dribbble</span>
+              <span class="link-btn__arrow link-btn__arrow--out" aria-hidden="true">↗</span>
+            </a>
+            <a class="link-btn link-btn--lg" href="https://www.linkedin.com/in/guikerber/" target="_blank" rel="noopener">
+              <span class="link-btn__arrow link-btn__arrow--in" aria-hidden="true">↗</span>
+              <span class="link-btn__label">LinkedIn</span>
+              <span class="link-btn__arrow link-btn__arrow--out" aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="deck__bottom">
+      <nav class="deck__controls" aria-label="Slides">
+        <button class="icon-btn" type="button" data-deck-prev aria-label="Previous slide" aria-keyshortcuts="ArrowLeft" title="Previous (←)">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="icon-btn" type="button" data-deck-next aria-label="Next slide" aria-keyshortcuts="ArrowRight" title="Next (→)">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="icon-btn" type="button" data-deck-full aria-label="Enter full screen" aria-pressed="false" aria-keyshortcuts="F" title="Full screen (F)" hidden>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </nav>
+    </footer>
+
+    <div class="deck__progress" aria-hidden="true"><div class="deck__progress-fill" data-deck-progress></div></div>
+    <p class="sr-only" aria-live="polite" data-deck-status></p>
+  </div>
+
+  <svg class="sprite" aria-hidden="true">
+    <symbol id="logo-mark" viewBox="0 0 27 26.7773">
+      <path fill="currentColor" fill-rule="evenodd" d="M23.6533 0C25.5015 0.000230991 26.9998 1.49846 27 3.34668V23.4297C27 25.2781 25.5017 26.7771 23.6533 26.7773H3.34668C1.49832 26.7771 0 25.2781 0 23.4297V3.34668C0.00023112 1.49846 1.49846 0.000231099 3.34668 0H23.6533ZM12.3516 4.68652C12.3514 4.34856 11.9897 4.13304 11.6924 4.29395L6.48145 7.11523C6.3376 7.19328 6.24805 7.34413 6.24805 7.50781V21.9736C6.24805 22.3153 6.61656 22.5303 6.91406 22.3623L20.749 14.5479C20.8888 14.4687 20.9754 14.3208 20.9756 14.1602V9.83398C20.9754 9.49138 20.605 9.27706 20.3076 9.44727L17.2646 11.1885C16.9671 11.3587 16.5967 11.1436 16.5967 10.8008V7.11523C16.5967 6.76916 16.2194 6.55461 15.9219 6.73145L13.0254 8.45312C12.728 8.62957 12.3516 8.41526 12.3516 8.06934V4.68652ZM18.7441 17.8916C17.5118 17.8916 16.5127 18.8907 16.5127 20.123C16.5128 21.3553 17.5118 22.3545 18.7441 22.3545C19.9762 22.3542 20.9745 21.3552 20.9746 20.123C20.9746 18.8908 19.9763 17.8918 18.7441 17.8916Z"/>
+    </symbol>
+  </svg>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script type="module" src="../../js/slides.js"></script>
+</body>
+</html>
