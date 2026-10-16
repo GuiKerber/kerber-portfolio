@@ -83,6 +83,18 @@
       <li data-slug="003-court-booking" data-title="Court booking" data-kind="Micro-interaction" data-ratio="portrait"></li>
       <li data-slug="004-brand-board" data-title="Brand board" data-kind="Micro-interaction"></li>
       <li data-slug="brand-contra-cover" data-title="Contra cover" data-kind="Motion"></li>
+      <!-- Still shots: they open as a large image instead of a live page -->
+      <li data-slug="klutch-golden-pack" data-title="Klutch golden pack" data-kind="Exploration" data-type="image" data-ratio="square"></li>
+      <li data-slug="mevvy-yield-farm" data-title="Mevvy yield farm" data-kind="Exploration" data-type="image"></li>
+      <li data-slug="handid-onboarding" data-title="HandID onboarding" data-kind="Exploration" data-type="image"></li>
+      <li data-slug="cravin-prize-boxes" data-title="Cravin prize boxes" data-kind="Exploration" data-type="image"></li>
+      <li data-slug="klutch-player-cards" data-title="Klutch player cards" data-kind="Exploration" data-type="image" data-ratio="square"></li>
+      <li data-slug="wallet-onboarding" data-title="Crypto wallet onboarding" data-kind="Exploration" data-type="image"></li>
+      <li data-slug="glovebox-landing" data-title="Glovebox landing" data-kind="Exploration" data-type="image"></li>
+      <li data-slug="stakup-pogs" data-title="StakUp pogs" data-kind="Exploration" data-type="image"></li>
+      <li data-slug="handid-cards" data-title="HandID cards" data-kind="Exploration" data-type="image"></li>
+      <li data-slug="cravin-boxes" data-title="Cravin box designs" data-kind="Exploration" data-type="image"></li>
+      <li data-slug="wallet-home" data-title="Crypto wallet home" data-kind="Exploration" data-type="image"></li>
     </ul>
 
     <p class="lab__title mono" aria-hidden="true">My Design Lab</p>
@@ -97,17 +109,21 @@
           <span data-lab-name></span>
         </p>
         <a class="lab-viewer__open mono" href="#" target="_blank" rel="noopener" data-lab-open>Open in a new tab ↗</a>
-        <button class="lab-viewer__close" type="button" aria-label="Close" data-lab-close>
+        <button class="lab-viewer__close" type="button" aria-label="Close" autofocus data-lab-close>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
         </button>
       </div>
       <div class="lab-viewer__frame">
         <iframe title="" loading="lazy" data-lab-frame></iframe>
+        <img alt="" hidden data-lab-image>
       </div>
     </div>
   </dialog>
 
-  <div class="lab-puck mono" aria-hidden="true">View</div>
+  <!-- Same cursor puck as the footer's copy button, with an eye -->
+  <div class="copy-puck" aria-hidden="true" data-lab-puck>
+    <svg viewBox="0 0 16 16" fill="none"><path d="M1.5 8S4 3.5 8 3.5 14.5 8 14.5 8 12 12.5 8 12.5 1.5 8 1.5 8Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="8" cy="8" r="2.1" stroke="currentColor" stroke-width="1.3"/></svg>
+  </div>
 
   <svg class="sprite" aria-hidden="true">
     <symbol id="logo-mark" viewBox="0 0 27 26.7773">

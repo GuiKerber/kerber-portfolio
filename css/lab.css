@@ -69,6 +69,13 @@
   width: calc(var(--lab-card-w) * 0.75);
   aspect-ratio: 4 / 5;
 }
+/* Square shots, also about the same area */
+.lab-card--square {
+  left: calc(var(--lab-card-w) * -0.433);
+  top: calc(var(--lab-card-w) * -0.433);
+  width: calc(var(--lab-card-w) * 0.866);
+  aspect-ratio: 1;
+}
 .lab-card img {
   display: block;
   width: 100%;
@@ -154,27 +161,9 @@
 }
 
 /* ============ Cursor puck ============ */
-.lab-puck {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: var(--z-cursor);
-  padding: var(--space-3) var(--space-5);
-  border-radius: var(--radius-pill);
-  background: var(--color-paper);
-  color: var(--color-on-paper);
-  font-size: var(--fs-mono);
-  letter-spacing: var(--ls-mono);
-  text-transform: uppercase;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  scale: 0.4;
-  transition: opacity var(--dur-fade) var(--ease), scale var(--dur-pop) var(--ease-out);
-}
-.lab-puck.is-visible { opacity: 1; scale: 1; }
+/* The footer's copy puck (style.css), reused with an eye icon */
 @media (hover: none) {
-  .lab-puck { display: none; }
+  [data-lab-puck] { display: none; }
 }
 
 /* ============ Viewer ============ */
@@ -270,10 +259,21 @@
   overflow: hidden;
   background: var(--color-bg-media);
 }
-.lab-viewer.is-portrait {
+.lab-viewer[data-ratio="portrait"] {
   --lab-viewer-w: min(92vw, var(--size-560), calc((100dvh - var(--space-45)) * 4 / 5));
 }
-.lab-viewer.is-portrait .lab-viewer__frame { aspect-ratio: 4 / 5; }
+.lab-viewer[data-ratio="portrait"] .lab-viewer__frame { aspect-ratio: 4 / 5; }
+.lab-viewer[data-ratio="square"] {
+  --lab-viewer-w: min(92vw, var(--size-640), calc(100dvh - var(--space-45)));
+}
+.lab-viewer[data-ratio="square"] .lab-viewer__frame { aspect-ratio: 1; }
+.lab-viewer__frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.lab-viewer__frame [hidden] { display: none; }
 .lab-viewer__frame iframe {
   display: block;
   width: 100%;

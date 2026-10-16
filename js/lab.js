@@ -15,14 +15,20 @@ const { entered } = initPageTransitions(reducedMotion);
 
 const stage = $('[data-lab-stage]');
 const sphere = $('[data-lab-sphere]');
-const puck = $('.lab-puck');
+const puck = $('[data-lab-puck]');
 
 /* ---------- Studies ---------- */
 const studies = [...$('[data-lab-list]').children].map((li) => {
-  const study = { slug: li.dataset.slug, title: li.dataset.title, kind: li.dataset.kind, portrait: li.dataset.ratio === 'portrait' };
+  const study = {
+    slug: li.dataset.slug,
+    title: li.dataset.title,
+    kind: li.dataset.kind,
+    ratio: li.dataset.ratio || 'landscape', // landscape 4:3, portrait 4:5, square 1:1
+    image: li.dataset.type === 'image',      // a still shot instead of a live page
+  };
   const button = document.createElement('button');
   button.type = 'button';
-  button.textContent = `${study.title}, ${study.kind.toLowerCase()}. Opens it live.`;
+  button.textContent = `${study.title}, ${study.kind.toLowerCase()}. ${study.image ? 'Opens it large.' : 'Opens it live.'}`;
   li.append(button);
   study.button = button;
   return study;
@@ -82,10 +88,10 @@ function buildCards() {
   cards = studies.map((study) => {
     const el = document.createElement('button');
     el.type = 'button';
-    el.className = study.portrait ? 'lab-card lab-card--portrait' : 'lab-card';
+    el.className = study.ratio === 'landscape' ? 'lab-card' : `lab-card lab-card--${study.ratio}`;
     el.tabIndex = -1; // keyboards use the list; the cards mirror it
     el.setAttribute('aria-hidden', 'true');
-    el.innerHTML = `<img src="../assets/lab/${study.slug}.webp" alt="" width="640" height="${study.portrait ? 800 : 480}" draggable="false" decoding="async">`;
+    el.innerHTML = `<img src="../assets/lab/${study.slug}.webp" alt="" width="640" height="${{ landscape: 480, portrait: 800, square: 640 }[study.ratio]}" draggable="false" decoding="async">`;
     sphere.append(el);
     return { el, n: new THREE.Vector3(), study, opacity: -1 };
   });
@@ -244,6 +250,7 @@ studies.forEach((study) => {
 const viewer = $('[data-lab-viewer]');
 const panel = $('[data-lab-panel]');
 const frame = $('[data-lab-frame]');
+const shot = $('[data-lab-image]');
 const backdrop = document.createElement('div');
 backdrop.className = 'lab-viewer__backdrop';
 viewer.prepend(backdrop);
@@ -254,10 +261,18 @@ function openViewer(study, origin) {
   returnFocus = document.activeElement;
   $('[data-lab-name]').textContent = study.title;
   $('[data-lab-kind]').textContent = study.kind;
-  $('[data-lab-open]').href = `../micro-interactions/${study.slug}/`;
-  frame.title = `${study.title}, live`;
-  viewer.classList.toggle('is-portrait', study.portrait);
-  frame.src = `../micro-interactions/${study.slug}/`;
+  const url = study.image ? `../assets/lab/full/${study.slug}.webp` : `../micro-interactions/${study.slug}/`;
+  $('[data-lab-open]').href = url;
+  viewer.dataset.ratio = study.ratio;
+  frame.hidden = study.image;
+  shot.hidden = !study.image;
+  if (study.image) {
+    shot.src = url;
+    shot.alt = study.title;
+  } else {
+    frame.title = `${study.title}, live`;
+    frame.src = url;
+  }
   paused = true;
   puck.classList.remove('is-visible');
   viewer.showModal();
@@ -281,6 +296,7 @@ function closeViewer() {
   const done = () => {
     viewer.close();
     frame.removeAttribute('src');
+    shot.removeAttribute('src');
     gsap.set([panel, backdrop], { clearProps: 'all' });
     paused = false;
     closing = false;
