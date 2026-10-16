@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Court booking · Micro-interactions · Guilherme Kerber</title>
+  <meta name="description" content="Book a court in your neighborhood. Switch between tennis, padel and beach tennis and the isometric court flips over like a tile while the whole page changes color.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Inter+Tight:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/tokens.css">
+  <link rel="stylesheet" href="../shared/stage.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="stage">
+    <form class="booking" novalidate aria-labelledby="booking-title">
+      <!-- Illustration only: it shows the court for the sport you pick -->
+      <div class="court" aria-hidden="true">
+        <!-- A two-sided tile: the next court waits on its back -->
+        <div class="court__tile">
+          <div class="court__face" data-sport="tennis"></div>
+          <div class="court__face" data-sport="padel"></div>
+          <div class="court__face" data-sport="beach"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <p class="eyebrow">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/></svg>
+          Courts near you
+        </p>
+        <h1 class="title" id="booking-title">Book your neighborhood court</h1>
+
+        <fieldset class="sports">
+          <legend class="sr-only">Sport</legend>
+          <span class="sports__thumb" aria-hidden="true"></span>
+          <label class="pill"><input type="radio" name="sport" value="tennis" checked><span class="pill__text">Tennis</span></label>
+          <label class="pill"><input type="radio" name="sport" value="padel"><span class="pill__text">Padel</span></label>
+          <label class="pill"><input type="radio" name="sport" value="beach"><span class="pill__text">Beach tennis</span></label>
+        </fieldset>
+
+        <div class="day">
+          <button class="day__step" type="button" data-step="-1" aria-label="Previous day" disabled>
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6l-6 6 6 6"/></svg>
+          </button>
+          <p class="day__name" id="day-name" aria-live="polite">Today</p>
+          <button class="day__step" type="button" data-step="1" aria-label="Next day">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+
+        <fieldset class="slots" aria-describedby="day-name">
+          <legend class="sr-only">Time</legend>
+          <div class="slots__grid">
+            <label class="slot" data-state="open"><input type="radio" name="slot" value="07:00"><span class="slot__chip"><svg class="icon slot__check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>07:00<span class="slot__taken sr-only">, taken</span></span></label>
+            <label class="slot" data-state="taken"><input type="radio" name="slot" value="08:00" disabled><span class="slot__chip"><svg class="icon slot__check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>08:00<span class="slot__taken sr-only">, taken</span></span></label>
+            <label class="slot" data-state="open"><input type="radio" name="slot" value="17:00"><span class="slot__chip"><svg class="icon slot__check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>17:00<span class="slot__taken sr-only">, taken</span></span></label>
+            <label class="slot" data-state="taken"><input type="radio" name="slot" value="18:00" disabled><span class="slot__chip"><svg class="icon slot__check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>18:00<span class="slot__taken sr-only">, taken</span></span></label>
+            <label class="slot" data-state="open"><input type="radio" name="slot" value="19:00"><span class="slot__chip"><svg class="icon slot__check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>19:00<span class="slot__taken sr-only">, taken</span></span></label>
+            <label class="slot" data-state="open"><input type="radio" name="slot" value="20:00"><span class="slot__chip"><svg class="icon slot__check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>20:00<span class="slot__taken sr-only">, taken</span></span></label>
+          </div>
+          <p class="slots__empty">Every court is booked <span class="slots__when">that day</span>. Try another day.</p>
+        </fieldset>
+
+        <button class="cta" type="submit" data-state="idle" disabled>
+          <span class="cta__label" data-cta="idle">Choose a time</span>
+          <span class="cta__label" data-cta="ready"><span>Book <span class="cta__time">19:00</span></span></span>
+          <span class="cta__label" data-cta="loading"><span class="spinner" aria-hidden="true"></span>Booking…</span>
+          <span class="cta__label" data-cta="done"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Booked for <span class="cta__time">19:00</span></span></span>
+        </button>
+
+        <p class="status" aria-live="polite">
+          <span class="status__msg" data-status="done">You're booked. See you on court 2.</span>
+          <span class="status__msg" data-status="error">You're offline. Connect and try again.</span>
+        </p>
+      </div>
+    </form>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="../shared/loop.js"></script>
+  <script type="module" src="script.js"></script>
+</body>
+</html>

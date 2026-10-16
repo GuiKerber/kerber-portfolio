@@ -1,0 +1,286 @@
+/* ==========================================================================
+   My Design Lab
+   A canvas you can drag in any direction: the study cards sit on a sphere
+   that turns under the pointer, with the 3D logo in the middle. A card opens
+   its study live in a viewer, over the canvas.
+   ========================================================================== */
+:root {
+  --lab-card-w: clamp(var(--size-160), 16vw, var(--size-260));
+  --lab-card-ratio: 4 / 3;
+  --lab-logo-size: clamp(var(--size-180), 22vw, var(--size-320));
+  --lab-shadow-hover: 0 28px 56px rgb(0 0 0 / 0.65);
+  --lab-viewer-w: min(92vw, 1120px, calc((100dvh - var(--space-45)) * 4 / 3));
+  --lab-backdrop: rgb(0 0 0 / 0.72);
+}
+
+.lab-page {
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.lab {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* ============ The sphere ============ */
+.lab__stage {
+  position: absolute;
+  inset: 0;
+  z-index: 0; /* keeps the 3D cards in their own layer, under the labels */
+  display: grid;
+  place-items: center;
+  perspective: var(--lab-perspective, 3000px);
+  touch-action: none; /* the drag is ours, not the browser's */
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.lab__stage.is-dragging { cursor: grabbing; }
+
+.lab__sphere {
+  position: relative;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+}
+
+.lab-card {
+  position: absolute;
+  left: calc(var(--lab-card-w) / -2);
+  top: calc(var(--lab-card-w) * 3 / -8);
+  width: var(--lab-card-w);
+  aspect-ratio: var(--lab-card-ratio);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-media);
+  overflow: hidden;
+  background: var(--color-bg-media);
+  backface-visibility: hidden;
+  cursor: pointer;
+  transition: box-shadow var(--dur) var(--ease), filter var(--dur) var(--ease);
+}
+/* Vertical studies (the LinkedIn 4:5 cut) keep about the same area as a 4:3 card */
+.lab-card--portrait {
+  left: calc(var(--lab-card-w) * -0.375);
+  top: calc(var(--lab-card-w) * -0.46875);
+  width: calc(var(--lab-card-w) * 0.75);
+  aspect-ratio: 4 / 5;
+}
+.lab-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+.lab-card:hover,
+.lab-card.is-focus {
+  box-shadow: var(--lab-shadow-hover);
+  filter: brightness(1.06);
+}
+.lab-card.is-focus {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--space-1);
+}
+.lab__stage.is-dragging .lab-card { cursor: grabbing; }
+
+/* ============ Logo ============ */
+.lab__logo-canvas,
+.lab__logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: var(--z-content);
+  translate: -50% -50%;
+}
+.lab__logo-canvas {
+  width: calc(var(--lab-logo-size) * 2);
+  height: calc(var(--lab-logo-size) * 2);
+  pointer-events: none;
+}
+/* Covers the icon only, so drags keep working around it */
+.lab__logo {
+  width: calc(var(--lab-logo-size) * 0.62);
+  height: calc(var(--lab-logo-size) * 0.62);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-media);
+  background: none;
+  cursor: pointer;
+}
+.lab__logo:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--space-2);
+}
+
+/* ============ Labels ============ */
+.lab__list {
+  /* Kept for keyboards and screen readers; focus shows on the card itself */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  list-style: none;
+}
+
+.lab__title,
+.lab__hint {
+  position: absolute;
+  bottom: var(--space-8);
+  z-index: var(--z-content);
+  margin: 0;
+  font-size: var(--fs-mono);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+.lab__title { left: var(--gutter); }
+.lab__hint { left: 50%; translate: -50% 0; }
+/* On phones the two labels would collide; the hint is the one that helps */
+@media (max-width: 767px) {
+  .lab__title { display: none; }
+}
+@media (min-width: 768px) {
+  .lab__title { left: var(--space-8); }
+}
+
+/* ============ Cursor puck ============ */
+.lab-puck {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: var(--z-cursor);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-pill);
+  background: var(--color-paper);
+  color: var(--color-on-paper);
+  font-size: var(--fs-mono);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  scale: 0.4;
+  transition: opacity var(--dur-fade) var(--ease), scale var(--dur-pop) var(--ease-out);
+}
+.lab-puck.is-visible { opacity: 1; scale: 1; }
+@media (hover: none) {
+  .lab-puck { display: none; }
+}
+
+/* ============ Viewer ============ */
+.lab-viewer {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  overflow: hidden;
+}
+.lab-viewer[open] {
+  display: grid;
+  place-items: center;
+}
+.lab-viewer::backdrop { background: transparent; } /* our own backdrop fades with GSAP */
+.lab-viewer__backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--lab-backdrop);
+}
+
+.lab-viewer__panel {
+  position: relative;
+  display: grid;
+  gap: var(--space-3);
+  width: var(--lab-viewer-w);
+}
+
+.lab-viewer__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.lab-viewer__title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+  flex: 1;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-body-lg);
+  color: var(--color-text-strong);
+}
+.lab-viewer__kind,
+.lab-viewer__open {
+  font-size: var(--fs-mono);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.lab-viewer__open {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease);
+}
+.lab-viewer__open:hover { color: var(--color-text-strong); }
+
+.lab-viewer__close {
+  display: grid;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  padding: 0;
+  border: var(--hairline) solid var(--color-border);
+  border-radius: var(--radius-round);
+  background: none;
+  color: var(--color-text-strong);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+.lab-viewer__close svg {
+  width: var(--size-18);
+  height: var(--size-18);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+.lab-viewer__close:hover { background: var(--color-paper); color: var(--color-on-paper); }
+.lab-viewer__close:active { opacity: var(--opacity-pressed); }
+
+.lab-viewer__frame {
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-media);
+  overflow: hidden;
+  background: var(--color-bg-media);
+}
+.lab-viewer.is-portrait {
+  --lab-viewer-w: min(92vw, var(--size-560), calc((100dvh - var(--space-45)) * 4 / 5));
+}
+.lab-viewer.is-portrait .lab-viewer__frame { aspect-ratio: 4 / 5; }
+.lab-viewer__frame iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+@media (max-width: 767px) {
+  .lab-viewer__open { display: none; }
+}

@@ -1,0 +1,107 @@
+/* ==========================================================================
+   Contra cover (video)
+   The 1600 x 1200 cover from tools/brand, rebuilt as a loop: the strings run
+   behind, the 3D icon breaks apart and pulls back together.
+   Sizes are fixed px on purpose: it's a poster at one size, not a page.
+   ========================================================================== */
+:root {
+  --cc-w: 800px;
+  --cc-h: 600px;
+  --cc-margin: 56px;
+  --cc-fs-mark: 15px;
+  --cc-fs-mono: 11px;
+  --cc-fs-title: 60px;
+  /* The icon's canvas is much larger than the icon, so shards can fly across the poster */
+  --cc-icon-size: 1400px;
+  --cc-icon-x: 630px; /* icon centre */
+  --cc-icon-y: 390px;
+  --cc-flare-size: 520px;
+}
+
+.cover {
+  position: relative;
+  width: var(--cc-w);
+  height: var(--cc-h);
+  overflow: hidden;
+  background: var(--color-bg);
+  color: var(--color-text-strong);
+}
+
+.cover__strings {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.cover__icon {
+  position: absolute;
+  left: calc(var(--cc-icon-x) - var(--cc-icon-size) / 2);
+  top: calc(var(--cc-icon-y) - var(--cc-icon-size) / 2);
+  width: var(--cc-icon-size);
+  height: var(--cc-icon-size);
+  pointer-events: none;
+}
+
+/* A brief orange bloom behind the icon when it breaks */
+.cover__flare {
+  position: absolute;
+  left: calc(var(--cc-icon-x) - var(--cc-flare-size) / 2);
+  top: calc(var(--cc-icon-y) - var(--cc-flare-size) / 2);
+  width: var(--cc-flare-size);
+  height: var(--cc-flare-size);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--color-scene-rim), transparent);
+  opacity: 0;
+}
+
+.cover p,
+.cover h1 { margin: 0; }
+
+.cover__mark {
+  position: absolute;
+  left: var(--cc-margin);
+  top: calc(var(--cc-margin) - 0.2em);
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  font-family: var(--font-display);
+  font-size: var(--cc-fs-mark);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+.cover__mark svg { width: 1.05em; height: 1.05em; }
+
+.cover__copy {
+  position: absolute;
+  left: var(--cc-margin);
+  top: 178px;
+}
+
+.cover__eyebrow,
+.cover__foot {
+  font-family: var(--font-mono);
+  font-size: var(--cc-fs-mono);
+  letter-spacing: -0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.cover__title {
+  margin-top: 26px;
+  font-family: var(--font-display);
+  font-size: var(--cc-fs-title);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+}
+
+.cover__foot {
+  position: absolute;
+  left: var(--cc-margin);
+  bottom: calc(var(--cc-margin) - 4px);
+  display: grid;
+  gap: 12px;
+}
+.cover__industries { color: var(--color-text); }

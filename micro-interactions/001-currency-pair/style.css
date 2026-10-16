@@ -1,0 +1,652 @@
+/* ==========================================================================
+   001 · Currency pair picker
+   Exploration tokens (primitives, then roles), then the card.
+   Spacing, radius and motion come from the portfolio's css/tokens.css.
+   ========================================================================== */
+
+/* ============ Tokens: primitives ============ */
+:root {
+  --fx-forest-900: #10290a;
+  --fx-moss-600: #4f5d48;
+  --fx-moss-400: #7d8a76;
+  --fx-mist-50: #f5f7f2;
+  --fx-mist-100: #eceee8;
+  --fx-mist-200: #e1e5db;
+  --fx-mist-300: #cfd5c7;
+  --fx-mist-400: #b5bdab;
+  --fx-lime-300: #bdf27e;
+  --fx-lime-400: #a6e35c;
+  --fx-mint-100: #e4f5d8;
+  --fx-mint-800: #22571a;
+  --fx-red-700: #a8261b;
+  --fx-white: #ffffff;
+  --fx-white-a50: rgba(255, 255, 255, 0.5);
+  --fx-black-a08: rgba(0, 0, 0, 0.08);
+  --fx-black-a18: rgba(0, 0, 0, 0.18);
+  --fx-black-a40: rgba(0, 0, 0, 0.4);
+  --fx-forest-a24: rgba(16, 41, 10, 0.24);
+}
+
+/* ============ Tokens: roles ============ */
+:root {
+  /* Surfaces */
+  --stage-bg: var(--fx-forest-900);
+  --fx-backdrop: url("background.webp");
+  --fx-surface: var(--fx-white);
+  --fx-surface-sunken: var(--fx-mist-50);
+  --fx-control: var(--fx-mist-100);
+  --fx-control-hover: var(--fx-mist-200);
+  --fx-control-active: var(--fx-mist-300);
+  --fx-line: var(--fx-mist-200);
+  --fx-shadow-card: 0 40px 80px -24px var(--fx-black-a40);
+  --fx-shadow-pop: 0 18px 40px -12px var(--fx-forest-a24), 0 0 0 var(--fx-hairline) var(--fx-line);
+
+  /* Text */
+  --fx-text: var(--fx-forest-900);
+  --fx-text-muted: var(--fx-moss-600);
+  --fx-text-placeholder: var(--fx-moss-400);  /* large text only: 3.7:1 on white */
+
+  /* Accent + feedback */
+  --fx-accent: var(--fx-lime-300);
+  --fx-accent-hover: var(--fx-lime-400);
+  --fx-on-accent: var(--fx-forest-900);
+  --fx-success-bg: var(--fx-mint-100);
+  --fx-success-text: var(--fx-mint-800);
+  --fx-danger-text: var(--fx-red-700);
+
+  /* Coins */
+  --fx-coin-rim: var(--fx-mist-300);
+  --fx-coin-rim-shade: var(--fx-mist-400);
+  --fx-coin-edge: var(--fx-black-a08);
+  --fx-coin-gloss: var(--fx-white-a50);
+  --fx-coin-shade: var(--fx-black-a18);
+
+  /* Type */
+  --fx-font: "Inter Tight", system-ui, sans-serif;
+  --fx-fw-medium: 500;
+  --fx-fw-semibold: 600;
+  --fx-fw-heavy: 800;
+  --fx-fs-amount: 40px;
+  --fx-fs-button: 16px;
+  --fx-fs-body: 15px;
+  --fx-fs-label: 14px;
+  --fx-fs-small: 13px;
+  --fx-lh-amount: 1.05;
+  --fx-lh-ui: 1.2;
+  --fx-ls-amount: var(--tracking-400);
+  --fx-ls-ui: var(--tracking-200);
+
+  /* Sizes */
+  --fx-card-w: 392px;
+  --fx-card-radius: 32px;
+  --fx-panel-radius: 22px;
+  --fx-pop-radius: 18px;
+  --fx-option-radius: 12px;
+  --fx-deck-h: 124px;
+  --fx-perspective: 700px;
+  --fx-tilt: -14deg;
+  --fx-coin: 54px;
+  --fx-flag: 24px;
+  --fx-icon: 18px;
+  --fx-chip-h: 32px;
+  --fx-pill-w: 116px;
+  --fx-amount-w: 212px;
+  --fx-dropdown-w: 248px;
+  --fx-dropdown-rows: 4.5;   /* the half row shows the list goes on */
+  --fx-list-fade: var(--space-7);
+  --fx-meta-icon: 36px;
+  --fx-cta-h: 52px;
+  --fx-hairline: 1px;
+  --fx-dash: 1.5px;
+  --fx-spinner: 18px;
+  --fx-spinner-stroke: 2px;
+  --fx-press-scale: 0.98;
+  --fx-pop-scale: 0.96;
+  --fx-caret-w: 2.5px;
+  --fx-caret-h: 0.8em;
+  --fx-caret-gap: -6px;      /* the caret sits just past the last digit */
+  --fx-focus-line: 2px;
+  --fx-focus-offset: -6px;
+
+  /* Motion */
+  --fx-spin: 800ms;
+}
+
+/* ============ Stage ============ */
+/* Illustrated landscape behind the card; the flat green shows while it loads */
+.stage {
+  background: var(--stage-bg) var(--fx-backdrop) center / cover no-repeat;
+}
+
+/* ============ Card ============ */
+.card {
+  --color-focus: var(--fx-text);
+  position: relative;
+  width: var(--fx-card-w);
+  padding: var(--space-6);
+  border-radius: var(--fx-card-radius);
+  background: var(--fx-surface);
+  color: var(--fx-text);
+  font-family: var(--fx-font);
+  font-size: var(--fx-fs-body);
+  line-height: var(--fx-lh-ui);
+  letter-spacing: var(--fx-ls-ui);
+  box-shadow: var(--fx-shadow-card);
+}
+
+:where(.card p) { margin: 0; }
+
+.icon {
+  width: var(--fx-icon);
+  height: var(--fx-icon);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: none;
+}
+
+.flag {
+  width: var(--fx-flag);
+  height: var(--fx-flag);
+  flex: none;
+  border-radius: var(--radius-round);
+  background: var(--flag) center / cover;
+  box-shadow: inset 0 0 0 var(--fx-hairline) var(--fx-coin-edge);
+}
+
+/* ============ Picker: the coin deck (illustration) ============ */
+.picker {
+  display: grid;
+  justify-items: center;
+  padding: var(--space-2) var(--space-3) var(--space-4);
+  border-radius: var(--fx-panel-radius);
+  background: var(--fx-surface-sunken);
+}
+
+.deck {
+  position: relative;
+  width: 100%;
+  height: var(--fx-deck-h);
+  perspective: var(--fx-perspective);
+  pointer-events: none;
+}
+
+.deck__scene {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--fx-tilt));
+}
+
+.deck__ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-style: preserve-3d;
+}
+
+.coin {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--fx-coin);
+  height: var(--fx-coin);
+  margin: calc(var(--fx-coin) / -2) 0 0 calc(var(--fx-coin) / -2);
+  border-radius: var(--radius-round);
+  transform-style: preserve-3d;
+}
+
+/* The tokens stand in for the picked coins once the deck folds away */
+.token { visibility: hidden; }
+
+.coin__face {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--flag) center / cover;
+  box-shadow: inset 0 0 0 var(--fx-hairline) var(--fx-coin-edge);
+  backface-visibility: hidden;
+  transform: translateZ(2px);
+}
+.coin__face::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 32% 24%, var(--fx-coin-gloss), transparent 46%),
+    radial-gradient(circle at 70% 90%, var(--fx-coin-shade), transparent 55%);
+}
+.coin__face--back {
+  background-image: var(--flag-back, var(--flag));
+  transform: rotateY(180deg) translateZ(2px);
+  filter: brightness(0.82);
+}
+/* A token flips to show its next flag on the back, so the back stays lit */
+.token .coin__face--back { filter: none; }
+
+/* Stacked discs between the faces read as the coin's edge when it turns */
+.coin__rim {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--fx-coin-rim);
+  transform: translateZ(calc((var(--i) - 1.5) * 1px));
+}
+.coin__rim:nth-child(odd) { background: var(--fx-coin-rim-shade); }
+
+/* ============ Picker: status line ============ */
+.picker__status {
+  display: grid;
+  place-items: center;
+  min-height: var(--fx-chip-h);
+}
+
+.picker__msg {
+  grid-area: 1 / 1;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--fx-text-muted);
+  font-size: var(--fx-fs-label);
+  font-weight: var(--fx-fw-medium);
+}
+.picker__msg:not([data-msg="from"]) { visibility: hidden; opacity: 0; }
+
+.rate {
+  height: var(--fx-chip-h);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--fx-control);
+  color: var(--fx-text);
+  font-weight: var(--fx-fw-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.picker__msg--error { color: var(--fx-danger-text); }
+
+/* ============ Rows: what you send, what they get ============ */
+.rows {
+  display: grid;
+  gap: var(--space-5);
+  margin-top: var(--space-5);
+}
+
+.row__label {
+  margin-bottom: var(--space-2);
+  color: var(--fx-text-muted);
+  font-size: var(--fx-fs-label);
+}
+
+.row__line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+/* ============ Select: pill + dropdown ============ */
+.select {
+  position: relative;
+  flex: none;
+}
+.select[data-open] { z-index: var(--z-stack-3); }
+
+.pill {
+  display: inline-grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  width: var(--fx-pill-w);
+  height: var(--tap);
+  padding: 0 var(--space-3) 0 var(--space-2);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--fx-control);
+  color: var(--fx-text);
+  font: var(--fx-fw-semibold) var(--fx-fs-button) / var(--fx-lh-ui) var(--fx-font);
+  letter-spacing: var(--fx-ls-ui);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+.pill:hover,
+.pill[aria-expanded="true"] { background: var(--fx-control-hover); }
+.pill:active { background: var(--fx-control-active); }
+
+.pill__face {
+  grid-area: 1 / 1;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.pill__filled { visibility: hidden; opacity: 0; }
+
+.pill__chevron {
+  grid-area: 1 / 2;
+  transition: transform var(--dur) var(--ease);
+}
+.pill[aria-expanded="true"] .pill__chevron { transform: rotate(180deg); }
+
+.pill__dash {
+  width: var(--fx-flag);
+  height: var(--fx-flag);
+  border: var(--fx-dash) dashed var(--fx-text-placeholder);
+  border-radius: var(--radius-round);
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  z-index: var(--z-stack-3);
+  width: var(--fx-dropdown-w);
+  border-radius: var(--fx-pop-radius);
+  background: var(--fx-surface);
+  box-shadow: var(--fx-shadow-pop);
+  transform-origin: top left;
+  visibility: hidden;
+  opacity: 0;
+}
+.dropdown[data-dir="up"] {
+  top: auto;
+  bottom: calc(100% + var(--space-2));
+  transform-origin: bottom left;
+}
+
+/* Live: the dropdown opens with CSS. In the demo, the loop drives it. */
+html[data-mode="live"] .dropdown {
+  transform: scale(var(--fx-pop-scale));
+  transition:
+    opacity var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease-out),
+    visibility 0s linear var(--dur-fast);
+}
+html[data-mode="live"] .select[data-open] .dropdown {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  transition-delay: 0s;
+}
+
+.dropdown__list {
+  --fade-top: 0px;
+  --fade-bottom: var(--fx-list-fade);
+  position: relative;
+  max-height: calc(var(--tap) * var(--fx-dropdown-rows) + var(--space-1));
+  margin: 0;
+  padding: var(--space-1);
+  list-style: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  mask-image: linear-gradient(transparent, #000 var(--fade-top), #000 calc(100% - var(--fade-bottom)), transparent);
+}
+.dropdown__list::-webkit-scrollbar { display: none; }
+.dropdown__list[data-scrolled] { --fade-top: var(--fx-list-fade); }
+.dropdown__list[data-end] { --fade-bottom: 0px; }
+.dropdown__list:focus-visible { outline-offset: calc(var(--focus-width) * -1); }
+
+/* One highlight slides to the option under the pointer or the arrow keys */
+.dropdown__hl {
+  position: absolute;
+  top: 0;
+  left: var(--space-1);
+  right: var(--space-1);
+  height: var(--tap);
+  border-radius: var(--fx-option-radius);
+  background: var(--fx-control);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(var(--hl-y, 0px));
+}
+html[data-mode="live"] .dropdown__hl {
+  transition: transform var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease);
+}
+.dropdown__hl[data-on] { opacity: 1; }
+.dropdown__hl[data-pressed] { background: var(--fx-control-active); }
+
+.option {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--fx-flag) auto 1fr var(--fx-icon);
+  align-items: center;
+  column-gap: var(--space-2);
+  height: var(--tap);
+  padding: 0 var(--space-3);
+  cursor: pointer;
+}
+.option__code { font-weight: var(--fx-fw-semibold); }
+.option__name {
+  overflow: hidden;
+  color: var(--fx-text-muted);
+  font-size: var(--fx-fs-small);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.option__check { visibility: hidden; }
+.option[aria-selected="true"] .option__check { visibility: visible; }
+.option[aria-disabled="true"] { cursor: not-allowed; }
+.option[aria-disabled="true"] .flag,
+.option[aria-disabled="true"] .option__code { opacity: var(--opacity-disabled); }
+
+/* ============ Amounts ============ */
+.amount {
+  position: relative;
+  flex: 1;
+  display: grid;
+  justify-items: end;
+  align-items: center;
+  min-width: 0;
+  font-size: var(--amount-size, var(--fx-fs-amount));
+  font-weight: var(--fx-fw-heavy);
+  line-height: var(--fx-lh-amount);
+  letter-spacing: var(--fx-ls-amount);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.amount > * { grid-area: 1 / 1; }
+.amount__empty {
+  color: var(--fx-text-placeholder);
+  font-size: var(--fx-fs-amount);
+}
+
+/* What you send: a real input for visitors; in the loop, the keystrokes are
+   drawn as stacked states (one per key) so every frame can be recorded. */
+.amount__input {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--fx-text);
+  font: inherit;
+  letter-spacing: inherit;
+  font-variant-numeric: inherit;
+  text-align: right;
+  caret-color: var(--fx-text);
+  outline: none; /* focus shows as the underline below */
+  visibility: hidden;
+}
+.amount__input::placeholder {
+  color: var(--fx-text-placeholder);
+  opacity: 1;
+}
+.amount__input:disabled { cursor: not-allowed; }
+html[data-mode="live"] .amount__input { visibility: visible; }
+html[data-mode="live"] .amount :is(.amount__empty, .amount__typed, .amount__caret) { display: none; }
+
+.amount__typed {
+  display: grid;
+  justify-items: end;
+}
+.typed {
+  grid-area: 1 / 1;
+  visibility: hidden;
+  opacity: 0;
+}
+.typed__new,
+.typed__dec { display: inline-block; }
+
+.amount__caret {
+  justify-self: end;
+  width: var(--fx-caret-w);
+  height: var(--fx-caret-h);
+  margin-right: var(--fx-caret-gap);
+  border-radius: var(--radius-pill);
+  background: var(--fx-text);
+  visibility: hidden;
+  opacity: 0;
+}
+
+.amount__focus {
+  align-self: end;
+  justify-self: stretch;
+  height: var(--fx-focus-line);
+  margin-bottom: var(--fx-focus-offset);
+  border-radius: var(--radius-pill);
+  background: var(--fx-text);
+  transform: scaleX(0);
+  transform-origin: right;
+  pointer-events: none;
+}
+html[data-mode="live"] .amount__focus { transition: transform var(--dur) var(--ease-out), background-color var(--dur-fast) var(--ease); }
+html[data-mode="live"] .amount__input:enabled:hover ~ .amount__focus {
+  transform: none;
+  background: var(--fx-line);
+}
+html[data-mode="live"] .amount__input:enabled:focus ~ .amount__focus {
+  transform: none;
+  background: var(--fx-text);
+}
+
+/* Measures typed text so long amounts can shrink to fit */
+.amount__mirror {
+  position: absolute;
+  visibility: hidden;
+  white-space: pre;
+  pointer-events: none;
+}
+
+/* Odometer: each digit is a strip (blank, 0-9, 0-9) that rolls into place */
+.odo {
+  --fade: 0%; /* soft top and bottom edges while the digits roll */
+  display: inline-flex;
+  visibility: hidden;
+  opacity: 0;
+}
+.odo__col {
+  display: inline-block;
+  height: calc(var(--fx-lh-amount) * 1em);
+  overflow: hidden;
+  mask-image: linear-gradient(transparent, #000 var(--fade), #000 calc(100% - var(--fade)), transparent);
+}
+.odo__strip { display: block; }
+.odo__strip > span {
+  display: block;
+  height: calc(var(--fx-lh-amount) * 1em);
+}
+
+/* ============ Meta: arrival and rate ============ */
+.meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+  padding-top: var(--space-5);
+  border-top: var(--fx-hairline) solid var(--fx-line);
+}
+
+.meta__item {
+  display: grid;
+  grid-template-columns: var(--fx-meta-icon) 1fr;
+  column-gap: var(--space-3);
+  align-items: center;
+}
+
+.meta__icon {
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: var(--fx-meta-icon);
+  height: var(--fx-meta-icon);
+  border: var(--fx-hairline) solid var(--fx-line);
+  border-radius: var(--radius-round);
+  color: var(--fx-text-muted);
+}
+
+.meta__label {
+  color: var(--fx-text-muted);
+  font-size: var(--fx-fs-small);
+}
+
+.meta__value {
+  display: grid;
+  font-weight: var(--fx-fw-semibold);
+}
+.meta__value > span { grid-area: 1 / 1; }
+.meta__value [data-empty] { color: var(--fx-text-muted); }
+.meta__value [data-filled] { visibility: hidden; opacity: 0; }
+
+/* ============ Call to action ============ */
+.cta {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: var(--fx-cta-h);
+  margin-top: var(--space-5);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--fx-accent);
+  color: var(--fx-on-accent);
+  font: var(--fx-fw-semibold) var(--fx-fs-button) / var(--fx-lh-ui) var(--fx-font);
+  letter-spacing: var(--fx-ls-ui);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+}
+.cta:hover { background: var(--fx-accent-hover); }
+.cta:active { transform: scale(var(--fx-press-scale)); }
+.cta:disabled {
+  background: var(--fx-control);
+  color: var(--fx-text-muted);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.cta__face {
+  grid-area: 1 / 1;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.cta__loading,
+.cta__done { visibility: hidden; }
+.cta[data-state="loading"] .cta__idle,
+.cta[data-state="done"] .cta__idle { visibility: hidden; }
+.cta[data-state="loading"] .cta__loading,
+.cta[data-state="done"] .cta__done { visibility: visible; }
+.cta[data-state="loading"] { cursor: progress; }
+.cta[data-state="done"] {
+  background: var(--fx-success-bg);
+  color: var(--fx-success-text);
+  cursor: default;
+}
+
+.spinner {
+  width: var(--fx-spinner);
+  height: var(--fx-spinner);
+  border: var(--fx-spinner-stroke) solid currentColor;
+  border-right-color: transparent;
+  border-radius: var(--radius-round);
+  animation: spin var(--fx-spin) linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation: none; }
+  .pill, .pill__chevron, .cta { transition: none; }
+  html[data-mode="live"] .dropdown,
+  html[data-mode="live"] .dropdown__hl,
+  html[data-mode="live"] .amount__focus { transition: none; }
+}

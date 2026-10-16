@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Currency pair picker · Micro-interactions · Guilherme Kerber</title>
+  <meta name="description" content="A deck of currency coins spins at the top of a transfer card. Pick what you send and the deck settles on it; pick what they receive and the pair lands side by side. Type the amount and the conversion rolls in.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/tokens.css">
+  <link rel="stylesheet" href="../shared/stage.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="stage">
+    <section class="card" aria-labelledby="card-title">
+      <h1 class="sr-only" id="card-title">Send money abroad</h1>
+
+      <div class="picker">
+        <!-- Illustration only: it mirrors what you pick below -->
+        <div class="deck" aria-hidden="true">
+          <div class="deck__scene">
+            <div class="deck__ring"></div>
+            <span class="coin token" data-token="from"></span>
+            <span class="coin token" data-token="to"></span>
+          </div>
+        </div>
+
+        <div class="picker__status" aria-live="polite">
+          <p class="picker__msg" data-msg="from">Choose the currency you send</p>
+          <p class="picker__msg" data-msg="to">Now choose what they receive</p>
+          <p class="picker__msg rate" data-msg="rate">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h12l-3-3M17 17H5l3 3"/></svg>
+            <span data-rate></span>
+          </p>
+          <p class="picker__msg picker__msg--error" data-msg="error">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.01"/></svg>
+            <span data-error></span>
+          </p>
+        </div>
+      </div>
+
+      <div class="rows">
+        <div class="row">
+          <p class="row__label" id="send-label">You send exactly</p>
+          <div class="row__line">
+            <div class="select" data-side="from">
+              <button class="pill" id="pill-from" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="list-from" aria-labelledby="send-label pill-from">
+                <span class="pill__face pill__empty"><span class="pill__dash"></span>Select</span>
+                <span class="pill__face pill__filled"><span class="flag"></span><span data-code></span></span>
+                <svg class="icon pill__chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="dropdown" data-dir="down">
+                <ul class="dropdown__list" id="list-from" role="listbox" tabindex="-1" aria-label="Currency you send"></ul>
+              </div>
+            </div>
+            <div class="amount" data-side="from">
+              <span class="amount__empty" aria-hidden="true">0.00</span>
+              <span class="amount__typed" aria-hidden="true"></span>
+              <span class="amount__caret" aria-hidden="true"></span>
+              <input class="amount__input" id="amount-from" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="0.00" aria-labelledby="send-label" disabled>
+              <span class="amount__focus" aria-hidden="true"></span>
+              <span class="amount__mirror" aria-hidden="true"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <p class="row__label" id="get-label">Recipient gets</p>
+          <div class="row__line">
+            <div class="select" data-side="to">
+              <button class="pill" id="pill-to" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="list-to" aria-labelledby="get-label pill-to">
+                <span class="pill__face pill__empty"><span class="pill__dash"></span>Select</span>
+                <span class="pill__face pill__filled"><span class="flag"></span><span data-code></span></span>
+                <svg class="icon pill__chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="dropdown" data-dir="up">
+                <ul class="dropdown__list" id="list-to" role="listbox" tabindex="-1" aria-label="Currency they receive"></ul>
+              </div>
+            </div>
+            <p class="amount" data-side="to">
+              <span class="amount__empty" aria-hidden="true">0.00</span>
+              <span class="odo" aria-hidden="true"></span>
+              <span class="sr-only" data-amount-text>Not set</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="meta">
+        <div class="meta__item">
+          <span class="meta__icon" aria-hidden="true">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M13 3 5 13.5h6L10 21l8-10.5h-6z"/></svg>
+          </span>
+          <p class="meta__label">Arrives</p>
+          <p class="meta__value"><span data-empty>—</span><span data-filled>Today, in seconds</span></p>
+        </div>
+        <div class="meta__item">
+          <span class="meta__icon" aria-hidden="true">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg>
+          </span>
+          <p class="meta__label">Rate</p>
+          <p class="meta__value"><span data-empty>—</span><span data-filled data-rate-state>Live</span></p>
+        </div>
+      </div>
+
+      <button class="cta" type="button" disabled>
+        <span class="cta__face cta__idle">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>
+          Lock this rate
+        </span>
+        <span class="cta__face cta__loading"><span class="spinner" aria-hidden="true"></span>Locking rate…</span>
+        <span class="cta__face cta__done">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>
+          Rate locked
+        </span>
+      </button>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="../shared/loop.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

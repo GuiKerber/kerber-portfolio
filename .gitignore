@@ -13,3 +13,10 @@ desktop.ini
 
 # Brand image generator (local tool)
 tools/brand/
+
+# Loop recorder: its dependencies and the videos it exports
+tools/record-loop/node_modules/
+micro-interactions/exports/
+
+# Raw illustrations for the explorations; the pages use processed copies
+micro-interactions/*/source/

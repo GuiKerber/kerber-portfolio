@@ -1,0 +1,447 @@
+/* ==========================================================================
+   002 · Train tracker
+   Exploration tokens (primitives, then roles), then the card.
+   Spacing, radius and motion come from the portfolio's css/tokens.css.
+   ========================================================================== */
+
+/* ============ Tokens: primitives ============ */
+:root {
+  --tt-ink-950: #101b17;
+  --tt-ink-900: #1d2c26;
+  --tt-sage-600: #5c6d65;
+  --tt-sage-300: #a9b6b0;
+  --tt-fog-200: #d6ded9;
+  --tt-fog-100: #e8ede9;
+  --tt-fog-50: #f3f6f3;
+  --tt-white: #ffffff;
+  --tt-cream-100: #f3efdc;
+  --tt-clay-50: #f4f7f9;
+  --tt-clay-100: #e8edf1;
+  --tt-clay-200: #dbe2e8;
+  --tt-clay-300: #c3ccd5;
+  --tt-sky-200: #d3e0ed;
+  --tt-mint-200: #bfe4cf;
+  --tt-mint-300: #a9d8bd;
+  --tt-mint-400: #8fcaa8;
+  --tt-green-700: #1e7d4a;
+  --tt-coral-400: #ec8667;
+  --tt-glass-900: #1c2e2a;
+  --tt-steel-700: #33433e;
+  --tt-hub-200: #d9dccf;
+  --tt-bark-500: #9b8a6c;
+  --tt-slate-a24: rgba(36, 52, 76, 0.24);
+  --tt-slate-a12: rgba(36, 52, 76, 0.12);
+  --tt-white-a0: rgba(255, 255, 255, 0);
+}
+
+/* ============ Tokens: roles ============ */
+:root {
+  /* Stage */
+  --stage-bg: var(--tt-clay-100);
+  --tt-stage-light: var(--tt-clay-50);
+  --tt-stage-edge: var(--tt-clay-200);
+
+  /* The button, before it opens */
+  --tt-button: var(--tt-ink-950);
+  --tt-button-hover: var(--tt-ink-900);
+  --tt-on-button: var(--tt-cream-100);
+
+  /* The card, once open */
+  --tt-card: var(--tt-white);
+  --tt-card-clear: var(--tt-white-a0);
+  --tt-control: var(--tt-white);
+  --tt-control-hover: var(--tt-fog-100);
+  --tt-skeleton: var(--tt-fog-100);
+  --tt-skeleton-shine: var(--tt-fog-50);
+  --tt-text: var(--tt-ink-950);
+  --tt-text-muted: var(--tt-sage-600);   /* 5.6:1 on white */
+  --tt-on-time: var(--tt-green-700);     /* 5.2:1 on white */
+  --tt-rail: var(--tt-fog-200);
+  --tt-tie: var(--tt-fog-100);
+  --tt-rail-done: var(--tt-ink-950);
+  --tt-tie-done: var(--tt-sage-300);
+  --tt-marker-body: var(--tt-scene-train);  /* the same train as the scene, from above */
+  --tt-marker-glass: var(--tt-glass-900);
+  --tt-shadow: drop-shadow(0 28px 36px var(--tt-slate-a24)) drop-shadow(0 4px 8px var(--tt-slate-a12));
+
+  /* 3D scene (read from JS): a world in white clay; only the train and the trees have colour */
+  --tt-scene-sky: var(--tt-clay-50);
+  --tt-scene-light: var(--tt-white);
+  --tt-scene-fill: var(--tt-sky-200);       /* the sky's light, which tints the shadows blue */
+  --tt-scene-fill-power: 1.6;               /* how strongly it lifts them */
+  --tt-scene-ground: var(--tt-clay-50);
+  --tt-scene-train: var(--tt-coral-400);
+  --tt-scene-glass: var(--tt-glass-900);
+  --tt-scene-steel: var(--tt-steel-700);
+  --tt-scene-hub: var(--tt-hub-200);
+  --tt-scene-slab: var(--tt-white);
+  --tt-scene-groove: var(--tt-clay-300);
+  --tt-scene-pole: var(--tt-clay-50);
+  --tt-scene-leaf-1: var(--tt-mint-200);
+  --tt-scene-leaf-2: var(--tt-mint-300);
+  --tt-scene-leaf-3: var(--tt-mint-400);
+  --tt-scene-trunk: var(--tt-bark-500);
+  --tt-scene-hill: var(--tt-clay-50);
+
+  /* Type */
+  --tt-font: "Manrope", system-ui, sans-serif;
+  --tt-fw-medium: 500;
+  --tt-fw-semibold: 600;
+  --tt-fw-bold: 700;
+  --tt-fw-heavy: 800;
+  --tt-fs-code: 30px;
+  --tt-fs-eta: 19px;
+  --tt-fs-title: 16px;
+  --tt-fs-body: 14px;
+  --tt-fs-small: 12px;
+  --tt-lh-tight: 1;
+  --tt-lh-ui: 1.3;
+  --tt-ls-code: var(--tracking-300);
+
+  /* Sizes */
+  --tt-card-w: 392px;
+  --tt-card-pad: var(--space-5);
+  --tt-card-radius: 28px;
+  --tt-hero-h: 212px;
+  --tt-hero-fade: 64px;       /* where the landscape melts into the card */
+  --tt-close: 32px;
+  --tt-icon: 18px;
+  --tt-dot: 7px;
+  --tt-rail-h: 14px;
+  --tt-rail-w: 2px;
+  --tt-tie-gap: 6px;
+  --tt-station: 8px;
+  --tt-marker-w: 40px;
+  --tt-marker-stroke: 1.5px;
+  --tt-skeleton-line: 12px;
+  --tt-skeleton-block: 46px;
+  --tt-press: 0.97;
+  --tt-progress: 0.58;        /* share of the trip done; the loop nudges it */
+}
+
+/* ============ Stage ============ */
+.stage {
+  background: radial-gradient(120% 90% at 50% 30%, var(--tt-stage-light), var(--tt-stage-edge));
+}
+
+.icon {
+  width: var(--tt-icon);
+  height: var(--tt-icon);
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+:where(.tracker p, .tracker h1) { margin: 0; }
+
+/* ============ The card (and the button it grows from) ============ */
+.tracker-shadow { filter: var(--tt-shadow); }
+
+/* Laid out at full size; a clip-path cuts it down to a pill while closed.
+   The clip is driven by three variables so its corners stay round mid-way.
+   Closed it wears the button's dark; the loop turns it white as it opens. */
+.tracker {
+  --color-focus: var(--tt-text);
+  --clip-x: 0px;
+  --clip-y: 0px;
+  --clip-r: var(--tt-card-radius);
+  position: relative;
+  width: var(--tt-card-w);
+  border-radius: var(--tt-card-radius);
+  background: var(--tt-button);
+  color: var(--tt-text);
+  font-family: var(--tt-font);
+  font-size: var(--tt-fs-body);
+  line-height: var(--tt-lh-ui);
+  clip-path: inset(var(--clip-y) var(--clip-x) round var(--clip-r));
+}
+
+.tracker__title {
+  position: absolute;
+  top: calc(var(--tt-card-pad) - var(--space-1));
+  left: var(--tt-card-pad);
+  z-index: var(--z-stack-1);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--tt-on-button);
+  font-size: var(--tt-fs-title);
+  font-weight: var(--tt-fw-bold);
+  line-height: var(--tt-close);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* The real button while closed: it sits over the pill */
+.tracker__toggle {
+  position: absolute;
+  z-index: var(--z-stack-2);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: none;
+  cursor: pointer;
+}
+.tracker__toggle:focus-visible {
+  --color-focus: var(--tt-on-button);
+  outline-offset: calc(var(--focus-width) * -2);
+  border-radius: var(--radius-pill);
+}
+.tracker__toggle[hidden] { display: none; }
+
+html[data-mode="live"] .tracker { transition: background-color var(--dur-fast) var(--ease), scale var(--dur-fast) var(--ease); }
+html[data-mode="live"] .tracker:has(.tracker__toggle:hover) { background-color: var(--tt-button-hover); }
+html[data-mode="live"] .tracker:has(.tracker__toggle:active) { scale: var(--tt-press); }
+.tracker:has(.tracker__toggle:disabled) .tracker__toggle { cursor: progress; }
+
+.tracker__close {
+  position: absolute;
+  top: calc(var(--tt-card-pad) - var(--space-1));
+  right: calc(var(--tt-card-pad) - var(--space-1));
+  z-index: var(--z-stack-2);
+  display: grid;
+  place-items: center;
+  width: var(--tt-close);
+  height: var(--tt-close);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-round);
+  background: var(--tt-control);
+  color: var(--tt-text);
+  cursor: pointer;
+  visibility: hidden;
+  opacity: 0;
+}
+/* A 44px hit area around the 32px circle */
+.tracker__close::before {
+  content: "";
+  position: absolute;
+  inset: calc((var(--tap) - var(--tt-close)) / -2);
+}
+.tracker__close:hover { background: var(--tt-control-hover); }
+.tracker__close:active { scale: var(--tt-press); }
+.tracker__close:focus-visible { border-radius: var(--radius-round); }
+.tracker__close .icon { width: var(--size-icon-sm); height: var(--size-icon-sm); }
+html[data-mode="live"] .tracker__close { transition: background-color var(--dur-fast) var(--ease), scale var(--dur-fast) var(--ease); }
+
+.tracker__info {
+  display: grid;
+  gap: var(--space-4);
+  padding: 0 var(--tt-card-pad) var(--tt-card-pad);
+}
+
+/* Each block shows a skeleton while the trip loads, then its content */
+.slot { display: grid; }
+.slot > * { grid-area: 1 / 1; }
+.slot__content,
+.sk {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.skeleton {
+  border-radius: var(--radius-media);
+  background: linear-gradient(90deg, var(--tt-skeleton) 35%, var(--tt-skeleton-shine) 50%, var(--tt-skeleton) 65%) 100% 0 / 300% 100%;
+}
+.sk--hero {
+  height: calc(var(--tt-hero-h) - var(--tt-hero-fade) / 2);
+  border-radius: 0;
+}
+.sk--line { height: var(--tt-skeleton-line); }
+.sk--block { height: var(--tt-skeleton-block); }
+
+/* ============ Hero: the landscape across the top of the card ============ */
+.hero {
+  position: relative;
+  height: var(--tt-hero-h);
+  background: var(--tt-scene-sky);
+}
+.hero__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* The ground melts into the card, so there is no frame around the scene */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: var(--tt-hero-fade);
+  background: linear-gradient(var(--tt-card-clear), var(--tt-card));
+  pointer-events: none;
+}
+
+/* Offline: the scene gives way to a message */
+.hero__offline {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-6) var(--space-8);
+  background: var(--tt-skeleton);
+  color: var(--tt-text);
+  font-weight: var(--tt-fw-semibold);
+  text-align: center;
+  visibility: hidden;
+}
+.hero[data-offline] .hero__offline { visibility: visible; }
+
+/* ============ Meta ============ */
+.meta {
+  display: flex;
+  justify-content: space-between;
+  color: var(--tt-text-muted);
+  font-size: var(--tt-fs-small);
+  font-weight: var(--tt-fw-semibold);
+}
+
+/* ============ Route ============ */
+.route {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-4);
+}
+.route__stop--end { text-align: right; }
+.route__code {
+  font-size: var(--tt-fs-code);
+  font-weight: var(--tt-fw-heavy);
+  line-height: var(--tt-lh-tight);
+  letter-spacing: var(--tt-ls-code);
+}
+.route__time {
+  margin-top: var(--space-1);
+  color: var(--tt-text-muted);
+  font-size: var(--tt-fs-small);
+  font-weight: var(--tt-fw-medium);
+}
+
+.route__track {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+}
+.route__label {
+  color: var(--tt-text-muted);
+  font-size: var(--tt-fs-small);
+  font-weight: var(--tt-fw-medium);
+}
+
+/* A stretch of track from above: two rails over a run of ties */
+.rail {
+  position: relative;
+  width: 100%;
+  height: var(--tt-rail-h);
+}
+.rail__ties {
+  --rail-color: var(--tt-rail);
+  --tie-color: var(--tt-tie);
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(var(--rail-color) 0 0) 0 25% / 100% var(--tt-rail-w) no-repeat,
+    linear-gradient(var(--rail-color) 0 0) 0 75% / 100% var(--tt-rail-w) no-repeat,
+    repeating-linear-gradient(90deg, var(--tie-color) 0 var(--tt-rail-w), transparent var(--tt-rail-w) var(--tt-tie-gap));
+}
+/* The stretch already covered, inked in up to the train */
+.rail__ties--done {
+  --rail-color: var(--tt-rail-done);
+  --tie-color: var(--tt-tie-done);
+  clip-path: inset(0 calc((1 - var(--tt-progress)) * 100%) 0 0);
+}
+/* Stations at both ends */
+.rail::before,
+.rail::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  z-index: var(--z-stack-1);
+  width: var(--tt-station);
+  height: var(--tt-station);
+  border-radius: var(--radius-round);
+  background: var(--tt-rail-done);
+  box-shadow: 0 0 0 var(--space-1) var(--tt-card);
+  transform: translate(-50%, -50%);
+}
+.rail::before { left: 0; }
+.rail::after {
+  left: 100%;
+  background: var(--tt-card);
+  box-shadow: inset 0 0 0 var(--tt-rail-w) var(--tt-rail-done), 0 0 0 var(--space-1) var(--tt-card);
+}
+
+/* The train, seen from above, with its nose on the line where it is now */
+.rail__marker {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-stack-2);
+  transform: translateX(calc(var(--tt-progress) * 100%));
+}
+.rail__train {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: var(--tt-marker-w);
+  overflow: visible;
+  transform: translate(-100%, -50%);
+}
+.rail__body {
+  fill: var(--tt-marker-body);
+  stroke: var(--tt-rail-done);
+  stroke-width: var(--tt-marker-stroke);
+}
+.rail__glass { fill: var(--tt-marker-glass); }
+
+/* ============ Status ============ */
+.status {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.status__state {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--tt-on-time);
+  font-size: var(--tt-fs-small);
+  font-weight: var(--tt-fw-bold);
+}
+.status__dot {
+  width: var(--tt-dot);
+  height: var(--tt-dot);
+  border-radius: var(--radius-round);
+  background: currentColor;
+}
+.status__eta {
+  margin-top: var(--space-1);
+  font-size: var(--tt-fs-eta);
+  font-weight: var(--tt-fw-bold);
+}
+.eta {
+  display: inline-grid;
+  overflow: hidden;
+  vertical-align: bottom;
+  font-variant-numeric: tabular-nums;
+}
+.eta > * { grid-area: 1 / 1; }
+.eta__next { visibility: hidden; opacity: 0; }
+
+.status__trip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: var(--tt-fw-semibold);
+}
+.status__trip .icon { color: var(--tt-text-muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-mode="live"] .tracker,
+  html[data-mode="live"] .tracker__close { transition: none; }
+}

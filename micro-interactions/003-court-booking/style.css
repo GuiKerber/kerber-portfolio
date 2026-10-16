@@ -1,0 +1,467 @@
+/* ==========================================================================
+   003 · Court booking
+   Exploration tokens (primitives, then roles), then the page.
+   Spacing, radius and motion come from the portfolio's css/tokens.css.
+   The page colour belongs to the sport; the courts are tuned to stand out
+   from it, and the interface stays in ink and white so it reads on all three.
+   ========================================================================== */
+
+/* ============ Tokens: primitives ============ */
+:root {
+  --cb-ink-900: #141414;
+  --cb-ink-800: #2a2a2a;
+  --cb-ink-a60: rgba(20, 20, 20, 0.6);
+  --cb-ink-a55: rgba(20, 20, 20, 0.55);
+  --cb-ink-a40: rgba(20, 20, 20, 0.4);
+  --cb-ink-a14: rgba(20, 20, 20, 0.14);
+  --cb-white: #ffffff;
+  --cb-grey-100: #ededed;
+  --cb-grey-100-a0: rgba(237, 237, 237, 0);
+  --cb-white-a85: rgba(255, 255, 255, 0.85);
+  --cb-sky-glass-a40: rgba(196, 236, 255, 0.4);
+
+  /* Pages */
+  --cb-green-500: #1fa463;
+  --cb-coral-400: #ff7a59;
+  --cb-sky-400: #3aa7e3;
+
+  /* Courts */
+  --cb-orange-300: #f7ad60;
+  --cb-orange-400: #f58a45;
+  --cb-orange-600: #e2602b;
+  --cb-teal-400: #2fb48c;
+  --cb-pine-700: #1d7a4c;
+  --cb-pine-500: #3a9d66;
+  --cb-pine-600: #2f8f5e;
+  --cb-pine-800: #1f6b45;
+  --cb-brick-500: #c2573a;
+  --cb-mist-100: #e9eef0;
+  --cb-cobalt-500: #2c6ae0;
+  --cb-cobalt-700: #2a52a8;
+  --cb-cobalt-400: #3d6fd8;
+  --cb-cream-100: #f4ede1;
+  --cb-cream-200: #e6d9c4;
+  --cb-cream-400: #cdb894;
+  --cb-graphite-800: #262a33;
+  --cb-violet-500: #6b4bd8;
+  --cb-violet-700: #4e33aa;
+  --cb-sand-200: #f6d58f;
+  --cb-sand-300: #eebc68;
+  --cb-sand-500: #d99a45;
+  --cb-palm-500: #3aa45f;
+  --cb-bark-500: #b07a45;
+  --cb-red-500: #f0473a;
+  --cb-tangerine-400: #ff8a3d;
+  --cb-lime-300: #e6f04b;
+  --cb-skin-200: #f2c29b;
+  --cb-skin-500: #b97a52;
+  --cb-espresso-900: #2a1d17;
+  --cb-sun-400: #f4c430;
+}
+
+/* ============ Tokens: roles ============ */
+:root {
+  /* The page behind each sport */
+  --cb-bg-tennis: var(--cb-green-500);   /* ink on it: 5.7:1 */
+  --cb-bg-padel: var(--cb-coral-400);    /* ink on it: 7.2:1 */
+  --cb-bg-beach: var(--cb-sky-400);      /* ink on it: 6.9:1 */
+  --stage-bg: var(--cb-bg-tennis);
+
+  /* Interface: ink and white only */
+  --cb-text: var(--cb-ink-900);
+  --cb-surface: var(--cb-white);
+  --cb-surface-hover: var(--cb-grey-100);
+  --cb-pill-hover: var(--cb-grey-100);
+  --cb-pill-hover-clear: var(--cb-grey-100-a0);
+  --cb-selected: var(--cb-ink-900);
+  --cb-on-selected: var(--cb-white);
+  --cb-taken-line: var(--cb-ink-a40);
+  --cb-taken-text: var(--cb-ink-a55);
+  --cb-cta: var(--cb-ink-900);
+  --cb-cta-hover: var(--cb-ink-800);
+  --cb-on-cta: var(--cb-white);
+  --cb-cta-off: var(--cb-ink-a14);
+  --cb-on-cta-off: var(--cb-ink-a60);
+  --color-focus: var(--cb-ink-900);
+
+  /* Illustration, shared by all three courts */
+  --cb-ink: var(--cb-ink-900);
+  --cb-line: var(--cb-white);
+  --cb-ball: var(--cb-lime-300);
+  --cb-mesh: var(--cb-ink-a55);
+  --cb-a-skin: var(--cb-skin-200);
+  --cb-a-hair: var(--cb-espresso-900);
+  --cb-a-shirt: var(--cb-white);
+  --cb-a-skirt: var(--cb-ink-900);
+  --cb-a-racket: var(--cb-tangerine-400);
+  --cb-b-skin: var(--cb-skin-500);
+  --cb-b-cap: var(--cb-sun-400);
+  --cb-b-shirt: var(--cb-white);
+  --cb-b-shorts: var(--cb-cobalt-700);
+  --cb-b-racket: var(--cb-cobalt-400);
+
+  /* Type */
+  --cb-font-display: "Bricolage Grotesque", var(--font-display);
+  --cb-font: "Inter Tight", var(--font-body);
+  --cb-fw-medium: 500;
+  --cb-fw-semibold: 600;
+  --cb-fw-bold: 700;
+  --cb-fw-heavy: 800;
+  --cb-fs-title: 38px;
+  --cb-fs-body: 15px;
+  --cb-fs-small: 14px;
+  --cb-lh-title: 0.98;
+  --cb-ls-title: var(--tracking-300);
+
+  /* Sizes */
+  --cb-court-w: 420px;
+  --cb-court-w-wide: 520px;   /* beside the booking, where there's height to spare */
+  --cb-court-ratio: 420 / 330;
+  --cb-court-depth: 1400px;    /* perspective for the tile's flip */
+  --cb-court-axis: -30deg;     /* the court's long diagonal, as drawn in isometric */
+  --cb-ui-w: 360px;
+  --cb-track-pad: var(--space-1);
+  --cb-chip-h: var(--tap);
+  --cb-chip-radius: 14px;
+  --cb-cta-h: 52px;
+  --cb-icon: 18px;
+  --cb-spinner: 16px;
+  --cb-spinner-w: 2px;
+  --cb-taken-w: 1.5px;
+  --cb-press: 0.97;
+}
+
+/* Each court's own colours, picked to stand out from its page */
+.court__face[data-sport="tennis"] {
+  --cb-tennis-top: var(--cb-orange-300);
+  --cb-tennis-band: var(--cb-orange-400);
+  --cb-tennis-side: var(--cb-orange-600);
+  --cb-tennis-court: var(--cb-teal-400);
+  --cb-tennis-screen: var(--cb-pine-700);
+  --cb-post: var(--cb-pine-500);
+  --cb-bin: var(--cb-brick-500);
+  --cb-bottle: var(--cb-mist-100);
+  --cb-bench-top: var(--cb-pine-600);
+  --cb-bench-side: var(--cb-pine-800);
+  --cb-bag-top: var(--cb-cobalt-400);
+  --cb-bag-side: var(--cb-cobalt-700);
+}
+.court__face[data-sport="padel"] {
+  --cb-padel-top: var(--cb-cream-100);
+  --cb-padel-band: var(--cb-cream-200);
+  --cb-padel-side: var(--cb-cream-400);
+  --cb-padel-court: var(--cb-cobalt-500);
+  --cb-glass: var(--cb-sky-glass-a40);
+  --cb-glass-shine: var(--cb-white-a85);
+  --cb-post: var(--cb-graphite-800);
+  --cb-tube: var(--cb-lime-300);
+  --cb-bench-top: var(--cb-graphite-800);
+  --cb-bench-side: var(--cb-ink-900);
+  --cb-bag-top: var(--cb-violet-500);
+  --cb-bag-side: var(--cb-violet-700);
+}
+.court__face[data-sport="beach"] {
+  --cb-beach-top: var(--cb-sand-200);
+  --cb-beach-band: var(--cb-sand-300);
+  --cb-beach-side: var(--cb-sand-500);
+  --cb-shade: var(--cb-sand-300);
+  --cb-ribbon: var(--cb-cobalt-500);
+  --cb-pole: var(--cb-white);
+  --cb-leaf: var(--cb-palm-500);
+  --cb-trunk: var(--cb-bark-500);
+  --cb-canopy: var(--cb-red-500);
+  --cb-stripe: var(--cb-white);
+  --cb-towel: var(--cb-tangerine-400);
+  --cb-towel-stripe: var(--cb-white);
+  --cb-cooler-top: var(--cb-white);
+  --cb-cooler-side: var(--cb-cobalt-500);
+}
+
+/* ============ Page ============ */
+.stage { color: var(--cb-text); }
+
+.icon {
+  width: var(--cb-icon);
+  height: var(--cb-icon);
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+:where(.booking p, .booking h1, .booking fieldset) { margin: 0; }
+:where(.booking fieldset) { min-width: 0; padding: 0; border: 0; }
+
+/* Mobile-first: the court on top, the booking under it */
+.booking {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-5);
+  font-family: var(--cb-font);
+  font-size: var(--cb-fs-body);
+  line-height: var(--leading-130);
+}
+
+.court {
+  position: relative;
+  width: var(--cb-court-w);
+  aspect-ratio: var(--cb-court-ratio);
+  perspective: var(--cb-court-depth);
+}
+/* The tile turns over around the court's long diagonal (the line running up
+   to the right), so its near edge rises, passes over the top and lands at the
+   back. The turn is a rotation about that line: line it up with the x axis,
+   rotate about x, then put it back. The loop drives --flip and --lift. */
+.court__tile {
+  --flip: 0deg;
+  --lift: 1;
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: scale(var(--lift)) rotate(var(--cb-court-axis)) rotateX(var(--flip)) rotate(calc(var(--cb-court-axis) * -1));
+}
+/* The next court waits on the back: turned half over about the same line */
+.court__face {
+  --side: 0deg;
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  transform: rotate(var(--cb-court-axis)) rotateX(var(--side)) rotate(calc(var(--cb-court-axis) * -1));
+}
+.court__face svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.court__face:not([data-sport="tennis"]) { visibility: hidden; opacity: 0; }
+
+.panel {
+  display: grid;
+  gap: var(--space-4);
+  width: var(--cb-ui-w);
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  font-size: var(--cb-fs-small);
+  font-weight: var(--cb-fw-semibold);
+}
+
+.title {
+  margin-bottom: var(--space-1);
+  font-family: var(--cb-font-display);
+  font-size: var(--cb-fs-title);
+  font-weight: var(--cb-fw-heavy);
+  line-height: var(--cb-lh-title);
+  letter-spacing: var(--cb-ls-title);
+}
+
+/* ============ Sport: a segmented control with a sliding ink thumb ============ */
+.sports {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: var(--cb-track-pad);
+  border-radius: var(--radius-pill);
+  background: var(--cb-surface);
+}
+.sports__thumb {
+  position: absolute;
+  top: var(--cb-track-pad);
+  bottom: var(--cb-track-pad);
+  left: var(--cb-track-pad);
+  width: calc((100% - var(--cb-track-pad) * 2) / 3);
+  border-radius: var(--radius-pill);
+  background: var(--cb-selected);
+}
+.pill {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: var(--tap);
+  border-radius: var(--radius-pill);
+  font-weight: var(--cb-fw-semibold);
+  cursor: pointer;
+}
+.pill input,
+.slot input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+.pill__text { position: relative; }
+.pill:has(input:checked) { color: var(--cb-on-selected); cursor: default; }
+.pill:has(input:not(:checked)):hover { background: var(--cb-pill-hover); }
+.pill:has(input:focus-visible) {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--space-1);
+}
+
+/* ============ Day ============ */
+.day {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.day__name { font-weight: var(--cb-fw-bold); }
+.day__step {
+  display: grid;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-round);
+  background: var(--cb-surface);
+  color: var(--cb-text);
+  cursor: pointer;
+}
+.day__step:hover { background: var(--cb-surface-hover); }
+.day__step:active { scale: var(--cb-press); }
+.day__step:disabled { background: var(--cb-cta-off); color: var(--cb-on-cta-off); cursor: not-allowed; }
+.day__step:focus-visible { border-radius: var(--radius-round); }
+
+/* ============ Times ============ */
+.slots { display: grid; }
+.slots > * { grid-area: 1 / 1; }
+.slots__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+}
+.slot {
+  position: relative;
+  display: grid;
+  cursor: pointer;
+}
+.slot__chip {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: var(--cb-chip-h);
+  border-radius: var(--cb-chip-radius);
+  background: var(--cb-surface);
+  font-weight: var(--cb-fw-semibold);
+  font-variant-numeric: tabular-nums;
+}
+.slot__check {
+  position: absolute;
+  left: var(--space-3);
+  top: 50%;
+  translate: 0 -50%;
+  visibility: hidden;
+  opacity: 0;
+}
+.slot:hover .slot__chip { background: var(--cb-surface-hover); }
+.slot:has(input:checked) .slot__chip { background: var(--cb-selected); color: var(--cb-on-selected); }
+.slot:has(input:checked) .slot__check { visibility: visible; opacity: 1; }
+.slot:has(input:focus-visible) .slot__chip {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--space-1);
+}
+/* Taken: struck through on a dashed outline, so it never relies on colour */
+.slot[data-state="taken"] { cursor: not-allowed; }
+.slot[data-state="taken"] .slot__chip {
+  background: none;
+  box-shadow: none;
+  outline: var(--cb-taken-w) dashed var(--cb-taken-line);
+  outline-offset: calc(var(--cb-taken-w) * -1);
+  color: var(--cb-taken-text);
+  text-decoration: line-through;
+}
+.slot[data-state="open"] .slot__taken { display: none; }
+
+/* Empty: no time left that day */
+.slots__empty {
+  align-self: center;
+  padding: var(--space-4) var(--space-6);
+  border-radius: var(--cb-chip-radius);
+  outline: var(--cb-taken-w) dashed var(--cb-taken-line);
+  outline-offset: calc(var(--cb-taken-w) * -1);
+  font-weight: var(--cb-fw-semibold);
+  visibility: hidden;
+}
+.slots[data-empty] .slots__grid { visibility: hidden; }
+.slots[data-empty] .slots__empty { visibility: visible; }
+
+/* ============ Book ============ */
+.cta {
+  display: grid;
+  place-items: center;
+  height: var(--cb-cta-h);
+  padding: 0 var(--space-6);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--cb-cta);
+  color: var(--cb-on-cta);
+  font: inherit;
+  font-weight: var(--cb-fw-bold);
+  cursor: pointer;
+}
+.cta > * { grid-area: 1 / 1; }
+.cta:hover { background: var(--cb-cta-hover); }
+.cta:active { scale: var(--cb-press); }
+.cta:disabled,
+.cta[data-state="idle"] { background: var(--cb-cta-off); color: var(--cb-on-cta-off); cursor: not-allowed; }
+.cta[data-state="loading"] { cursor: progress; }
+.cta[data-state="done"] { cursor: default; }
+.cta:focus-visible { border-radius: var(--radius-pill); }
+
+.cta__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  visibility: hidden;
+  opacity: 0;
+}
+.cta[data-state="idle"] [data-cta="idle"],
+.cta[data-state="ready"] [data-cta="ready"],
+.cta[data-state="loading"] [data-cta="loading"],
+.cta[data-state="done"] [data-cta="done"] { visibility: visible; opacity: 1; }
+
+.spinner {
+  width: var(--cb-spinner);
+  height: var(--cb-spinner);
+  border: var(--cb-spinner-w) solid currentColor;
+  border-right-color: transparent;
+  border-radius: var(--radius-round);
+}
+html[data-mode="live"] .cta[data-state="loading"] .spinner { animation: cb-spin 0.8s linear infinite; }
+@keyframes cb-spin { to { rotate: 1turn; } }
+
+.status {
+  display: grid;
+  min-height: 1lh;
+  font-size: var(--cb-fs-small);
+  font-weight: var(--cb-fw-semibold);
+}
+.status > * { grid-area: 1 / 1; }
+.status__msg { visibility: hidden; opacity: 0; }
+.status[data-state="done"] [data-status="done"],
+.status[data-state="error"] [data-status="error"] { visibility: visible; opacity: 1; }
+
+/* Live: the visitor's own clicks ease between states */
+html[data-mode="live"] :is(.pill, .day__step, .slot__chip, .cta) {
+  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), scale var(--dur-fast) var(--ease);
+}
+
+/* ============ Wide frames: the court beside the booking ============ */
+@media (min-aspect-ratio: 1/1) {
+  .booking {
+    --cb-court-w: var(--cb-court-w-wide);
+    grid-template-columns: var(--cb-court-w) var(--cb-ui-w);
+    align-items: center;
+    column-gap: var(--space-8);
+  }
+  .panel { text-align: left; }
+  .eyebrow { justify-content: flex-start; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-mode="live"] :is(.pill, .day__step, .slot__chip, .cta) { transition: none; }
+  html[data-mode="live"] .cta[data-state="loading"] .spinner { animation-duration: 2.4s; }
+}

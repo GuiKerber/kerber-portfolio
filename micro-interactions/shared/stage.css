@@ -1,0 +1,152 @@
+/* ==========================================================================
+   Micro-interactions: shared stage
+   Every exploration links css/tokens.css, then this file, then its own CSS.
+   The stage fills the window: the library embeds each exploration in a frame,
+   and the recorder opens it at the size of each video format.
+   ========================================================================== */
+
+:root {
+  /* Explorations override these with their own style tokens */
+  --stage-bg: var(--color-bg);
+  --stage-text: var(--color-text);
+
+  /* Simulated cursor */
+  --loop-cursor-size: var(--size-20);
+  --loop-cursor-fill: var(--color-on-paper);
+  --loop-cursor-stroke: var(--color-paper);
+  --loop-dot-size: var(--size-28);
+  --loop-dot-fill: var(--color-paper);
+  --loop-ring-width: var(--border-2);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--stage-bg);
+  color: var(--stage-text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+.stage {
+  position: relative;
+  display: grid;
+  /* The track keeps the stage's size, so a piece taller than a small frame
+     stays centred while loop.js scales it down to fit */
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--stage-bg);
+}
+
+/* While the demo plays (and while recording) GSAP owns every style change,
+   so CSS transitions would only add lag. They come back when the visitor
+   takes over and the component answers to real hover, focus and press. */
+html[data-mode="demo"] .stage *,
+html[data-mode="record"] .stage * {
+  transition: none !important;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--space-1);
+  border-radius: var(--radius-focus);
+}
+
+/* ============ Simulated cursor ============ */
+.loop-cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: var(--z-cursor);
+  pointer-events: none;
+  will-change: transform;
+}
+html[data-mode="live"] .loop-cursor { visibility: hidden; }
+
+.loop-cursor__arrow {
+  display: block;
+  width: var(--loop-cursor-size);
+  height: var(--loop-cursor-size);
+}
+.loop-cursor__arrow path {
+  fill: var(--loop-cursor-fill);
+  stroke: var(--loop-cursor-stroke);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+/* Touch-style dot, centred on the pointer position */
+.loop-cursor__dot {
+  display: block;
+  width: var(--loop-dot-size);
+  height: var(--loop-dot-size);
+  margin: calc(var(--loop-dot-size) / -2) 0 0 calc(var(--loop-dot-size) / -2);
+  border-radius: var(--radius-round);
+  background: var(--loop-dot-fill);
+  opacity: 0.5;
+}
+
+/* Ring that spreads out from the pointer on each press */
+.loop-cursor__ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--loop-dot-size);
+  height: var(--loop-dot-size);
+  margin: calc(var(--loop-dot-size) / -2) 0 0 calc(var(--loop-dot-size) / -2);
+  border: var(--loop-ring-width) solid var(--loop-dot-fill);
+  border-radius: var(--radius-round);
+  opacity: 0;
+}
+
+/* ============ Play / pause control (live view only) ============ */
+.loop-control {
+  position: fixed;
+  right: var(--gutter);
+  bottom: var(--gutter);
+  z-index: var(--z-header);
+  display: grid;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  padding: 0;
+  border: var(--hairline) solid var(--color-text-subtle);
+  border-radius: var(--radius-round);
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.loop-control:hover { color: var(--color-text-strong); border-color: var(--color-text-strong); }
+.loop-control:active { opacity: var(--opacity-pressed); }
+.loop-control:focus-visible { border-radius: var(--radius-round); }
+.loop-control svg { width: var(--size-icon-sm); height: var(--size-icon-sm); }
+.loop-control [data-icon] { display: none; }
+.loop-control[aria-pressed="false"] [data-icon="pause"],
+.loop-control[aria-pressed="true"] [data-icon="play"] { display: block; }
+html[data-mode="record"] .loop-control { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .loop-control { transition: none; }
+}

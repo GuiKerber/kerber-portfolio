@@ -1,0 +1,255 @@
+/* ==========================================================================
+   004 · Brand board
+   The site's own tokens do the work here (css/tokens.css): near-black page,
+   hairlines, three type families, one orange accent. This file only adds the
+   board's sizes and the roles of the three swatches.
+   ========================================================================== */
+
+/* ============ Tokens ============ */
+:root {
+  /* Swatches: the three colours the brand runs on */
+  --bb-ink: var(--neutral-1000);
+  --bb-paper: var(--neutral-100);
+  --bb-accent: var(--orange-500);
+  --bb-on-ink: var(--color-text-strong);
+  --bb-on-paper: var(--color-on-paper);     /* 18:1 on paper */
+  --bb-on-accent: var(--color-on-paper);    /* 6.5:1 on the accent */
+  --bb-grow-ink: 5;                         /* how much of the tile each takes: */
+  --bb-grow-paper: 3;                       /* the accent is used sparingly */
+  --bb-grow-accent: 1.6;
+  --bb-grow-hover: 6;
+
+  /* Board, portrait first: icon on top, then type, then wordmark and colour */
+  --bb-w: 520px;
+  --bb-icon-h: 300px;
+  --bb-type-h: 196px;
+  --bb-row-h: 176px;
+  --bb-pad: var(--space-5);
+  --bb-sample: 40px;
+  --bb-mark: 30px;
+  --bb-word: 26px;
+  --bb-family: 15px;
+
+  /* Board, wide: icon on the left, the rest beside it */
+  --bb-w-wide: 1000px;
+  --bb-icon-w-wide: 400px;
+  --bb-row-h-wide: 290px;
+  --bb-sample-wide: 58px;
+  --bb-mark-wide: 38px;
+  --bb-word-wide: 32px;
+}
+
+/* ============ Page ============ */
+.strings {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.board {
+  position: relative;
+  z-index: var(--z-content);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: var(--bb-icon-h) var(--bb-type-h) var(--bb-row-h);
+  width: var(--bb-w);
+  border-top: var(--hairline) solid var(--color-border);
+  border-left: var(--hairline) solid var(--color-border);
+}
+.cell--icon,
+.cell--type { grid-column: 1 / 3; }
+
+:where(.board p, .board ul) { margin: 0; padding: 0; }
+
+.cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--bb-pad);
+  border-right: var(--hairline) solid var(--color-border);
+  border-bottom: var(--hairline) solid var(--color-border);
+}
+
+/* Mono labels, as on the site */
+.cell__label,
+.cell__note {
+  position: relative;
+  z-index: var(--z-stack-1);
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+.cell__label { display: flex; gap: var(--space-3); }
+.cell__index { color: var(--color-text-strong); }
+.cell__note { font-size: var(--fs-caption); }
+
+/* A whole tile that answers to a click */
+.cell__hit {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-stack-2);
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.cell__hit:focus-visible { outline-offset: calc(var(--focus-width) * -2); }
+
+/* ============ 01 · Icon ============ */
+.icon__canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.icon__hit[aria-busy="true"] { cursor: progress; }
+
+/* ============ 02 · Type ============ */
+.sample {
+  position: relative;
+  z-index: var(--z-stack-1);
+  display: grid;
+  font-family: var(--font-display);
+  font-size: var(--bb-sample);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-display);
+  letter-spacing: var(--ls-display);
+  color: var(--color-text);
+  pointer-events: none;
+}
+.cell--type:has(.type__hit:hover) .sample { color: var(--color-text-strong); }
+html[data-mode="live"] .sample { transition: color var(--dur-fast) var(--ease); }
+.rotator { display: inline-grid; vertical-align: top; }
+.rotator__word {
+  grid-area: 1 / 1;
+  opacity: 0;
+  filter: blur(var(--blur-reveal));
+}
+.rotator__word.is-active { opacity: 1; filter: none; }
+
+.families {
+  position: relative;
+  z-index: var(--z-stack-1);
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: var(--hairline) solid var(--color-border);
+  list-style: none;
+  pointer-events: none;
+}
+.family {
+  display: grid;
+  gap: var(--space-1);
+  font-size: var(--bb-family);
+  color: var(--color-text-strong);
+}
+.family--display { font-family: var(--font-display); }
+.family--body { font-family: var(--font-body); }
+.family--mono { font-family: var(--font-mono); letter-spacing: var(--ls-mono); }
+.family__role {
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* ============ 03 · Wordmark ============ */
+.lockup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  color: var(--color-text-strong);
+}
+.lockup__mark { width: var(--bb-mark); height: var(--bb-mark); flex: none; }
+.lockup__word {
+  font-family: var(--font-display);
+  font-size: var(--bb-word);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--ls-logo);
+  white-space: nowrap;
+}
+.lockup__word sup { font-size: 0.5em; vertical-align: super; margin-left: 0.1em; }
+
+/* ============ 04 · Colour ============ */
+.swatches {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+.swatch {
+  --grow: var(--bb-grow-ink);
+  display: flex;
+  flex: var(--grow) 1 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-height: 0;
+  padding: 0 var(--space-3);
+  border: 0;
+  font-family: var(--font-body);
+  font-size: var(--fs-body-sm);
+  cursor: copy;
+}
+.swatch--ink {
+  background: var(--bb-ink);
+  color: var(--bb-on-ink);
+  border: var(--hairline) solid var(--color-border);
+}
+.swatch--paper { --grow: var(--bb-grow-paper); background: var(--bb-paper); color: var(--bb-on-paper); }
+.swatch--accent { --grow: var(--bb-grow-accent); background: var(--bb-accent); color: var(--bb-on-accent); }
+.swatch:hover { --grow: var(--bb-grow-hover); }
+.swatch:active { opacity: var(--opacity-pressed); }
+.swatch:focus-visible { position: relative; z-index: var(--z-stack-1); outline-offset: calc(var(--focus-width) * -1); }
+
+/* The code, or what happened when you tried to copy it */
+.swatch__code {
+  display: grid;
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+}
+.swatch__code > * { grid-area: 1 / 1; justify-self: end; }
+.swatch__done,
+.swatch__fail { visibility: hidden; opacity: 0; }
+.swatch[data-state="copied"] .swatch__done,
+.swatch[data-state="failed"] .swatch__fail { visibility: visible; opacity: 1; }
+.swatch[data-state] .swatch__hex { visibility: hidden; opacity: 0; }
+
+/* Live: the visitor's own hovers ease */
+html[data-mode="live"] .swatch {
+  transition: flex-grow var(--dur) var(--ease), opacity var(--dur-fast) var(--ease);
+}
+
+/* ============ Wide frames: icon on the left ============ */
+@media (min-aspect-ratio: 1/1) {
+  .board {
+    --bb-w: var(--bb-w-wide);
+    --bb-sample: var(--bb-sample-wide);
+    --bb-mark: var(--bb-mark-wide);
+    --bb-word: var(--bb-word-wide);
+    grid-template-columns: var(--bb-icon-w-wide) 1fr 1fr;
+    grid-template-rows: var(--bb-row-h-wide) var(--bb-row-h-wide);
+  }
+  .cell--icon { grid-column: 1; grid-row: 1 / 3; }
+  .cell--type { grid-column: 2 / 4; grid-row: 1; }
+  .cell--mark { grid-column: 2; grid-row: 2; }
+  .cell--color { grid-column: 3; grid-row: 2; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-mode="live"] .swatch { transition: none; }
+}

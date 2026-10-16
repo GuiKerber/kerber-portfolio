@@ -1,0 +1,62 @@
+/* ============ Micro-interactions library ============ */
+/* Each study plays live in a 4:3 frame; hovering it hands the controls over.
+   Every value comes from tokens.css. */
+
+.lab { padding-bottom: var(--section-pad-lg); }
+
+.lab-grid {
+  display: grid;
+  gap: var(--space-16);
+}
+@media (min-width: 1024px) {
+  .lab-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-16) var(--space-6);
+  }
+}
+
+.lab-item {
+  display: grid;
+  align-content: start;
+  gap: var(--space-6);
+}
+
+.lab-item__frame {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--radius-media);
+  background: var(--color-bg-media);
+}
+.lab-item__frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.lab-item__meta {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-4);
+}
+
+.lab-item__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+.lab-item__num { color: var(--color-text-muted); }
+.lab-item__title {
+  font-size: var(--fs-card-title);
+  color: var(--color-text-strong);
+}
+
+.lab-item__desc {
+  max-width: var(--case-text-w);
+  color: var(--color-text-muted);
+  line-height: var(--lh-reading);
+}
+
+.lab-item .tags { margin-bottom: 0; }

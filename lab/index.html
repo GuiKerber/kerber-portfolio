@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Design Lab · Guilherme Kerber</title>
+  <meta name="description" content="Micro-interactions and motion studies by Guilherme Kerber, built in code. Drag the canvas in any direction and open a study to play with it live.">
+  <link rel="canonical" href="https://guikerber.com/lab/">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://guikerber.com/lab/">
+  <meta property="og:site_name" content="Guilherme Kerber">
+  <meta property="og:title" content="My Design Lab · Guilherme Kerber">
+  <meta property="og:description" content="Micro-interactions and motion studies by Guilherme Kerber, built in code. Drag the canvas in any direction and open a study to play with it live.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <script>try { if (sessionStorage.getItem("page-shift")) document.documentElement.classList.add("is-shifting"); } catch (e) {}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500&family=Martian+Mono:wght@400&family=Inter+Tight:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/lab.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body class="lab-page">
+  <a class="skip-link" href="#lab-studies">Skip to the studies</a>
+
+  <header class="header">
+    <a class="logo" href="../" aria-label="Guilherme Kerber, home" data-transition-label="Guilherme Kerber">
+      <svg class="logo__mark" viewBox="0 0 27 26.7773" aria-hidden="true"><use href="#logo-mark"/></svg>
+      <span class="logo__word">GUI KERBER<sup>®</sup></span>
+    </a>
+    <nav class="header__actions" aria-label="Primary">
+      <a class="pill pill--solid" href="../#contact" data-transition-label="Contact">
+        <span class="pill__roll"><span>Let's talk</span></span>
+      </a>
+      <button class="pill pill--ghost" type="button" aria-expanded="false" aria-controls="menu" data-menu-toggle>
+        <span class="pill__roll"><span data-menu-label>Menu</span></span>
+        <span class="pill__icon" aria-hidden="true"><i></i><i></i></span>
+      </button>
+    </nav>
+  </header>
+
+  <div class="menu" id="menu" hidden>
+    <ul class="menu__list" role="list">
+      <li><a class="display" href="../#about" data-menu-link>About</a></li>
+      <li><a class="display" href="../#work" data-menu-link>Work</a></li>
+      <li><a class="display" href="../#explorations" data-menu-link>Explorations</a></li>
+      <li><a class="display" href="../#contact" data-menu-link>Contact</a></li>
+    </ul>
+    <div class="menu__foot mono">
+      <a href="https://www.linkedin.com/in/guikerber/" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a href="https://dribbble.com/kerber" target="_blank" rel="noopener">Dribbble ↗</a>
+      <span>contact@guikerber.com</span>
+    </div>
+  </div>
+
+  <main class="lab" id="main">
+    <h1 class="sr-only">My Design Lab</h1>
+
+    <!-- The canvas: cards sit on a sphere, so dragging never runs out of room.
+         JS fills it from the list below. -->
+    <div class="lab__stage" data-lab-stage>
+      <div class="lab__sphere" data-lab-sphere></div>
+    </div>
+
+    <!-- The 3D logo in the middle; a click breaks it apart. The canvas is
+         larger than the icon so the shards have room; the button covers the icon only. -->
+    <canvas class="lab__logo-canvas" aria-hidden="true"></canvas>
+    <button class="lab__logo" type="button" aria-label="Break the logo apart" data-lab-logo></button>
+
+    <!-- One entry per study. Screen readers and keyboards use this list;
+         the cards on the sphere are copies of these. -->
+    <ul class="lab__list" id="lab-studies" role="list" aria-label="Studies" data-lab-list>
+      <li data-slug="001-currency-pair" data-title="Currency pair picker" data-kind="Micro-interaction"></li>
+      <li data-slug="002-train-tracker" data-title="Train tracker" data-kind="Micro-interaction"></li>
+      <li data-slug="003-court-booking" data-title="Court booking" data-kind="Micro-interaction" data-ratio="portrait"></li>
+      <li data-slug="004-brand-board" data-title="Brand board" data-kind="Micro-interaction"></li>
+      <li data-slug="brand-contra-cover" data-title="Contra cover" data-kind="Motion"></li>
+    </ul>
+
+    <p class="lab__title mono" aria-hidden="true">My Design Lab</p>
+    <p class="lab__hint mono" aria-hidden="true">Drag to explore</p>
+  </main>
+
+  <dialog class="lab-viewer" aria-labelledby="lab-viewer-title" data-lab-viewer>
+    <div class="lab-viewer__panel" data-lab-panel>
+      <div class="lab-viewer__bar">
+        <p class="lab-viewer__title" id="lab-viewer-title">
+          <span class="lab-viewer__kind mono" data-lab-kind></span>
+          <span data-lab-name></span>
+        </p>
+        <a class="lab-viewer__open mono" href="#" target="_blank" rel="noopener" data-lab-open>Open in a new tab ↗</a>
+        <button class="lab-viewer__close" type="button" aria-label="Close" data-lab-close>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+      <div class="lab-viewer__frame">
+        <iframe title="" loading="lazy" data-lab-frame></iframe>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="lab-puck mono" aria-hidden="true">View</div>
+
+  <svg class="sprite" aria-hidden="true">
+    <symbol id="logo-mark" viewBox="0 0 27 26.7773">
+      <path id="logo-path" fill="currentColor" fill-rule="evenodd" d="M23.6533 0C25.5015 0.000230991 26.9998 1.49846 27 3.34668V23.4297C27 25.2781 25.5017 26.7771 23.6533 26.7773H3.34668C1.49832 26.7771 0 25.2781 0 23.4297V3.34668C0.00023112 1.49846 1.49846 0.000231099 3.34668 0H23.6533ZM12.3516 4.68652C12.3514 4.34856 11.9897 4.13304 11.6924 4.29395L6.48145 7.11523C6.3376 7.19328 6.24805 7.34413 6.24805 7.50781V21.9736C6.24805 22.3153 6.61656 22.5303 6.91406 22.3623L20.749 14.5479C20.8888 14.4687 20.9754 14.3208 20.9756 14.1602V9.83398C20.9754 9.49138 20.605 9.27706 20.3076 9.44727L17.2646 11.1885C16.9671 11.3587 16.5967 11.1436 16.5967 10.8008V7.11523C16.5967 6.76916 16.2194 6.55461 15.9219 6.73145L13.0254 8.45312C12.728 8.62957 12.3516 8.41526 12.3516 8.06934V4.68652ZM18.7441 17.8916C17.5118 17.8916 16.5127 18.8907 16.5127 20.123C16.5128 21.3553 17.5118 22.3545 18.7441 22.3545C19.9762 22.3542 20.9745 21.3552 20.9746 20.123C20.9746 18.8908 19.9763 17.8918 18.7441 17.8916Z"/>
+    </symbol>
+  </svg>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script type="module" src="../js/lab.js"></script>
+</body>
+</html>
