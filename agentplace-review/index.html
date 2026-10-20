@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agentplace UI Review · Guilherme Kerber</title>
+  <meta name="description" content="Three UI improvements for the Agentplace builder, found while building a product designer job application agent.">
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href="https://guikerber.com/agentplace-review/">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://guikerber.com/agentplace-review/">
+  <meta property="og:site_name" content="Guilherme Kerber">
+  <meta property="og:title" content="Agentplace UI Review · Guilherme Kerber">
+  <meta property="og:description" content="Three UI improvements for the Agentplace builder, found while building a product designer job application agent.">
+  <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+  <script>try { if (sessionStorage.getItem("page-shift")) document.documentElement.classList.add("is-shifting"); } catch (e) {}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500&family=Martian+Mono:wght@400&family=Inter+Tight:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/case.css">
+</head>
+<body class="case-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="header">
+    <a class="logo" href="../" aria-label="Guilherme Kerber, home" data-transition-label="Guilherme Kerber">
+      <svg class="logo__mark" viewBox="0 0 27 26.7773" aria-hidden="true"><use href="#logo-mark"/></svg>
+      <span class="logo__word">GUI KERBER<sup>®</sup></span>
+    </a>
+    <nav class="header__actions" aria-label="Primary">
+      <a class="pill pill--solid" href="#contact">
+        <span class="pill__roll"><span>Let's talk</span></span>
+      </a>
+      <button class="pill pill--ghost" type="button" aria-expanded="false" aria-controls="menu" data-menu-toggle>
+        <span class="pill__roll"><span data-menu-label>Menu</span></span>
+        <span class="pill__icon" aria-hidden="true"><i></i><i></i></span>
+      </button>
+    </nav>
+  </header>
+
+  <div class="menu" id="menu" hidden>
+    <ul class="menu__list" role="list">
+      <li><a class="display" href="../#about" data-menu-link>About</a></li>
+      <li><a class="display" href="../#work" data-menu-link>Work</a></li>
+      <li><a class="display" href="../#explorations" data-menu-link>Explorations</a></li>
+      <li><a class="display" href="#contact" data-menu-link>Contact</a></li>
+    </ul>
+    <div class="menu__foot mono">
+      <a href="https://www.linkedin.com/in/guikerber/" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a href="https://dribbble.com/kerber" target="_blank" rel="noopener">Dribbble ↗</a>
+      <span>contact@guikerber.com</span>
+    </div>
+  </div>
+
+  <main id="main">
+    <article class="case">
+
+      <!-- Intro -->
+      <header class="case-hero container">
+        <p class="case-hero__eyebrow mono" data-fade-up>UI review · Job application test · 2026</p>
+        <h1 class="case-hero__title display" data-blur-in>Agentplace UI review</h1>
+        <p class="case-hero__dek" data-fade-up>I used Agentplace to build an agent that helps me apply for product designer roles, then asked it to change the opening into three paths: tailor a CV, answer job-description questions, and write a cover letter. These are the three moments where the interface made me stop and work out what I was looking at.</p>
+
+        <dl class="case-meta" data-fade-up>
+          <div class="case-meta__row"><dt class="caps">Product</dt><dd>Agentplace builder</dd></div>
+          <div class="case-meta__row"><dt class="caps">Reviewer</dt><dd>Guilherme Kerber, Senior Product Designer</dd></div>
+          <div class="case-meta__row"><dt class="caps">Flow tested</dt><dd>Builder chat, preview, rebuild, sidebar preview</dd></div>
+          <div class="case-meta__row"><dt class="caps">Findings</dt><dd>3 UI improvements</dd></div>
+        </dl>
+      </header>
+
+      <!-- Finding 01 -->
+      <section class="case-block container" aria-labelledby="finding-1">
+        <h2 class="case-block__label caps" id="finding-1">Finding 01</h2>
+        <div class="case-block__body">
+          <ul class="decisions" role="list">
+            <li class="decision" data-fade-up>
+              <h3 class="decision__title heading">A chat inside a chat is hard to tell apart</h3>
+              <p>The builder is a conversation on the left, and the agent I built is also a conversation on the right, with its own input and the same light surface. Both panels ask me to type something, so it is easy to give the builder's instruction to the agent, or the other way round. Nothing says the right panel is the output, the thing I'm making.</p>
+              <p class="decision__trade"><span class="mono">Suggestion</span>Frame the right panel as the product being built. Show the agent's name at the top of the preview and give it a different surface, for example an inverted theme or a distinct background, so the builder and the agent read as two separate apps.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <figure class="case-figure case-figure--full" data-reveal>
+        <img src="../assets/reviews/agentplace/chat-in-chat.webp" alt="Agentplace with the builder chat on the left and the agent preview on the right; both panels end in a text input" width="2000" height="1037" loading="lazy">
+      </figure>
+
+      <!-- Finding 02 -->
+      <section class="case-block container" aria-labelledby="finding-2">
+        <h2 class="case-block__label caps" id="finding-2">Finding 02</h2>
+        <div class="case-block__body">
+          <ul class="decisions" role="list">
+            <li class="decision" data-fade-up>
+              <h3 class="decision__title heading">A rebuild replaces the previous version</h3>
+              <p>When I asked for the three paths, the preview showed "Server is building" and then swapped the old version for the new one, with no way back to it. Iterating on an agent means comparing outputs: without the earlier version I can't tell whether a change made it better, and a bad rebuild costs me the version that worked.</p>
+              <p class="decision__trade"><span class="mono">Suggestion</span>Open each rebuild as a new tab next to the current one, such as "Preview #2". The tab bar and the "+" button are already there, so this adds simple version control without a new pattern.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <figure class="case-figure case-figure--full" data-reveal>
+        <img src="../assets/reviews/agentplace/rebuild.webp" alt="Agentplace while the agent rebuilds: the builder lists files being saved and the preview shows a Server is building notice over the previous version" width="2000" height="1057" loading="lazy">
+      </figure>
+
+      <!-- Finding 03 -->
+      <section class="case-block container" aria-labelledby="finding-3">
+        <h2 class="case-block__label caps" id="finding-3">Finding 03</h2>
+        <div class="case-block__body">
+          <ul class="decisions" role="list">
+            <li class="decision" data-fade-up>
+              <h3 class="decision__title heading">The Preview menu item opens something unexpected</h3>
+              <p>Clicking Preview in the sidebar starts a new builder chat, while the right panel loads a preview of something else I built earlier in the project. A navigation item should take me to a place, not start a new session, and here neither panel shows the agent I was working on.</p>
+              <p class="decision__trade"><span class="mono">Suggestion</span>Treat preview as an action on what the builder made. Show a preview card for the result inside the builder chat, and add a Preview button in the secondary style next to Publish, so previewing always refers to the current build.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <figure class="case-figure case-figure--full" data-reveal>
+        <img src="../assets/reviews/agentplace/sidebar-preview.webp" alt="Agentplace after clicking Preview in the sidebar: a new empty builder chat on the left and an earlier build of the agent on the right" width="2000" height="1060" loading="lazy">
+      </figure>
+
+      <!-- Takeaway -->
+      <section class="case-block container" aria-labelledby="takeaway">
+        <h2 class="case-block__label caps" id="takeaway">Takeaway</h2>
+        <div class="case-block__body" data-fade-up>
+          <p>The three suggestions share one idea: keep what the builder makes clearly separate from the builder itself, and keep every version of it reachable.</p>
+        </div>
+      </section>
+    </article>
+
+    <footer class="footer" id="contact" aria-labelledby="contact-title">
+      <canvas class="footer__lines" aria-hidden="true"></canvas>
+      <div class="container footer__inner">
+        <div class="footer__top">
+          <p class="footer__label caps">Contact</p>
+          <h2 class="footer__title display" id="contact-title">
+            <span class="footer__mask"><span class="footer__line">Say hello at</span></span>
+            <span class="footer__email-line">
+              <button class="footer__email" type="button" data-copy-email="contact@guikerber.com" aria-describedby="copy-hint">
+                <span class="footer__email-text">contact@guikerber.com</span>
+                <span class="footer__copied mono" aria-hidden="true">Copied</span>
+              </button>
+            </span>
+          </h2>
+          <span class="sr-only" id="copy-hint">Copies the email address</span>
+          <span class="sr-only" aria-live="polite" data-copy-status></span>
+        </div>
+
+        <div class="footer__body">
+          <p class="footer__desc">Open to freelance projects, full-time positions, and creative collaborations. If you have a product problem that needs attention, let’s talk.</p>
+          <div class="footer__social">
+            <a class="link-btn link-btn--sm" href="https://www.linkedin.com/in/guikerber/" target="_blank" rel="noopener">
+              <span class="link-btn__arrow link-btn__arrow--in" aria-hidden="true">↗</span>
+              <span class="link-btn__label">LinkedIn</span>
+              <span class="link-btn__arrow link-btn__arrow--out" aria-hidden="true">↗</span>
+            </a>
+            <a class="link-btn link-btn--sm" href="https://dribbble.com/kerber" target="_blank" rel="noopener">
+              <span class="link-btn__arrow link-btn__arrow--in" aria-hidden="true">↗</span>
+              <span class="link-btn__label">Dribbble</span>
+              <span class="link-btn__arrow link-btn__arrow--out" aria-hidden="true">↗</span>
+            </a>
+            <a class="link-btn link-btn--sm" href="../resume/" data-transition-label="Resume">
+              <span class="link-btn__arrow link-btn__arrow--in" aria-hidden="true">→</span>
+              <span class="link-btn__label">Resume</span>
+              <span class="link-btn__arrow link-btn__arrow--out" aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer__bar mono">
+          <span>© 2026 Guilherme Kerber</span>
+          <a class="footer__top-link" href="#main">Back to top ↑</a>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <div class="copy-puck" aria-hidden="true">
+    <svg class="copy-puck__copy" viewBox="0 0 16 16" fill="none"><rect x="5.6" y="5.6" width="7.8" height="7.8" rx="1.6" stroke="currentColor" stroke-width="1.3"/><path d="M10.4 5.6V4A1.5 1.5 0 0 0 8.9 2.5H4A1.5 1.5 0 0 0 2.5 4v4.9A1.5 1.5 0 0 0 4 10.4h1.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+    <svg class="copy-puck__check" viewBox="0 0 16 16" fill="none"><path d="M3.6 8.4l2.9 2.9L12.4 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+
+  <svg class="sprite" aria-hidden="true">
+    <symbol id="logo-mark" viewBox="0 0 27 26.7773">
+      <path fill="currentColor" fill-rule="evenodd" d="M23.6533 0C25.5015 0.000230991 26.9998 1.49846 27 3.34668V23.4297C27 25.2781 25.5017 26.7771 23.6533 26.7773H3.34668C1.49832 26.7771 0 25.2781 0 23.4297V3.34668C0.00023112 1.49846 1.49846 0.000231099 3.34668 0H23.6533ZM12.3516 4.68652C12.3514 4.34856 11.9897 4.13304 11.6924 4.29395L6.48145 7.11523C6.3376 7.19328 6.24805 7.34413 6.24805 7.50781V21.9736C6.24805 22.3153 6.61656 22.5303 6.91406 22.3623L20.749 14.5479C20.8888 14.4687 20.9754 14.3208 20.9756 14.1602V9.83398C20.9754 9.49138 20.605 9.27706 20.3076 9.44727L17.2646 11.1885C16.9671 11.3587 16.5967 11.1436 16.5967 10.8008V7.11523C16.5967 6.76916 16.2194 6.55461 15.9219 6.73145L13.0254 8.45312C12.728 8.62957 12.3516 8.41526 12.3516 8.06934V4.68652ZM18.7441 17.8916C17.5118 17.8916 16.5127 18.8907 16.5127 20.123C16.5128 21.3553 17.5118 22.3545 18.7441 22.3545C19.9762 22.3542 20.9745 21.3552 20.9746 20.123C20.9746 18.8908 19.9763 17.8918 18.7441 17.8916Z"/>
+    </symbol>
+  </svg>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+  <script type="module" src="../js/case.js"></script>
+</body>
+</html>
