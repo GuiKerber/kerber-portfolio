@@ -90,7 +90,8 @@
 }
 /* Each image keeps its own proportion (from its width/height attributes):
    full 2900x1800, side-by-side 3:4, grid 1:1 */
-.case-figure img {
+.case-figure img,
+.case-figure video {
   display: block;
   width: 100%;
   height: auto;
